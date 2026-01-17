@@ -141,6 +141,8 @@ export default function ServicesPage() {
                 <TableHead>
                   <TableRow>
                     <TableHeaderCell>Vehicle ID</TableHeaderCell>
+                    <TableHeaderCell>Brand</TableHeaderCell>
+                    <TableHeaderCell>Model</TableHeaderCell>
                     <TableHeaderCell className="hidden md:table-cell">Last Service</TableHeaderCell>
                     <TableHeaderCell className="hidden lg:table-cell">Next Service</TableHeaderCell>
                     <TableHeaderCell className="hidden lg:table-cell">Interval</TableHeaderCell>
@@ -151,7 +153,9 @@ export default function ServicesPage() {
                 <TableBody>
                   {services.map((service) => (
                     <TableRow key={service._id}>
-                      {/* <TableCell className="font-semibold text-sm">{service.vehicle_id}</TableCell> */}
+                      <TableCell className="font-semibold text-sm">{service.vehicle_id._id}</TableCell>
+                      <TableCell className="font-semibold text-sm">{service.vehicle_id.brand}</TableCell>
+                      <TableCell className="font-semibold text-sm">{service.vehicle_id.vehicle_model}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{formatDate(service.last_service_date)}</TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{formatDate(service.next_service_date)}</TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{service.service_interval_days} days</TableCell>
@@ -188,7 +192,7 @@ export default function ServicesPage() {
           <Select
             label="Vehicle"
             name="vehicle_id"
-            value={formData.vehicle_id || ""}
+            value={formData.vehicle_id?._id || ""}
             onChange={handleChange}
             options={vehicles.map((vehicle) => ({
               value: vehicle._id || "",

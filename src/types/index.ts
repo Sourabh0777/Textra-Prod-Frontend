@@ -46,7 +46,7 @@ export interface IVehicle {
 
 export interface IService {
   _id?: string;
-  vehicle_id: string;
+  vehicle_id: IVehicle;
   last_service_date: Date;
   next_service_date: Date;
   service_interval_days: number;
