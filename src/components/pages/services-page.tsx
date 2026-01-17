@@ -1,128 +1,128 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { Header } from "@/components/layout/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardBody } from "@/components/ui/card"
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table"
-import { Modal } from "@/components/ui/modal"
-import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
-import { Loader } from "@/components/ui/loader"
-import { fetchServices, createService, updateService, deleteService, fetchVehicles } from "@/lib/api"
-import type { IService, IVehicle } from "@/types"
+import { useState, useEffect } from "react";
+import { Header } from "@/components/layout/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardBody } from "@/components/ui/card";
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
+import { Modal } from "@/components/ui/modal";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Loader } from "@/components/ui/loader";
+import { fetchServices, createService, updateService, deleteService, fetchVehicles } from "@/lib/api";
+import type { IService, IVehicle } from "@/types";
 
 export default function ServicesPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [services, setServices] = useState<IService[]>([])
-  const [vehicles, setVehicles] = useState<IVehicle[]>([])
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [formData, setFormData] = useState<Partial<IService>>({})
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [services, setServices] = useState<IService[]>([]);
+  const [vehicles, setVehicles] = useState<IVehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState<Partial<IService>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const loadData = async () => {
-    setLoading(true)
-    const [servicesRes, vehiclesRes] = await Promise.all([fetchServices(), fetchVehicles()])
+    setLoading(true);
+    const [servicesRes, vehiclesRes] = await Promise.all([fetchServices(), fetchVehicles()]);
     if (servicesRes.success && Array.isArray(servicesRes.data)) {
-      setServices(servicesRes.data)
+      setServices(servicesRes.data);
     }
     if (vehiclesRes.success && Array.isArray(vehiclesRes.data)) {
-      setVehicles(vehiclesRes.data)
+      setVehicles(vehiclesRes.data);
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   const handleOpenModal = (service?: IService) => {
     if (service) {
-      setFormData(service)
-      setEditingId(service._id || null)
-      setIsEditMode(true)
+      setFormData(service);
+      setEditingId(service._id || null);
+      setIsEditMode(true);
     } else {
-      setFormData({})
-      setEditingId(null)
-      setIsEditMode(false)
+      setFormData({});
+      setEditingId(null);
+      setIsEditMode(false);
     }
-    setErrors({})
-    setIsModalOpen(true)
-  }
+    setErrors({});
+    setIsModalOpen(true);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: name === "service_interval_days" ? Number(value) : name.includes("date") ? new Date(value) : value,
-    })
+    });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" })
+      setErrors({ ...errors, [name]: "" });
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
-    if (!formData.vehicle_id) newErrors.vehicle_id = "Vehicle is required"
-    if (!formData.last_service_date) newErrors.last_service_date = "Last service date is required"
-    if (!formData.next_service_date) newErrors.next_service_date = "Next service date is required"
-    if (!formData.service_interval_days) newErrors.service_interval_days = "Service interval is required"
-    return newErrors
-  }
+    const newErrors: Record<string, string> = {};
+    if (!formData.vehicle_id) newErrors.vehicle_id = "Vehicle is required";
+    if (!formData.last_service_date) newErrors.last_service_date = "Last service date is required";
+    if (!formData.next_service_date) newErrors.next_service_date = "Next service date is required";
+    if (!formData.service_interval_days) newErrors.service_interval_days = "Service interval is required";
+    return newErrors;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const newErrors = validateForm()
+    e.preventDefault();
+    const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      return;
     }
 
-    setSubmitting(true)
+    setSubmitting(true);
     try {
-      let result
+      let result;
       if (isEditMode && editingId) {
-        result = await updateService(editingId, formData)
+        result = await updateService(editingId, formData);
       } else {
-        result = await createService(formData)
+        result = await createService(formData);
       }
 
       if (result.success) {
-        await loadData()
-        setIsModalOpen(false)
-        setFormData({})
+        await loadData();
+        setIsModalOpen(false);
+        setFormData({});
       } else {
-        setErrors({ submit: result.error || "Failed to save service" })
+        setErrors({ submit: result.error || "Failed to save service" });
       }
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this service?")) {
-      const result = await deleteService(id)
+      const result = await deleteService(id);
       if (result.success) {
-        await loadData()
+        await loadData();
       } else {
-        alert("Failed to delete service")
+        alert("Failed to delete service");
       }
     }
-  }
+  };
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   }
 
   const formatDate = (date: any) => {
-    if (!date) return "-"
-    return new Date(date).toLocaleDateString()
-  }
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString();
+  };
 
   return (
     <>
@@ -151,16 +151,10 @@ export default function ServicesPage() {
                 <TableBody>
                   {services.map((service) => (
                     <TableRow key={service._id}>
-                      <TableCell className="font-semibold text-sm">{service.vehicle_id}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">
-                        {formatDate(service.last_service_date)}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">
-                        {formatDate(service.next_service_date)}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">
-                        {service.service_interval_days} days
-                      </TableCell>
+                      {/* <TableCell className="font-semibold text-sm">{service.vehicle_id}</TableCell> */}
+                      <TableCell className="hidden md:table-cell text-sm">{formatDate(service.last_service_date)}</TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">{formatDate(service.next_service_date)}</TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">{service.service_interval_days} days</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{service.notes || "-"}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -243,5 +237,5 @@ export default function ServicesPage() {
         </form>
       </Modal>
     </>
-  )
+  );
 }

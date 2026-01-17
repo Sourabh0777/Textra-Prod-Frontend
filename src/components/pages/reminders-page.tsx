@@ -1,134 +1,134 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { Header } from "@/components/layout/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardBody } from "@/components/ui/card"
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Modal } from "@/components/ui/modal"
-import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
-import { Loader } from "@/components/ui/loader"
-import { fetchReminders, createReminder, updateReminder, deleteReminder, fetchServices } from "@/lib/api"
-import type { IReminder, IService } from "@/types"
+import { useState, useEffect } from "react";
+import { Header } from "@/components/layout/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardBody } from "@/components/ui/card";
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Modal } from "@/components/ui/modal";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Loader } from "@/components/ui/loader";
+import { fetchReminders, createReminder, updateReminder, deleteReminder, fetchServices } from "@/lib/api";
+import type { IReminder, IService } from "@/types";
 
 export default function RemindersPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [reminders, setReminders] = useState<IReminder[]>([])
-  const [services, setServices] = useState<IService[]>([])
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: "pending" })
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [reminders, setReminders] = useState<IReminder[]>([]);
+  const [services, setServices] = useState<IService[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: "pending" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const statusVariant: Record<string, "success" | "warning" | "danger" | "info"> = {
     pending: "warning",
     sent: "success",
     failed: "danger",
-  }
+  };
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const loadData = async () => {
-    setLoading(true)
-    const [remindersRes, servicesRes] = await Promise.all([fetchReminders(), fetchServices()])
+    setLoading(true);
+    const [remindersRes, servicesRes] = await Promise.all([fetchReminders(), fetchServices()]);
     if (remindersRes.success && Array.isArray(remindersRes.data)) {
-      setReminders(remindersRes.data)
+      setReminders(remindersRes.data);
     }
     if (servicesRes.success && Array.isArray(servicesRes.data)) {
-      setServices(servicesRes.data)
+      setServices(servicesRes.data);
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   const handleOpenModal = (reminder?: IReminder) => {
     if (reminder) {
-      setFormData(reminder)
-      setEditingId(reminder._id || null)
-      setIsEditMode(true)
+      setFormData(reminder);
+      setEditingId(reminder._id || null);
+      setIsEditMode(true);
     } else {
-      setFormData({ retry_count: 0, status: "pending" })
-      setEditingId(null)
-      setIsEditMode(false)
+      setFormData({ retry_count: 0, status: "pending" });
+      setEditingId(null);
+      setIsEditMode(false);
     }
-    setErrors({})
-    setIsModalOpen(true)
-  }
+    setErrors({});
+    setIsModalOpen(true);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: name === "retry_count" || name === "scheduled_for" ? new Date(value) : value,
-    })
+    });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" })
+      setErrors({ ...errors, [name]: "" });
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
-    if (!formData.service_id) newErrors.service_id = "Service is required"
-    if (!formData.scheduled_for) newErrors.scheduled_for = "Scheduled date is required"
-    if (!formData.status) newErrors.status = "Status is required"
-    return newErrors
-  }
+    const newErrors: Record<string, string> = {};
+    if (!formData.service_id) newErrors.service_id = "Service is required";
+    if (!formData.scheduled_for) newErrors.scheduled_for = "Scheduled date is required";
+    if (!formData.status) newErrors.status = "Status is required";
+    return newErrors;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const newErrors = validateForm()
+    e.preventDefault();
+    const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      return;
     }
 
-    setSubmitting(true)
+    setSubmitting(true);
     try {
-      let result
+      let result;
       if (isEditMode && editingId) {
-        result = await updateReminder(editingId, formData)
+        result = await updateReminder(editingId, formData);
       } else {
-        result = await createReminder(formData)
+        result = await createReminder(formData);
       }
 
       if (result.success) {
-        await loadData()
-        setIsModalOpen(false)
-        setFormData({ retry_count: 0, status: "pending" })
+        await loadData();
+        setIsModalOpen(false);
+        setFormData({ retry_count: 0, status: "pending" });
       } else {
-        setErrors({ submit: result.error || "Failed to save reminder" })
+        setErrors({ submit: result.error || "Failed to save reminder" });
       }
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this reminder?")) {
-      const result = await deleteReminder(id)
+      const result = await deleteReminder(id);
       if (result.success) {
-        await loadData()
+        await loadData();
       } else {
-        alert("Failed to delete reminder")
+        alert("Failed to delete reminder");
       }
     }
-  }
+  };
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   }
 
   const formatDate = (date: any) => {
-    if (!date) return "-"
-    return new Date(date).toLocaleDateString()
-  }
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString();
+  };
 
   return (
     <>
@@ -157,17 +157,13 @@ export default function RemindersPage() {
                 <TableBody>
                   {reminders.map((reminder) => (
                     <TableRow key={reminder._id}>
-                      <TableCell className="font-semibold text-sm">{reminder.service_id}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">
-                        {formatDate(reminder.scheduled_for)}
-                      </TableCell>
+                      {/* <TableCell className="font-semibold text-sm">{reminder.service_id}</TableCell> */}
+                      <TableCell className="hidden md:table-cell text-sm">{formatDate(reminder.scheduled_for)}</TableCell>
                       <TableCell>
                         <Badge variant={statusVariant[reminder.status] || "info"}>{reminder.status}</Badge>
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{reminder.retry_count}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">
-                        {formatDate(reminder.last_attempt_at)}
-                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">{formatDate(reminder.last_attempt_at)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" onClick={() => handleOpenModal(reminder)}>
@@ -231,16 +227,9 @@ export default function RemindersPage() {
             error={errors.status}
             fullWidth
           />
-          <Input
-            label="Retry Count"
-            name="retry_count"
-            type="number"
-            value={formData.retry_count || 0}
-            onChange={handleChange}
-            fullWidth
-          />
+          <Input label="Retry Count" name="retry_count" type="number" value={formData.retry_count || 0} onChange={handleChange} fullWidth />
         </form>
       </Modal>
     </>
-  )
+  );
 }
