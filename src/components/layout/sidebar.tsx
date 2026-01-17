@@ -11,6 +11,8 @@ interface SidebarProps {
 
 const menuItems = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
+  { label: "Business Types", href: "/business-types", icon: Building2 },
+
   { label: "Businesses", href: "/businesses", icon: Building2 },
   { label: "Customers", href: "/customers", icon: Users },
   { label: "Vehicles", href: "/vehicles", icon: Car },

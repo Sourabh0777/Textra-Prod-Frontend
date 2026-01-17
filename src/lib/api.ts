@@ -53,6 +53,30 @@ export async function fetchBusinessTypes() {
   return fetchApi("/business-types");
 }
 
+export async function fetchBusinessType(id: string) {
+  return fetchApi(`/business-types/${id}`);
+}
+
+export async function createBusinessType(data: any) {
+  return fetchApi("/business-types", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateBusinessType(id: string, data: any) {
+  return fetchApi(`/business-types/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteBusinessType(id: string) {
+  return fetchApi(`/business-types/${id}`, {
+    method: "DELETE",
+  });
+}
+
 // Business APIs
 export async function fetchBusinesses() {
   return fetchApi("/businesses");
