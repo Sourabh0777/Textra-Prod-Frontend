@@ -52,6 +52,7 @@ export interface IService {
   service_interval_days: number;
   notes?: string;
   created_at?: Date;
+  status: string;
 }
 
 export interface IReminder {

@@ -146,6 +146,7 @@ export default function ServicesPage() {
                     <TableHeaderCell className="hidden md:table-cell">Last Service</TableHeaderCell>
                     <TableHeaderCell className="hidden lg:table-cell">Next Service</TableHeaderCell>
                     <TableHeaderCell className="hidden lg:table-cell">Interval</TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell">Status</TableHeaderCell>
                     <TableHeaderCell className="hidden md:table-cell">Notes</TableHeaderCell>
                     <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
@@ -159,6 +160,7 @@ export default function ServicesPage() {
                       <TableCell className="hidden md:table-cell text-sm">{formatDate(service.last_service_date)}</TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{formatDate(service.next_service_date)}</TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{service.service_interval_days} days</TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">{service.status}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{service.notes || "-"}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
