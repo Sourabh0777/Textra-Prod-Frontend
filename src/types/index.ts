@@ -57,7 +57,7 @@ export interface IService {
 
 export interface IReminder {
   _id?: string;
-  service_id: string;
+  service_id: IService;
   scheduled_for: Date;
   status: string;
   retry_count: number;

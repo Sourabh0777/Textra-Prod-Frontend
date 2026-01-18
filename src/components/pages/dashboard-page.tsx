@@ -77,7 +77,6 @@ export default function DashboardPage() {
             </p>
           </div>
         )}
-
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
           {stats.map((stat) => (
             <Card key={stat.label}>
@@ -88,7 +87,81 @@ export default function DashboardPage() {
             </Card>
           ))}
         </div>
-
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Modules</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+              {modules.map((module) => (
+                <Link key={module.href} href={module.href} className="p-3 md:p-4 border border-neutral-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all">
+                  <div className="text-2xl md:text-3xl mb-2">{module.icon}</div>
+                  <p className="font-semibold text-neutral-900 text-sm md:text-base">{module.label}</p>
+                </Link>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Modules</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+              {modules.map((module) => (
+                <Link key={module.href} href={module.href} className="p-3 md:p-4 border border-neutral-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all">
+                  <div className="text-2xl md:text-3xl mb-2">{module.icon}</div>
+                  <p className="font-semibold text-neutral-900 text-sm md:text-base">{module.label}</p>
+                </Link>
+              ))}
+            </div>
+          </CardBody>
+        </Card>{" "}
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Modules</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+              {modules.map((module) => (
+                <Link key={module.href} href={module.href} className="p-3 md:p-4 border border-neutral-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all">
+                  <div className="text-2xl md:text-3xl mb-2">{module.icon}</div>
+                  <p className="font-semibold text-neutral-900 text-sm md:text-base">{module.label}</p>
+                </Link>
+              ))}
+            </div>
+          </CardBody>
+        </Card>{" "}
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Modules</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+              {modules.map((module) => (
+                <Link key={module.href} href={module.href} className="p-3 md:p-4 border border-neutral-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all">
+                  <div className="text-2xl md:text-3xl mb-2">{module.icon}</div>
+                  <p className="font-semibold text-neutral-900 text-sm md:text-base">{module.label}</p>
+                </Link>
+              ))}
+            </div>
+          </CardBody>
+        </Card>{" "}
+        <Card>
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Modules</h2>
+          </CardHeader>
+          <CardBody>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+              {modules.map((module) => (
+                <Link key={module.href} href={module.href} className="p-3 md:p-4 border border-neutral-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all">
+                  <div className="text-2xl md:text-3xl mb-2">{module.icon}</div>
+                  <p className="font-semibold text-neutral-900 text-sm md:text-base">{module.label}</p>
+                </Link>
+              ))}
+            </div>
+          </CardBody>
+        </Card>{" "}
         <Card>
           <CardHeader>
             <h2 className="text-lg font-semibold">Modules</h2>

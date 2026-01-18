@@ -157,7 +157,7 @@ export default function RemindersPage() {
                 <TableBody>
                   {reminders.map((reminder) => (
                     <TableRow key={reminder._id}>
-                      {/* <TableCell className="font-semibold text-sm">{reminder.service_id}</TableCell> */}
+                      <TableCell className="font-semibold text-sm">{reminder.service_id._id}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{formatDate(reminder.scheduled_for)}</TableCell>
                       <TableCell>
                         <Badge variant={statusVariant[reminder.status] || "info"}>{reminder.status}</Badge>
@@ -196,7 +196,7 @@ export default function RemindersPage() {
           <Select
             label="Service"
             name="service_id"
-            value={formData.service_id || ""}
+            value={formData.service_id?._id || ""}
             onChange={handleChange}
             options={services.map((service) => ({
               value: service._id || "",
