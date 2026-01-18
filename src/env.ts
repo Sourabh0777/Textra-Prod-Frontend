@@ -1,0 +1,56 @@
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
+
+export const env = createEnv({
+  /**
+   * Server-side environment variables schema
+   * These are only available on the server and never exposed to the client
+   */
+  server: {
+    // Node Environment
+    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  },
+
+  /**
+   * Client-side environment variables schema
+   * These must be prefixed with NEXT_PUBLIC_ and are exposed to the browser
+   */
+  client: {
+    // API Configuration
+    NEXT_PUBLIC_API_URL: z.string().url(),
+
+    // Clerk Client Configuration
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1),
+    NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: z.string().min(1),
+    NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: z.string().min(1),
+  },
+
+  /**
+   * Runtime environment variables mapping
+   * Map process.env to the schema above
+   */
+  runtimeEnv: {
+    // Server
+    NODE_ENV: process.env.NODE_ENV,
+
+    // Client
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
+    NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL,
+    NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL,
+  },
+
+  /**
+   * Skip validation during build time in CI/CD
+   * Set to true if you want to skip validation during build
+   */
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+  /**
+   * Makes it so that empty strings are treated as undefined.
+   * `SOME_VAR: z.string()` and `SOME_VAR=''` will throw an error.
+   */
+  emptyStringAsUndefined: true,
+});
