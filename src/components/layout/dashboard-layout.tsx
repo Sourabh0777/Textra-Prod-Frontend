@@ -4,6 +4,7 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { Sidebar } from "./sidebar";
 import { Navbar } from "./navbar";
+import { useFetchUserData } from "@/lib/hooks/useFetchUserData";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,6 +13,9 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Fetch user data and store in Redux
+  useFetchUserData();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);

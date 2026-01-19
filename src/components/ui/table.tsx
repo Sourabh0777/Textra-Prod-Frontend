@@ -4,6 +4,18 @@ interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
   children: React.ReactNode
 }
 
+interface TableHeadProps extends React.HTMLAttributes<HTMLTableSectionElement> {
+  children: React.ReactNode
+}
+
+interface TableBodyProps extends React.HTMLAttributes<HTMLTableSectionElement> {
+  children: React.ReactNode
+}
+
+interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+  children: React.ReactNode
+}
+
 export function Table({ children, className = "", ...props }: TableProps) {
   return (
     <div className="overflow-x-auto">
@@ -14,7 +26,7 @@ export function Table({ children, className = "", ...props }: TableProps) {
   )
 }
 
-export function TableHead({ children, className = "", ...props }: TableProps) {
+export function TableHead({ children, className = "", ...props }: TableHeadProps) {
   return (
     <thead className={`bg-neutral-100 border-b border-neutral-200 ${className}`} {...props}>
       {children}
@@ -22,7 +34,7 @@ export function TableHead({ children, className = "", ...props }: TableProps) {
   )
 }
 
-export function TableBody({ children, className = "", ...props }: TableProps) {
+export function TableBody({ children, className = "", ...props }: TableBodyProps) {
   return (
     <tbody className={className} {...props}>
       {children}
@@ -30,7 +42,7 @@ export function TableBody({ children, className = "", ...props }: TableProps) {
   )
 }
 
-export function TableRow({ children, className = "", ...props }: TableProps) {
+export function TableRow({ children, className = "", ...props }: TableRowProps) {
   return (
     <tr className={`border-b border-neutral-200 hover:bg-neutral-50 ${className}`} {...props}>
       {children}
