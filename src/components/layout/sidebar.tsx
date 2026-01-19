@@ -47,6 +47,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
 
           return (
             <Link
+              key={item.href}
               href={item.href}
               onClick={onClose}
               className={`
