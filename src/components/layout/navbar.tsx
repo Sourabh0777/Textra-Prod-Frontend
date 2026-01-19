@@ -2,6 +2,7 @@
 
 import { Bell, Search, Settings } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 
 interface NavbarProps {
@@ -10,6 +11,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
+  const router = useRouter();
   const [notifications] = useState(3);
 
   return (
@@ -49,7 +51,10 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
           </button>
 
           {/* Settings */}
-          <button className="p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300">
+          <button
+            onClick={() => router.push("/select-business-type")}
+            className="p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300"
+          >
             <Settings className="w-5 h-5" />
           </button>
 
