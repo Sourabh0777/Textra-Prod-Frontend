@@ -1,8 +1,8 @@
 "use client";
 
-import { User, LogOut, Bell, Search, Settings } from "lucide-react";
+import { Bell, Search, Settings } from "lucide-react";
 import { useState } from "react";
-import { useClerk } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -11,7 +11,6 @@ interface NavbarProps {
 
 export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
   const [notifications] = useState(3);
-  const { signOut } = useClerk();
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white/70 backdrop-blur-xl border-b border-neutral-200">
@@ -58,27 +57,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
 
           {/* User Profile */}
           <div className="flex items-center gap-3 pl-2">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-neutral-900 leading-tight">Admin User</p>
-              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Super Admin</p>
-            </div>
-
-            <div className="relative group">
-              <button className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#15368A]/10 border border-[#15368A]/20 text-[#15368A] hover:bg-[#15368A] hover:text-white transition-all duration-300 overflow-hidden ring-4 ring-transparent hover:ring-[#15368A]/10">
-                <User className="w-5 h-5" />
-              </button>
-
-              {/* Simple dropdown indicator or hover effect */}
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
-            </div>
-
-            <button
-              className="ml-2 p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-300"
-              title="Logout"
-              onClick={() => signOut({ redirectUrl: "/sign-in" })}
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
+            <UserButton />
           </div>
         </div>
       </div>
