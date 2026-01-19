@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { type NextRequest } from "next/server";
@@ -6,18 +7,18 @@ export async function GET(req: NextRequest) {
   const { userId, getToken } = await auth();
 
   if (!userId) {
-    return new Response("Unauthorized", { status: 401 });
+    redirect("/sign-in");
   }
   console.log("🚀 ~ GET ~ userId:", userId);
 
   try {
     const token = await getToken();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = env.NEXT_PUBLIC_API_URL;
 
     // Call the external backend to sync user/session
     // We don't care about the response body for now, just ensuring it's called.
     // If you need to handle errors (e.g. backend down), add logic here.
-    await fetch(`${apiUrl}/sign-in`, {
+    const response = await fetch(`${apiUrl}/sign-in`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -25,11 +26,14 @@ export async function GET(req: NextRequest) {
       },
       body: JSON.stringify({ userId }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Backend verification failed with status: ${response.status}`);
+    }
   } catch (error) {
     console.error("Error calling backend sign-in:", error);
-    // Optionally handle error (e.g. redirect to error page)
-    // For now, we proceed to dashboard/home even if sync fails, or you might want to block.
+    return new Response("Error identifying user on the backend", { status: 500 });
   }
 
-  redirect("/");
+  redirect("/businesses");
 }
