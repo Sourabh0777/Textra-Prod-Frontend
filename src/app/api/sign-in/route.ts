@@ -35,5 +35,5 @@ export async function GET(req: NextRequest) {
     return new Response("Error identifying user on the backend", { status: 500 });
   }
 
-  redirect("/businesses");
+  redirect("/select-business-type");
 }
