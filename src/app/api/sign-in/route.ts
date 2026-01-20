@@ -1,4 +1,5 @@
 import { env } from '@/env';
+import { API_BASE_URL } from '@/lib/api';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { type NextRequest } from 'next/server';
@@ -9,11 +10,9 @@ export async function GET(req: NextRequest) {
   if (!userId) {
     redirect('/sign-in');
   }
-  console.log('🚀 ~ GET ~ userId:', userId);
-
   try {
     const token = await getToken();
-    const apiUrl = env.NEXT_PUBLIC_API_URL;
+    const apiUrl = API_BASE_URL;
 
     // Call the external backend to sync user/session
     // We don't care about the response body for now, just ensuring it's called.

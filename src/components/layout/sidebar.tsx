@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, ChevronRight } from 'lucide-react';
+import { useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/api';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -20,10 +22,25 @@ const menuItems = [
   { label: 'Reminders', href: '/reminders', icon: Clock },
   { label: 'WhatsApp Logs', href: '/whatsapp-logs', icon: MessageSquare },
 ];
+import { useAuth } from '@clerk/nextjs';
 
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
-  const pathname = usePathname();
+  const { getToken, userId } = useAuth();
 
+  const pathname = usePathname();
+  useEffect(() => {
+    const fetchSideBar = async () => {
+      const url = ` ${API_BASE_URL}/business-types/side-bar`;
+      const token = await getToken();
+
+      const res = fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    };
+    fetchSideBar();
+  }, []);
   return (
     <aside className="w-full h-full bg-[#15368A] text-[#FFFFFF] overflow-y-auto flex flex-col border-r border-white/10">
       {/* Header */}

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/env';
 
-export const API_BASE_URL = env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+export const API_BASE_URL = env.NEXT_PUBLIC_API_URL;
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -20,7 +20,6 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
 
   try {
     const url = `${API_BASE_URL}${endpoint}`;
-    console.log('🚀 ~ fetchApi ~ url:', url);
 
     const response = await fetch(url, {
       ...options,

@@ -58,7 +58,6 @@ export default function SelectBusinessTypePage() {
     try {
       setSaving(true);
       setError(null);
-      console.log('🚀 ~ SelectBusinessTypePage ~ selectedBusinessType:', selectedBusinessType);
 
       const token = await getToken();
       const apiUrl = env.NEXT_PUBLIC_API_URL;
@@ -70,7 +69,6 @@ export default function SelectBusinessTypePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('🚀 ~ handleSave ~ response:', response);
 
       if (!response.ok) {
         const errorData = await response.json();
