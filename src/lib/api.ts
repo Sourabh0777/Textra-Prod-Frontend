@@ -1,4 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { env } from "@/env";
+
+export const API_BASE_URL = env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -17,7 +20,7 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
 
   try {
     const url = `${API_BASE_URL}${endpoint}`;
-    console.log(url);
+    console.log("🚀 ~ fetchApi ~ url:", url);
 
     const response = await fetch(url, {
       ...options,
@@ -233,4 +236,10 @@ export async function fetchWhatsAppLogs() {
 
 export async function fetchWhatsAppLog(id: string) {
   return fetchApi(`/whatsapp-logs/${id}`);
+}
+
+export async function fetchLoginUser() {
+  return fetchApi("/users/current", {
+    method: "GET",
+  });
 }

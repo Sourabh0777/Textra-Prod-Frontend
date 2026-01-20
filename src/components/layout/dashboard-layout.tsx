@@ -13,9 +13,9 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Fetch user data and store in Redux
-  useFetchUserData();
+  const { user, isLoading } = useFetchUserData();
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);

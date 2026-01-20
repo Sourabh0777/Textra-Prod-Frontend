@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface User {
@@ -5,7 +6,7 @@ export interface User {
   clerkId: string;
   email: string;
   name: string;
-  [key: string]: any;
+  [key: string]:any;
 }
 
 interface UserState {

@@ -1,52 +1,29 @@
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setUser, setLoading, setError } from "@/lib/slices/userSlice";
+import { useAppDispatch } from "@/lib/hooks";
+import { setUser } from "@/lib/slices/userSlice";
+import { useFetchLoginUserQuery } from "@/lib/api/endpoints/userApi";
 
 export function useFetchUserData() {
   const { user: clerkUser, isLoaded } = useUser();
   const dispatch = useAppDispatch();
-  const reduxUser = useAppSelector((state) => state.user.user);
-  const isLoading = useAppSelector((state) => state.user.loading);
 
+  // Use RTK Query hook
+  // skip the query if clerk is not loaded or user not signed in
+  const {
+    data: apiUser,
+    isLoading,
+    isError,
+  } = useFetchLoginUserQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  // Sync to Redux slice (optional, but good for backward compat if other parts use the slice)
   useEffect(() => {
-    if (!isLoaded || !clerkUser) {
-      return;
+    if (apiUser) {
+      dispatch(setUser(apiUser));
     }
+  }, [apiUser, dispatch]);
 
-    // If user already exists in Redux, don't fetch again
-    if (reduxUser) {
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        dispatch(setLoading(true));
-
-        const response = await fetch(`/api/users?clerkId=${clerkUser.id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch user: ${response.status}`);
-        }
-
-        const userData = await response.json();
-        dispatch(setUser(userData));
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        dispatch(setError(errorMessage));
-        console.error("Error fetching user:", error);
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-
-    fetchUser();
-  }, [isLoaded, clerkUser, reduxUser, dispatch]);
-
-  return { user: reduxUser, isLoading };
+  return { user: apiUser || null, isLoading };
 }

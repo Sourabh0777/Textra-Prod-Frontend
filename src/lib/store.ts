@@ -1,14 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "@/lib/slices/userSlice";
-import { userApi } from "@/lib/api/userApi";
+import { baseApi } from "@/lib/api/baseApi";
 
-export const store = configureStore({
-  reducer: {
-    user: userReducer,
-    [userApi.reducerPath]: userApi.reducer,
-  },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(userApi.middleware),
-});
+export const makeStore = () => {
+  return configureStore({
+    reducer: {
+      user: userReducer,
+      [baseApi.reducerPath]: baseApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
+  });
+};
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];
