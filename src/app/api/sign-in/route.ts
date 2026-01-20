@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
     console.error("Error calling backend sign-in:", error);
     return new Response("Error identifying user on the backend", { status: 500 });
   }
-
   // Redirect to dashboard where Redux will fetch user data
   redirect("/select-business-type");
 }
