@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { Header } from "@/components/layout/header";
-import { Button } from "@/components/ui/button";
-import { Card, CardBody } from "@/components/ui/card";
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
-import { Loader } from "@/components/ui/loader";
-import { fetchBusinessTypes, createBusinessType, updateBusinessType, deleteBusinessType } from "@/lib/api";
-import type { IBusinessType } from "@/types";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/header';
+import { Button } from '@/components/ui/button';
+import { Card, CardBody } from '@/components/ui/card';
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Modal } from '@/components/ui/modal';
+import { Input } from '@/components/ui/input';
+import { Loader } from '@/components/ui/loader';
+import { fetchBusinessTypes, createBusinessType, updateBusinessType, deleteBusinessType } from '@/lib/api';
+import type { IBusinessType } from '@/types';
 
 export default function BusinessTypesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +42,7 @@ export default function BusinessTypesPage() {
       setEditingId(type._id || null);
       setIsEditMode(true);
     } else {
-      setFormData({ is_active: true, name: "", description: "" });
+      setFormData({ is_active: true, name: '', description: '' });
       setEditingId(null);
       setIsEditMode(false);
     }
@@ -57,13 +57,13 @@ export default function BusinessTypesPage() {
       [name]: value,
     });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
+      setErrors({ ...errors, [name]: '' });
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.name) newErrors.name = 'Name is required';
     return newErrors;
   };
 
@@ -88,7 +88,7 @@ export default function BusinessTypesPage() {
         await loadData();
         setIsModalOpen(false);
       } else {
-        setErrors({ submit: result.error || "Failed to save business type" });
+        setErrors({ submit: result.error || 'Failed to save business type' });
       }
     } finally {
       setSubmitting(false);
@@ -96,12 +96,12 @@ export default function BusinessTypesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this business type?")) {
+    if (window.confirm('Are you sure you want to delete this business type?')) {
       const result = await deleteBusinessType(id);
       if (result.success) {
         await loadData();
       } else {
-        alert("Failed to delete business type");
+        alert('Failed to delete business type');
       }
     }
   };
@@ -136,16 +136,18 @@ export default function BusinessTypesPage() {
                   {businessTypes.map((type) => (
                     <TableRow key={type._id}>
                       <TableCell className="font-semibold">{type.name}</TableCell>
-                      <TableCell className="text-sm">{type.description || "-"}</TableCell>
+                      <TableCell className="text-sm">{type.description || '-'}</TableCell>
                       <TableCell>
-                        <Badge variant={type.is_active ? "success" : "danger"}>{type.is_active ? "Active" : "Inactive"}</Badge>
+                        <Badge variant={type.is_active ? 'success' : 'danger'}>
+                          {type.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" onClick={() => handleOpenModal(type)}>
                             Edit
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(type._id || "")}>
+                          <Button variant="danger" size="sm" onClick={() => handleDelete(type._id || '')}>
                             Delete
                           </Button>
                         </div>
@@ -162,20 +164,27 @@ export default function BusinessTypesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={isEditMode ? "Edit Business Type" : "Add New Business Type"}
+        title={isEditMode ? 'Edit Business Type' : 'Add New Business Type'}
         onConfirm={handleSubmit}
-        confirmText={isEditMode ? "Update" : "Add"}
+        confirmText={isEditMode ? 'Update' : 'Add'}
         loading={submitting}
       >
         <div className="p-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-            <Input label="Name" name="name" value={formData.name || ""} onChange={handleChange} error={errors.name} fullWidth />
+            <Input
+              label="Name"
+              name="name"
+              value={formData.name || ''}
+              onChange={handleChange}
+              error={errors.name}
+              fullWidth
+            />
             <div className="space-y-1">
               <label className="text-sm font-medium text-neutral-700">Description</label>
               <textarea
                 name="description"
-                value={formData.description || ""}
+                value={formData.description || ''}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
               />

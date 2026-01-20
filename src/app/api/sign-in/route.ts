@@ -1,15 +1,15 @@
-import { env } from "@/env";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { type NextRequest } from "next/server";
+import { env } from '@/env';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import { type NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const { userId, getToken } = await auth();
 
   if (!userId) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
-  console.log("🚀 ~ GET ~ userId:", userId);
+  console.log('🚀 ~ GET ~ userId:', userId);
 
   try {
     const token = await getToken();
@@ -19,9 +19,9 @@ export async function GET(req: NextRequest) {
     // We don't care about the response body for now, just ensuring it's called.
     // If you need to handle errors (e.g. backend down), add logic here.
     const response = await fetch(`${apiUrl}/sign-in`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ userId }),
@@ -31,9 +31,9 @@ export async function GET(req: NextRequest) {
       throw new Error(`Backend verification failed with status: ${response.status}`);
     }
   } catch (error) {
-    console.error("Error calling backend sign-in:", error);
-    return new Response("Error identifying user on the backend", { status: 500 });
+    console.error('Error calling backend sign-in:', error);
+    return new Response('Error identifying user on the backend', { status: 500 });
   }
   // Redirect to dashboard where Redux will fetch user data
-  redirect("/select-business-type");
+  redirect('/select-business-type');
 }

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { Button } from "./button";
+import { Button } from './button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,7 +14,15 @@ interface ModalProps {
   loading?: boolean;
 }
 
-export function Modal({ isOpen, onClose, title, children, onConfirm, confirmText = "Save", loading = false }: ModalProps) {
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  onConfirm,
+  confirmText = 'Save',
+  loading = false,
+}: ModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -22,7 +30,11 @@ export function Modal({ isOpen, onClose, title, children, onConfirm, confirmText
       <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="px-4 md:px-6 py-4 border-b border-neutral-200 flex justify-between items-center sticky top-0 bg-white">
           <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
-          <button onClick={onClose} disabled={loading} className="text-neutral-400 hover:text-neutral-600 text-xl disabled:opacity-50">
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="text-neutral-400 hover:text-neutral-600 text-xl disabled:opacity-50"
+          >
             ×
           </button>
         </div>

@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useEffect } from "react";
-import { Header } from "@/components/layout/header";
-import { Button } from "@/components/ui/button";
-import { Card, CardBody } from "@/components/ui/card";
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Loader } from "@/components/ui/loader";
-import { fetchBusinesses, createBusiness, updateBusiness, deleteBusiness, fetchBusinessTypes } from "@/lib/api";
-import type { IBusiness, IBusinessType } from "@/types";
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/header';
+import { Button } from '@/components/ui/button';
+import { Card, CardBody } from '@/components/ui/card';
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Modal } from '@/components/ui/modal';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Loader } from '@/components/ui/loader';
+import { fetchBusinesses, createBusiness, updateBusiness, deleteBusiness, fetchBusinessTypes } from '@/lib/api';
+import type { IBusiness, IBusinessType } from '@/types';
 
 export default function BusinessesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,23 +60,23 @@ export default function BusinessesPage() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "is_active" ? value === "true" : value,
+      [name]: name === 'is_active' ? value === 'true' : value,
     });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
+      setErrors({ ...errors, [name]: '' });
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.business_name) newErrors.business_name = "Business name is required";
-    if (!formData.owner_name) newErrors.owner_name = "Owner name is required";
-    if (!formData.phone_number) newErrors.phone_number = "Phone number is required";
-    if (!formData.business_type_id) newErrors.business_type_id = "Business type is required";
-    if (!formData.address) newErrors.address = "Address is required";
-    if (!formData.city) newErrors.city = "City is required";
-    if (!formData.waba_id) newErrors.waba_id = "WABA ID is required";
-    if (!formData.phone_number_id) newErrors.phone_number_id = "Phone Number ID is required";
+    if (!formData.business_name) newErrors.business_name = 'Business name is required';
+    if (!formData.owner_name) newErrors.owner_name = 'Owner name is required';
+    if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
+    if (!formData.business_type_id) newErrors.business_type_id = 'Business type is required';
+    if (!formData.address) newErrors.address = 'Address is required';
+    if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.waba_id) newErrors.waba_id = 'WABA ID is required';
+    if (!formData.phone_number_id) newErrors.phone_number_id = 'Phone Number ID is required';
     return newErrors;
   };
 
@@ -102,7 +102,7 @@ export default function BusinessesPage() {
         setIsModalOpen(false);
         setFormData({ is_active: true });
       } else {
-        setErrors({ submit: result.error || "Failed to save business" });
+        setErrors({ submit: result.error || 'Failed to save business' });
       }
     } finally {
       setSubmitting(false);
@@ -110,12 +110,12 @@ export default function BusinessesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this business?")) {
+    if (window.confirm('Are you sure you want to delete this business?')) {
       const result = await deleteBusiness(id);
       if (result.success) {
         await loadData();
       } else {
-        alert("Failed to delete business");
+        alert('Failed to delete business');
       }
     }
   };
@@ -156,14 +156,16 @@ export default function BusinessesPage() {
                       <TableCell className="hidden lg:table-cell text-sm">{business.phone_number}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{business.city}</TableCell>
                       <TableCell>
-                        <Badge variant={business.is_active ? "success" : "danger"}>{business.is_active ? "Active" : "Inactive"}</Badge>
+                        <Badge variant={business.is_active ? 'success' : 'danger'}>
+                          {business.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" onClick={() => handleOpenModal(business)}>
                             Edit
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(business._id || "")}>
+                          <Button variant="danger" size="sm" onClick={() => handleDelete(business._id || '')}>
                             Delete
                           </Button>
                         </div>
@@ -180,9 +182,9 @@ export default function BusinessesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={isEditMode ? "Edit Business" : "Add New Business"}
+        title={isEditMode ? 'Edit Business' : 'Add New Business'}
         onConfirm={handleSubmit}
-        confirmText={isEditMode ? "Update Business" : "Add Business"}
+        confirmText={isEditMode ? 'Update Business' : 'Add Business'}
         loading={submitting}
       >
         <div className="p-4">
@@ -191,32 +193,94 @@ export default function BusinessesPage() {
             <Select
               label="Business Type"
               name="business_type_id"
-              value={formData.business_type_id || ""}
+              value={formData.business_type_id || ''}
               onChange={handleChange}
               options={businessTypes.map((type) => ({
-                value: type._id || "",
+                value: type._id || '',
                 label: type.name,
               }))}
               error={errors.business_type_id}
               fullWidth
             />
-            <Input label="Business Name" name="business_name" value={formData.business_name || ""} onChange={handleChange} error={errors.business_name} fullWidth />
-            <Input label="Owner Name" name="owner_name" value={formData.owner_name || ""} onChange={handleChange} error={errors.owner_name} fullWidth />
-            <Input label="Phone Number" name="phone_number" value={formData.phone_number || ""} onChange={handleChange} error={errors.phone_number} fullWidth />
-            <Input label="Address" name="address" value={formData.address || ""} onChange={handleChange} error={errors.address} fullWidth />
-            <Input label="City" name="city" value={formData.city || ""} onChange={handleChange} error={errors.city} fullWidth />
-            <Input label="WABA ID" name="waba_id" value={formData.waba_id || ""} onChange={handleChange} error={errors.waba_id} fullWidth />
-            <Input label="Phone Number ID" name="phone_number_id" value={formData.phone_number_id || ""} onChange={handleChange} error={errors.phone_number_id} fullWidth />
-            <Input label="Phone Number Display (Optional)" name="phone_number_display" value={formData.phone_number_display || ""} onChange={handleChange} fullWidth />
-            <Input label="Access Token (Optional)" name="access_token" value={formData.access_token || ""} onChange={handleChange} type="password" fullWidth />
+            <Input
+              label="Business Name"
+              name="business_name"
+              value={formData.business_name || ''}
+              onChange={handleChange}
+              error={errors.business_name}
+              fullWidth
+            />
+            <Input
+              label="Owner Name"
+              name="owner_name"
+              value={formData.owner_name || ''}
+              onChange={handleChange}
+              error={errors.owner_name}
+              fullWidth
+            />
+            <Input
+              label="Phone Number"
+              name="phone_number"
+              value={formData.phone_number || ''}
+              onChange={handleChange}
+              error={errors.phone_number}
+              fullWidth
+            />
+            <Input
+              label="Address"
+              name="address"
+              value={formData.address || ''}
+              onChange={handleChange}
+              error={errors.address}
+              fullWidth
+            />
+            <Input
+              label="City"
+              name="city"
+              value={formData.city || ''}
+              onChange={handleChange}
+              error={errors.city}
+              fullWidth
+            />
+            <Input
+              label="WABA ID"
+              name="waba_id"
+              value={formData.waba_id || ''}
+              onChange={handleChange}
+              error={errors.waba_id}
+              fullWidth
+            />
+            <Input
+              label="Phone Number ID"
+              name="phone_number_id"
+              value={formData.phone_number_id || ''}
+              onChange={handleChange}
+              error={errors.phone_number_id}
+              fullWidth
+            />
+            <Input
+              label="Phone Number Display (Optional)"
+              name="phone_number_display"
+              value={formData.phone_number_display || ''}
+              onChange={handleChange}
+              fullWidth
+            />
+            <Input
+              label="Access Token (Optional)"
+              name="access_token"
+              value={formData.access_token || ''}
+              onChange={handleChange}
+              type="password"
+              fullWidth
+            />
             <Select
               label="Status"
               name="is_active"
               value={String(formData.is_active)}
               onChange={handleChange}
               options={[
-                { value: "true", label: "Active" },
-                { value: "false", label: "Inactive" },
+                { value: 'true', label: 'Active' },
+                { value: 'false', label: 'Inactive' },
               ]}
               fullWidth
             />

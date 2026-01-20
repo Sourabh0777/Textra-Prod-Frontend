@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Bell, Search, Settings } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { Bell, Search, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { UserButton } from '@clerk/nextjs';
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -19,7 +19,10 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
       <div className="flex h-16 items-center justify-between px-4 md:px-8">
         {/* Mobile Menu Button */}
         {isMobile && (
-          <button onClick={onMenuClick} className="p-2 mr-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300 lg:hidden">
+          <button
+            onClick={onMenuClick}
+            className="p-2 mr-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300 lg:hidden"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -52,7 +55,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
 
           {/* Settings */}
           <button
-            onClick={() => router.push("/select-business-type")}
+            onClick={() => router.push('/select-business-type')}
             className="p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300"
           >
             <Settings className="w-5 h-5" />

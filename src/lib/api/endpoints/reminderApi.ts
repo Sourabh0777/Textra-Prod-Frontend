@@ -1,39 +1,45 @@
-import { baseApi } from "../baseApi";
+import { baseApi } from '../baseApi';
 
 export const reminderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchReminders: builder.query<any, string | void>({
-      query: (serviceId) => (serviceId ? `/reminders?service_id=${serviceId}` : "/reminders"),
-      providesTags: ["Reminder"],
+      query: (serviceId) => (serviceId ? `/reminders?service_id=${serviceId}` : '/reminders'),
+      providesTags: ['Reminder'],
     }),
     fetchReminder: builder.query<any, string>({
       query: (id) => `/reminders/${id}`,
-      providesTags: (result, error, id) => [{ type: "Reminder", id }],
+      providesTags: (result, error, id) => [{ type: 'Reminder', id }],
     }),
     createReminder: builder.mutation<any, any>({
       query: (body) => ({
-        url: "/reminders",
-        method: "POST",
+        url: '/reminders',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Reminder"],
+      invalidatesTags: ['Reminder'],
     }),
     updateReminder: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
         url: `/reminders/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Reminder", id }, "Reminder"],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Reminder', id }, 'Reminder'],
     }),
     deleteReminder: builder.mutation<any, string>({
       query: (id) => ({
         url: `/reminders/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
-      invalidatesTags: ["Reminder"],
+      invalidatesTags: ['Reminder'],
     }),
   }),
 });
 
-export const { useFetchRemindersQuery, useFetchReminderQuery, useCreateReminderMutation, useUpdateReminderMutation, useDeleteReminderMutation } = reminderApi;
+export const {
+  useFetchRemindersQuery,
+  useFetchReminderQuery,
+  useCreateReminderMutation,
+  useUpdateReminderMutation,
+  useDeleteReminderMutation,
+} = reminderApi;

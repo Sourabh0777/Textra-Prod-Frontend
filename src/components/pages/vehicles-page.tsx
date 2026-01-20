@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useEffect } from "react";
-import { Header } from "@/components/layout/header";
-import { Button } from "@/components/ui/button";
-import { Card, CardBody } from "@/components/ui/card";
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
-import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Loader } from "@/components/ui/loader";
-import { fetchVehicles, createVehicle, updateVehicle, deleteVehicle, fetchCustomers } from "@/lib/api";
-import type { IVehicle, ICustomer } from "@/types";
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/header';
+import { Button } from '@/components/ui/button';
+import { Card, CardBody } from '@/components/ui/card';
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
+import { Modal } from '@/components/ui/modal';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Loader } from '@/components/ui/loader';
+import { fetchVehicles, createVehicle, updateVehicle, deleteVehicle, fetchCustomers } from '@/lib/api';
+import type { IVehicle, ICustomer } from '@/types';
 
 export default function VehiclesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,21 +59,21 @@ export default function VehiclesPage() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "year" ? Number(value) : value,
+      [name]: name === 'year' ? Number(value) : value,
     });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
+      setErrors({ ...errors, [name]: '' });
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.customer_id) newErrors.customer_id = "Customer is required";
-    if (!formData.vehicle_type) newErrors.vehicle_type = "Vehicle type is required";
-    if (!formData.brand) newErrors.brand = "Brand is required";
-    if (!formData.vehicle_model) newErrors.vehicle_model = "Model is required";
-    if (!formData.registration_number) newErrors.registration_number = "Registration number is required";
-    if (!formData.year) newErrors.year = "Year is required";
+    if (!formData.customer_id) newErrors.customer_id = 'Customer is required';
+    if (!formData.vehicle_type) newErrors.vehicle_type = 'Vehicle type is required';
+    if (!formData.brand) newErrors.brand = 'Brand is required';
+    if (!formData.vehicle_model) newErrors.vehicle_model = 'Model is required';
+    if (!formData.registration_number) newErrors.registration_number = 'Registration number is required';
+    if (!formData.year) newErrors.year = 'Year is required';
     return newErrors;
   };
 
@@ -99,7 +99,7 @@ export default function VehiclesPage() {
         setIsModalOpen(false);
         setFormData({});
       } else {
-        setErrors({ submit: result.error || "Failed to save vehicle" });
+        setErrors({ submit: result.error || 'Failed to save vehicle' });
       }
     } finally {
       setSubmitting(false);
@@ -107,12 +107,12 @@ export default function VehiclesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this vehicle?")) {
+    if (window.confirm('Are you sure you want to delete this vehicle?')) {
       const result = await deleteVehicle(id);
       if (result.success) {
         await loadData();
       } else {
-        alert("Failed to delete vehicle");
+        alert('Failed to delete vehicle');
       }
     }
   };
@@ -165,7 +165,7 @@ export default function VehiclesPage() {
                           <Button variant="ghost" size="sm" onClick={() => handleOpenModal(vehicle)}>
                             Edit
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(vehicle._id || "")}>
+                          <Button variant="danger" size="sm" onClick={() => handleDelete(vehicle._id || '')}>
                             Delete
                           </Button>
                         </div>
@@ -182,9 +182,9 @@ export default function VehiclesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={isEditMode ? "Edit Vehicle" : "Add New Vehicle"}
+        title={isEditMode ? 'Edit Vehicle' : 'Add New Vehicle'}
         onConfirm={handleSubmit}
-        confirmText={isEditMode ? "Update Vehicle" : "Add Vehicle"}
+        confirmText={isEditMode ? 'Update Vehicle' : 'Add Vehicle'}
         loading={submitting}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -195,24 +195,53 @@ export default function VehiclesPage() {
             // value={formData.customer_id || ""}
             onChange={handleChange}
             options={customers.map((customer) => ({
-              value: customer._id || "",
+              value: customer._id || '',
               label: customer.name,
             }))}
             error={errors.customer_id}
             fullWidth
           />
-          <Input label="Vehicle Type" name="vehicle_type" value={formData.vehicle_type || ""} onChange={handleChange} error={errors.vehicle_type} fullWidth />
-          <Input label="Brand" name="brand" value={formData.brand || ""} onChange={handleChange} error={errors.brand} fullWidth />
-          <Input label="Model" name="vehicle_model" value={formData.vehicle_model || ""} onChange={handleChange} error={errors.vehicle_model} fullWidth />
+          <Input
+            label="Vehicle Type"
+            name="vehicle_type"
+            value={formData.vehicle_type || ''}
+            onChange={handleChange}
+            error={errors.vehicle_type}
+            fullWidth
+          />
+          <Input
+            label="Brand"
+            name="brand"
+            value={formData.brand || ''}
+            onChange={handleChange}
+            error={errors.brand}
+            fullWidth
+          />
+          <Input
+            label="Model"
+            name="vehicle_model"
+            value={formData.vehicle_model || ''}
+            onChange={handleChange}
+            error={errors.vehicle_model}
+            fullWidth
+          />
           <Input
             label="Registration Number"
             name="registration_number"
-            value={formData.registration_number || ""}
+            value={formData.registration_number || ''}
             onChange={handleChange}
             error={errors.registration_number}
             fullWidth
           />
-          <Input label="Year" name="year" type="number" value={formData.year || ""} onChange={handleChange} error={errors.year} fullWidth />
+          <Input
+            label="Year"
+            name="year"
+            type="number"
+            value={formData.year || ''}
+            onChange={handleChange}
+            error={errors.year}
+            fullWidth
+          />
         </form>
       </Modal>
     </>

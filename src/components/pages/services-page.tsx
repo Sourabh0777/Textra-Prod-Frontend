@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useEffect } from "react";
-import { Header } from "@/components/layout/header";
-import { Button } from "@/components/ui/button";
-import { Card, CardBody } from "@/components/ui/card";
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from "@/components/ui/table";
-import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Loader } from "@/components/ui/loader";
-import { fetchServices, createService, updateService, deleteService, fetchVehicles } from "@/lib/api";
-import type { IService, IVehicle } from "@/types";
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/header';
+import { Button } from '@/components/ui/button';
+import { Card, CardBody } from '@/components/ui/card';
+import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
+import { Modal } from '@/components/ui/modal';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Loader } from '@/components/ui/loader';
+import { fetchServices, createService, updateService, deleteService, fetchVehicles } from '@/lib/api';
+import type { IService, IVehicle } from '@/types';
 
 export default function ServicesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,19 +59,19 @@ export default function ServicesPage() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "service_interval_days" ? Number(value) : name.includes("date") ? new Date(value) : value,
+      [name]: name === 'service_interval_days' ? Number(value) : name.includes('date') ? new Date(value) : value,
     });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
+      setErrors({ ...errors, [name]: '' });
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.vehicle_id) newErrors.vehicle_id = "Vehicle is required";
-    if (!formData.last_service_date) newErrors.last_service_date = "Last service date is required";
-    if (!formData.next_service_date) newErrors.next_service_date = "Next service date is required";
-    if (!formData.service_interval_days) newErrors.service_interval_days = "Service interval is required";
+    if (!formData.vehicle_id) newErrors.vehicle_id = 'Vehicle is required';
+    if (!formData.last_service_date) newErrors.last_service_date = 'Last service date is required';
+    if (!formData.next_service_date) newErrors.next_service_date = 'Next service date is required';
+    if (!formData.service_interval_days) newErrors.service_interval_days = 'Service interval is required';
     return newErrors;
   };
 
@@ -97,7 +97,7 @@ export default function ServicesPage() {
         setIsModalOpen(false);
         setFormData({});
       } else {
-        setErrors({ submit: result.error || "Failed to save service" });
+        setErrors({ submit: result.error || 'Failed to save service' });
       }
     } finally {
       setSubmitting(false);
@@ -105,12 +105,12 @@ export default function ServicesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this service?")) {
+    if (window.confirm('Are you sure you want to delete this service?')) {
       const result = await deleteService(id);
       if (result.success) {
         await loadData();
       } else {
-        alert("Failed to delete service");
+        alert('Failed to delete service');
       }
     }
   };
@@ -120,7 +120,7 @@ export default function ServicesPage() {
   }
 
   const formatDate = (date: any) => {
-    if (!date) return "-";
+    if (!date) return '-';
     return new Date(date).toLocaleDateString();
   };
 
@@ -157,17 +157,23 @@ export default function ServicesPage() {
                       <TableCell className="font-semibold text-sm">{service.vehicle_id._id}</TableCell>
                       <TableCell className="font-semibold text-sm">{service.vehicle_id.brand}</TableCell>
                       <TableCell className="font-semibold text-sm">{service.vehicle_id.vehicle_model}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{formatDate(service.last_service_date)}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{formatDate(service.next_service_date)}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{service.service_interval_days} days</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm">
+                        {formatDate(service.last_service_date)}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">
+                        {formatDate(service.next_service_date)}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm">
+                        {service.service_interval_days} days
+                      </TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{service.status}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{service.notes || "-"}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm">{service.notes || '-'}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" onClick={() => handleOpenModal(service)}>
                             Edit
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(service._id || "")}>
+                          <Button variant="danger" size="sm" onClick={() => handleDelete(service._id || '')}>
                             Delete
                           </Button>
                         </div>
@@ -184,9 +190,9 @@ export default function ServicesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={isEditMode ? "Edit Service" : "Add New Service"}
+        title={isEditMode ? 'Edit Service' : 'Add New Service'}
         onConfirm={handleSubmit}
-        confirmText={isEditMode ? "Update Service" : "Add Service"}
+        confirmText={isEditMode ? 'Update Service' : 'Add Service'}
         loading={submitting}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -194,10 +200,10 @@ export default function ServicesPage() {
           <Select
             label="Vehicle"
             name="vehicle_id"
-            value={formData.vehicle_id?._id || ""}
+            value={formData.vehicle_id?._id || ''}
             onChange={handleChange}
             options={vehicles.map((vehicle) => ({
-              value: vehicle._id || "",
+              value: vehicle._id || '',
               label: `${vehicle.brand} ${vehicle.vehicle_model}`,
             }))}
             error={errors.vehicle_id}
@@ -207,7 +213,7 @@ export default function ServicesPage() {
             label="Last Service Date"
             name="last_service_date"
             type="date"
-            value={formData.last_service_date ? new Date(formData.last_service_date).toISOString().split("T")[0] : ""}
+            value={formData.last_service_date ? new Date(formData.last_service_date).toISOString().split('T')[0] : ''}
             onChange={handleChange}
             error={errors.last_service_date}
             fullWidth
@@ -216,7 +222,7 @@ export default function ServicesPage() {
             label="Next Service Date"
             name="next_service_date"
             type="date"
-            value={formData.next_service_date ? new Date(formData.next_service_date).toISOString().split("T")[0] : ""}
+            value={formData.next_service_date ? new Date(formData.next_service_date).toISOString().split('T')[0] : ''}
             onChange={handleChange}
             error={errors.next_service_date}
             fullWidth
@@ -225,7 +231,7 @@ export default function ServicesPage() {
             label="Service Interval (days)"
             name="service_interval_days"
             type="number"
-            value={formData.service_interval_days || ""}
+            value={formData.service_interval_days || ''}
             onChange={handleChange}
             error={errors.service_interval_days}
             fullWidth
@@ -234,7 +240,7 @@ export default function ServicesPage() {
             <label className="block text-sm font-medium text-neutral-900 mb-1">Notes (Optional)</label>
             <textarea
               name="notes"
-              value={formData.notes || ""}
+              value={formData.notes || ''}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
               rows={3}

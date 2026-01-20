@@ -1,14 +1,14 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const baseApi = createApi({
-  reducerPath: "api",
+  reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: "/api",
+    baseUrl: '/api',
     prepareHeaders: (headers) => {
       // Add any global headers here if needed
       return headers;
     },
   }),
-  tagTypes: ["User", "Business", "BusinessType", "Customer", "Vehicle", "Service", "Reminder", "WhatsAppLog"],
+  tagTypes: ['User', 'Business', 'BusinessType', 'Customer', 'Vehicle', 'Service', 'Reminder', 'WhatsAppLog'],
   endpoints: () => ({}),
 });

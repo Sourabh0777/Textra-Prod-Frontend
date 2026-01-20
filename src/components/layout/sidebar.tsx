@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, ChevronRight } from "lucide-react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -10,15 +10,15 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Business Types", href: "/business-types", icon: Building2 },
+  { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { label: 'Business Types', href: '/business-types', icon: Building2 },
 
-  { label: "Businesses", href: "/businesses", icon: Building2 },
-  { label: "Customers", href: "/customers", icon: Users },
-  { label: "Vehicles", href: "/vehicles", icon: Car },
-  { label: "Services", href: "/services", icon: Wrench },
-  { label: "Reminders", href: "/reminders", icon: Clock },
-  { label: "WhatsApp Logs", href: "/whatsapp-logs", icon: MessageSquare },
+  { label: 'Businesses', href: '/businesses', icon: Building2 },
+  { label: 'Customers', href: '/customers', icon: Users },
+  { label: 'Vehicles', href: '/vehicles', icon: Car },
+  { label: 'Services', href: '/services', icon: Wrench },
+  { label: 'Reminders', href: '/reminders', icon: Clock },
+  { label: 'WhatsApp Logs', href: '/whatsapp-logs', icon: MessageSquare },
 ];
 
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
@@ -56,7 +56,9 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
             >
               <Icon className={`w-5 h-5 transition-colors duration-300 text-white`} />
               <span className="font-semibold text-sm tracking-wide  text-white">{item.label}</span>
-              {isActive && <ChevronRight className="ml-auto w-4 h-4 text-[#FFFFFF] animate-in fade-in slide-in-from-left-2" />}
+              {isActive && (
+                <ChevronRight className="ml-auto w-4 h-4 text-[#FFFFFF] animate-in fade-in slide-in-from-left-2" />
+              )}
             </Link>
           );
         })}

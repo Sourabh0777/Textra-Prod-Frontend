@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
 interface HeaderProps {
-  title: string
-  subtitle?: string
+  title: string;
+  subtitle?: string;
 }
 
 export function Header({ title, subtitle }: HeaderProps) {
@@ -11,5 +11,5 @@ export function Header({ title, subtitle }: HeaderProps) {
       <h1 className="text-2xl md:text-3xl font-bold text-neutral-900">{title}</h1>
       {subtitle && <p className="text-sm md:text-base text-neutral-600 mt-1">{subtitle}</p>}
     </div>
-  )
+  );
 }

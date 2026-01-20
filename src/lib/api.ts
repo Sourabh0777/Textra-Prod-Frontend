@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { env } from "@/env";
+import { env } from '@/env';
 
-export const API_BASE_URL = env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+export const API_BASE_URL = env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -14,18 +14,18 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
   if (!API_BASE_URL) {
     return {
       success: false,
-      error: "API URL not configured. Please set NEXT_PUBLIC_API_URL.",
+      error: 'API URL not configured. Please set NEXT_PUBLIC_API_URL.',
     };
   }
 
   try {
     const url = `${API_BASE_URL}${endpoint}`;
-    console.log("🚀 ~ fetchApi ~ url:", url);
+    console.log('🚀 ~ fetchApi ~ url:', url);
 
     const response = await fetch(url, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...options.headers,
       },
     });
@@ -43,17 +43,17 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
       data: data,
     };
   } catch (error) {
-    console.error("[API Error]", error);
+    console.error('[API Error]', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error occurred",
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 }
 
 // Business Type APIs
 export async function fetchBusinessTypes() {
-  return fetchApi("/business-types");
+  return fetchApi('/business-types');
 }
 
 export async function fetchBusinessType(id: string) {
@@ -61,28 +61,28 @@ export async function fetchBusinessType(id: string) {
 }
 
 export async function createBusinessType(data: any) {
-  return fetchApi("/business-types", {
-    method: "POST",
+  return fetchApi('/business-types', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateBusinessType(id: string, data: any) {
   return fetchApi(`/business-types/${id}`, {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteBusinessType(id: string) {
   return fetchApi(`/business-types/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 }
 
 // Business APIs
 export async function fetchBusinesses() {
-  return fetchApi("/businesses");
+  return fetchApi('/businesses');
 }
 
 export async function fetchBusiness(id: string) {
@@ -90,28 +90,28 @@ export async function fetchBusiness(id: string) {
 }
 
 export async function createBusiness(data: any) {
-  return fetchApi("/businesses", {
-    method: "POST",
+  return fetchApi('/businesses', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateBusiness(id: string, data: any) {
   return fetchApi(`/businesses/${id}`, {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteBusiness(id: string) {
   return fetchApi(`/businesses/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 }
 
 // Customer APIs
 export async function fetchCustomers(businessId?: string) {
-  const endpoint = businessId ? `/customers?business_id=${businessId}` : "/customers";
+  const endpoint = businessId ? `/customers?business_id=${businessId}` : '/customers';
   return fetchApi(endpoint);
 }
 
@@ -120,28 +120,28 @@ export async function fetchCustomer(id: string) {
 }
 
 export async function createCustomer(data: any) {
-  return fetchApi("/customers", {
-    method: "POST",
+  return fetchApi('/customers', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateCustomer(id: string, data: any) {
   return fetchApi(`/customers/${id}`, {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteCustomer(id: string) {
   return fetchApi(`/customers/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 }
 
 // Vehicle APIs
 export async function fetchVehicles(customerId?: string) {
-  const endpoint = customerId ? `/vehicles?customer_id=${customerId}` : "/vehicles";
+  const endpoint = customerId ? `/vehicles?customer_id=${customerId}` : '/vehicles';
   return fetchApi(endpoint);
 }
 
@@ -150,28 +150,28 @@ export async function fetchVehicle(id: string) {
 }
 
 export async function createVehicle(data: any) {
-  return fetchApi("/vehicles", {
-    method: "POST",
+  return fetchApi('/vehicles', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateVehicle(id: string, data: any) {
   return fetchApi(`/vehicles/${id}`, {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteVehicle(id: string) {
   return fetchApi(`/vehicles/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 }
 
 // Service APIs
 export async function fetchServices(vehicleId?: string) {
-  const endpoint = vehicleId ? `/services?vehicle_id=${vehicleId}` : "/services";
+  const endpoint = vehicleId ? `/services?vehicle_id=${vehicleId}` : '/services';
   return fetchApi(endpoint);
 }
 
@@ -180,28 +180,28 @@ export async function fetchService(id: string) {
 }
 
 export async function createService(data: any) {
-  return fetchApi("/services", {
-    method: "POST",
+  return fetchApi('/services', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateService(id: string, data: any) {
   return fetchApi(`/services/${id}`, {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteService(id: string) {
   return fetchApi(`/services/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 }
 
 // Reminder APIs
 export async function fetchReminders(serviceId?: string) {
-  const endpoint = serviceId ? `/reminders?service_id=${serviceId}` : "/reminders";
+  const endpoint = serviceId ? `/reminders?service_id=${serviceId}` : '/reminders';
   return fetchApi(endpoint);
 }
 
@@ -210,28 +210,28 @@ export async function fetchReminder(id: string) {
 }
 
 export async function createReminder(data: any) {
-  return fetchApi("/reminders", {
-    method: "POST",
+  return fetchApi('/reminders', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
 export async function updateReminder(id: string, data: any) {
   return fetchApi(`/reminders/${id}`, {
-    method: "PUT",
+    method: 'PUT',
     body: JSON.stringify(data),
   });
 }
 
 export async function deleteReminder(id: string) {
   return fetchApi(`/reminders/${id}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 }
 
 // WhatsApp Log APIs
 export async function fetchWhatsAppLogs() {
-  return fetchApi("/whatsapp-logs");
+  return fetchApi('/whatsapp-logs');
 }
 
 export async function fetchWhatsAppLog(id: string) {
@@ -239,7 +239,7 @@ export async function fetchWhatsAppLog(id: string) {
 }
 
 export async function fetchLoginUser() {
-  return fetchApi("/users/current", {
-    method: "GET",
+  return fetchApi('/users/current', {
+    method: 'GET',
   });
 }
