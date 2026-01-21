@@ -3,44 +3,47 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, ChevronRight } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '@/lib/api';
 
 interface SidebarProps {
   onClose?: () => void;
   isOpen?: boolean;
 }
-
-const menuItems = [
-  { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { label: 'Business Types', href: '/business-types', icon: Building2 },
-
-  { label: 'Businesses', href: '/businesses', icon: Building2 },
-  { label: 'Customers', href: '/customers', icon: Users },
-  { label: 'Vehicles', href: '/vehicles', icon: Car },
-  { label: 'Services', href: '/services', icon: Wrench },
-  { label: 'Reminders', href: '/reminders', icon: Clock },
-  { label: 'WhatsApp Logs', href: '/whatsapp-logs', icon: MessageSquare },
-];
 import { useAuth } from '@clerk/nextjs';
+import { SIDEBAR_CONFIG, SidebarKey } from '@/config/sidebarConfig';
 
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken, userId } = useAuth();
+  const [menus, setMenus] = useState<SidebarKey[]>([]);
 
   const pathname = usePathname();
   useEffect(() => {
     const fetchSideBar = async () => {
-      const url = ` ${API_BASE_URL}/business-types/side-bar`;
-      const token = await getToken();
+      try {
+        const url = `${API_BASE_URL}/business-types/side-bar`; // removed space
 
-      const res = fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const token = await getToken();
+
+        const res = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        console.log('Sidebar API:', data);
+
+        setMenus(data.menus); // IMPORTANT
+      } catch (err) {
+        console.error('Sidebar error:', err);
+      }
     };
+
     fetchSideBar();
   }, []);
+
   return (
     <aside className="w-full h-full bg-[#15368A] text-[#FFFFFF] overflow-y-auto flex flex-col border-r border-white/10">
       {/* Header */}
@@ -58,7 +61,9 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {menuItems.map((item) => {
+        {menus.map((key) => {
+          const item = SIDEBAR_CONFIG[key];
+          if (!item) return null;
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
