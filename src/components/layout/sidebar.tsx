@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, ChevronRight } from 'lucide-react';
+import { Wrench, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '@/lib/api';
 

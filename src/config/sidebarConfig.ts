@@ -5,6 +5,7 @@ export const SIDEBAR_CONFIG = {
   dashboard: { label: 'Dashboard', href: '/', icon: LayoutDashboard },
   'business-types': { label: 'Business Types', href: '/business-types', icon: Building2 },
   businesses: { label: 'Businesses', href: '/businesses', icon: Building2 },
+  business: { label: 'Business', href: '/business', icon: Building2 },
   customers: { label: 'Customers', href: '/customers', icon: Users },
   vehicles: { label: 'Vehicles', href: '/vehicles', icon: Car },
   services: { label: 'Services', href: '/services', icon: Wrench },
