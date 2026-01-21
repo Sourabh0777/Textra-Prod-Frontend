@@ -5,32 +5,17 @@ import { useState, useEffect } from 'react';
 import { Sidebar } from './sidebar';
 import { Navbar } from './navbar';
 import { useFetchUserData } from '@/lib/hooks/useFetchUserData';
-import { API_BASE_URL } from '@/lib/api';
-import { useAuth } from '@clerk/nextjs';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  useFetchUserData();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { getToken, userId } = useAuth();
 
-  // Fetch user data and store in Redux
-  useEffect(() => {
-    const fetchSideBar = async () => {
-      const url = ` ${API_BASE_URL}/users/current`;
-      const token = await getToken();
-
-      const res = fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    };
-    fetchSideBar();
-  }, []);
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
