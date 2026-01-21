@@ -1,4 +1,6 @@
-"use client"
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
@@ -8,12 +10,28 @@ import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
 import type { IBusiness } from '@/types';
+import { fetchBusiness } from '@/lib/api';
 const BusinessPage = () => {
-  const [business, setBusiness] = useState<IBusiness | null>(null);
+  const [business, setBusiness] = useState<any>();
   const [formData, setFormData] = useState<Partial<IBusiness>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const loadData = async () => {
+    setLoading(true);
+    const res = await fetchBusiness('123');
+    console.log("🚀 ~ loadData ~ res:", res)
+    if (res.success && res.data) {
+      setBusiness(res.data);
+      setFormData(res.data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
   return (
     <>
       <Header title="Business Profile" subtitle="Manage your business information & WhatsApp setup" />

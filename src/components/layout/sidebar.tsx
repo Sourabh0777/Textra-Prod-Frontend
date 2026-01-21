@@ -32,9 +32,6 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
         });
 
         const data = await res.json();
-
-        console.log('Sidebar API:', data);
-
         setMenus(data.menus); // IMPORTANT
       } catch (err) {
         console.error('Sidebar error:', err);

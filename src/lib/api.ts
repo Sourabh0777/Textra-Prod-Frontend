@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/env';
+import { IBusiness } from '@/types';
 
 export const API_BASE_URL = env.NEXT_PUBLIC_API_URL;
 
@@ -20,7 +21,6 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
 
   try {
     const url = `${API_BASE_URL}${endpoint}`;
-
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -83,7 +83,6 @@ export async function deleteBusinessType(id: string) {
 export async function fetchBusinesses() {
   return fetchApi('/businesses');
 }
-
 export async function fetchBusiness(id: string) {
   return fetchApi(`/businesses/${id}`);
 }
