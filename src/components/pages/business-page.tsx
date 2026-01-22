@@ -21,7 +21,6 @@ const BusinessPage = () => {
   const loadData = async () => {
     setLoading(true);
     const res = await fetchBusiness('123');
-    console.log("🚀 ~ loadData ~ res:", res)
     if (res.success && res.data) {
       setBusiness(res.data);
       setFormData(res.data);

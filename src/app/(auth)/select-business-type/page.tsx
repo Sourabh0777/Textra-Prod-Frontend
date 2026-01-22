@@ -31,7 +31,13 @@ export default function SelectBusinessTypePage() {
     const fetchBusinessTypes = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/business-types');
+        const token = await getToken();
+
+        const response = await fetch('http://localhost:5000/api/business-types', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch business types');
         }
@@ -69,6 +75,7 @@ export default function SelectBusinessTypePage() {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log('🚀 ~ handleSave ~ response:', response);
 
       if (!response.ok) {
         const errorData = await response.json();
