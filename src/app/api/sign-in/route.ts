@@ -24,14 +24,12 @@ export async function GET(req: NextRequest) {
       },
       body: JSON.stringify({ userId }),
     });
-    console.log('🚀 ~ GET ~ response:', response);
     const data: { success: boolean; user: any } = await response.json();
-    console.log('🚀 ~ GET ~ data:', data);
     if (!data.success) {
-      redirect('/not-found');
+      return redirect('/not-found');
     }
     if (data.success && data.user) {
-      redirect('/select-business-type');
+      return redirect('/select-business-type');
     }
   } catch (error) {
     console.error('Error calling backend sign-in:', error);
