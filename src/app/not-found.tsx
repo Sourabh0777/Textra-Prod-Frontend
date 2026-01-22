@@ -15,6 +15,10 @@ export default function NotFound() {
           <Link href="/">
             <Button>Go to Dashboard</Button>
           </Link>
+
+          {/* <Button variant="secondary" onClick={}>
+            Go Back
+          </Button> */}
         </div>
       </div>
     </div>
