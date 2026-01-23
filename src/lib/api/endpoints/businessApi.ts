@@ -1,12 +1,13 @@
+import { IBusiness, IBusinessType } from '@/types';
 import { baseApi } from '../baseApi';
 
 export const businessApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    fetchBusinessTypes: builder.query<any, void>({
+    fetchBusinessTypes: builder.query<IBusinessType[], void>({
       query: () => '/business-types',
       providesTags: ['BusinessType'],
     }),
-    createBusinessType: builder.mutation<any, any>({
+    createBusinessType: builder.mutation<IBusinessType, void>({
       query: (body) => ({
         url: '/business-types',
         method: 'POST',
@@ -14,7 +15,7 @@ export const businessApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['BusinessType'],
     }),
-    updateBusinessType: builder.mutation<any, { id: string; data: any }>({
+    updateBusinessType: builder.mutation<IBusinessType, { id: string; data: IBusinessType }>({
       query: ({ id, data }) => ({
         url: `/business-types/${id}`,
         method: 'PUT',
@@ -22,7 +23,7 @@ export const businessApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['BusinessType'],
     }),
-    deleteBusinessType: builder.mutation<any, string>({
+    deleteBusinessType: builder.mutation<IBusinessType, string>({
       query: (id) => ({
         url: `/business-types/${id}`,
         method: 'DELETE',
@@ -31,15 +32,15 @@ export const businessApi = baseApi.injectEndpoints({
     }),
 
     // Businesses
-    fetchBusinesses: builder.query<any, void>({
+    fetchBusinesses: builder.query<IBusiness[], void>({
       query: () => '/businesses',
       providesTags: ['Business'],
     }),
-    fetchBusiness: builder.query<any, string>({
+    fetchBusiness: builder.query<IBusiness, string>({
       query: (id) => `/businesses/${id}`,
       providesTags: (result, error, id) => [{ type: 'Business', id }],
     }),
-    createBusiness: builder.mutation<any, any>({
+    createBusiness: builder.mutation<IBusiness, void>({
       query: (body) => ({
         url: '/businesses',
         method: 'POST',
@@ -47,7 +48,7 @@ export const businessApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Business'],
     }),
-    updateBusiness: builder.mutation<any, { id: string; data: any }>({
+    updateBusiness: builder.mutation<IBusiness, { id: string; data: IBusiness }>({
       query: ({ id, data }) => ({
         url: `/businesses/${id}`,
         method: 'PUT',
@@ -55,7 +56,7 @@ export const businessApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Business', id }, 'Business'],
     }),
-    deleteBusiness: builder.mutation<any, string>({
+    deleteBusiness: builder.mutation<IBusiness, string>({
       query: (id) => ({
         url: `/businesses/${id}`,
         method: 'DELETE',
@@ -64,13 +65,13 @@ export const businessApi = baseApi.injectEndpoints({
     }),
 
     // Get business details endpoint
-    getBusinessDetails: builder.query<any, void>({
+    getBusinessDetails: builder.query<IBusiness, void>({
       query: () => '/businesses/business',
       providesTags: ['Business'],
     }),
 
     // Update business details endpoint
-    updateBusinessDetails: builder.mutation<any, any>({
+    updateBusinessDetails: builder.mutation<IBusiness, void>({
       query: (body) => ({
         url: '/businesses/update-business',
         method: 'PUT',

@@ -1,6 +1,7 @@
 export interface IBusinessType {
   _id?: string;
   name: string;
+  slug: string;
   description?: string;
   is_active: boolean;
   created_at?: Date;

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
 import { env } from '@/env';
+import { useFetchBusinessTypesQuery } from '@/lib/api/endpoints/businessApi';
 
 interface BusinessType {
   _id: string;
@@ -18,45 +19,15 @@ interface BusinessType {
 
 export default function SelectBusinessTypePage() {
   const router = useRouter();
-  const { user, isLoaded } = useUser();
-  const { getToken } = useAuth();
-  const [businessTypes, setBusinessTypes] = useState<BusinessType[]>([]);
+  const { user: clerkUser, isLoaded } = useUser();
   const [selectedBusinessType, setSelectedBusinessType] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Fetch business types
-  useEffect(() => {
-    const fetchBusinessTypes = async () => {
-      try {
-        setLoading(true);
-        const token = await getToken();
-
-        const response = await fetch('http://localhost:5000/api/business-types', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch business types');
-        }
-        const data = await response.json();
-        setBusinessTypes(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isLoaded) {
-      fetchBusinessTypes();
-    }
-  }, [isLoaded]);
-
+  const { data: businessTypes, isLoading: loadingBusinessTypes } = useFetchBusinessTypesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
   const handleSave = async () => {
-    if (!selectedBusinessType || !user) {
+    if (!selectedBusinessType || !clerkUser) {
       setError('Please select a business type');
       return;
     }
@@ -91,7 +62,7 @@ export default function SelectBusinessTypePage() {
     }
   };
 
-  if (!isLoaded || loading) {
+  if (!isLoaded || loadingBusinessTypes) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader />
@@ -106,16 +77,14 @@ export default function SelectBusinessTypePage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Select Business Type</h1>
             <p className="text-gray-600 mt-2">
-              Welcome, {user?.firstName}! Please select your business type to continue.
+              Welcome, {clerkUser?.firstName}! Please select your business type to continue.
             </p>
           </div>
 
           {error && <div className="p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">{error}</div>}
 
           <div className="space-y-3">
-            {businessTypes.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No business types available</p>
-            ) : (
+            {businessTypes &&
               businessTypes.map((type) => (
                 <label
                   key={type._id}
@@ -134,8 +103,7 @@ export default function SelectBusinessTypePage() {
                     {type.description && <p className="text-sm text-gray-600 mt-1">{type.description}</p>}
                   </div>
                 </label>
-              ))
-            )}
+              ))}
           </div>
 
           <Button onClick={handleSave} disabled={!selectedBusinessType || saving} className="w-full">
