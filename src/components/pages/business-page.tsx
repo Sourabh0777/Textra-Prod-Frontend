@@ -10,27 +10,83 @@ import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
 import type { IBusiness } from '@/types';
-import { fetchBusiness } from '@/lib/api';
+import { useGetBusinessDetailsQuery, useUpdateBusinessDetailsMutation } from '@/lib/api/endpoints/businessApi';
+
 const BusinessPage = () => {
-  const [business, setBusiness] = useState<any>();
   const [formData, setFormData] = useState<Partial<IBusiness>>({});
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const loadData = async () => {
-    setLoading(true);
-    const res = await fetchBusiness('123');
-    if (res.success && res.data) {
-      setBusiness(res.data);
-      setFormData(res.data);
-    }
-    setLoading(false);
-  };
+  const { data: businessResponse, isLoading: loading, error } = useGetBusinessDetailsQuery();
+  const [updateBusinessDetails, { isLoading: saving }] = useUpdateBusinessDetailsMutation();
 
   useEffect(() => {
-    loadData();
-  }, []);
+    // RTK Query returns the response body directly
+    // Handle both cases: direct object or wrapped in { data: {...} }
+    const businessData = businessResponse?.data || businessResponse;
+    if (businessData) {
+      setFormData(businessData);
+    }
+  }, [businessResponse]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'is_active' ? value === 'true' : value,
+    }));
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setErrors({});
+      const result = await updateBusinessDetails(formData).unwrap();
+      if (result) {
+        // Success - you might want to show a toast notification here
+        console.log('Business updated successfully', result);
+      }
+    } catch (err: any) {
+      console.error('Error updating business:', err);
+      if (err.data?.errors) {
+        setErrors(err.data.errors);
+      } else {
+        setErrors({ general: err.data?.message || 'Failed to update business details' });
+      }
+    }
+  };
+  if (loading) {
+    return (
+      <>
+        <Header title="Business Profile" subtitle="Manage your business information & WhatsApp setup" />
+        <div className="p-4 md:p-8 max-w-4xl mx-auto flex justify-center items-center min-h-[400px]">
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Header title="Business Profile" subtitle="Manage your business information & WhatsApp setup" />
+        <div className="p-4 md:p-8 max-w-4xl mx-auto">
+          <Card>
+            <CardBody>
+              <p className="text-red-500">Error loading business details. Please try again later.</p>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Header title="Business Profile" subtitle="Manage your business information & WhatsApp setup" />
@@ -38,11 +94,17 @@ const BusinessPage = () => {
       <div className="p-4 md:p-8 max-w-4xl mx-auto">
         <Card>
           <CardBody className="space-y-6">
+            {errors.general && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+                {errors.general}
+              </div>
+            )}
+
             <Input
               label="Business Name"
               name="business_name"
               value={formData.business_name || ''}
-              //   onChange={handleChange}
+              onChange={handleChange}
               error={errors.business_name}
               fullWidth
             />
@@ -51,7 +113,8 @@ const BusinessPage = () => {
               label="Owner Name"
               name="owner_name"
               value={formData.owner_name || ''}
-              //   onChange={handleChange}
+              onChange={handleChange}
+              error={errors.owner_name}
               fullWidth
             />
 
@@ -59,7 +122,7 @@ const BusinessPage = () => {
               label="Phone Number"
               name="phone_number"
               value={formData.phone_number || ''}
-              //   onChange={handleChange}
+              onChange={handleChange}
               error={errors.phone_number}
               fullWidth
             />
@@ -68,7 +131,7 @@ const BusinessPage = () => {
               label="City"
               name="city"
               value={formData.city || ''}
-              //   onChange={handleChange}
+              onChange={handleChange}
               error={errors.city}
               fullWidth
             />
@@ -77,7 +140,8 @@ const BusinessPage = () => {
               label="Address"
               name="address"
               value={formData.address || ''}
-              // onChange={handleChange}
+              onChange={handleChange}
+              error={errors.address}
               fullWidth
             />
 
@@ -88,7 +152,8 @@ const BusinessPage = () => {
                 label="WABA ID"
                 name="waba_id"
                 value={formData.waba_id || ''}
-                //   onChange={handleChange}
+                onChange={handleChange}
+                error={errors.waba_id}
                 fullWidth
               />
 
@@ -96,7 +161,8 @@ const BusinessPage = () => {
                 label="Phone Number ID"
                 name="phone_number_id"
                 value={formData.phone_number_id || ''}
-                // onChange={handleChange}
+                onChange={handleChange}
+                error={errors.phone_number_id}
                 fullWidth
               />
 
@@ -104,7 +170,8 @@ const BusinessPage = () => {
                 label="Display Number"
                 name="phone_number_display"
                 value={formData.phone_number_display || ''}
-                // onChange={handleChange}
+                onChange={handleChange}
+                error={errors.phone_number_display}
                 fullWidth
               />
             </div>
@@ -112,8 +179,8 @@ const BusinessPage = () => {
             <Select
               label="Business Status"
               name="is_active"
-              value={String(formData.is_active)}
-              //   onChange={handleChange}
+              value={String(formData.is_active ?? true)}
+              onChange={handleChange}
               options={[
                 { value: 'true', label: 'Active' },
                 { value: 'false', label: 'Inactive' },
@@ -122,10 +189,7 @@ const BusinessPage = () => {
             />
 
             <div className="flex justify-end pt-4">
-              <Button
-                loading={saving}
-                //    onClick={handleSave}
-              >
+              <Button loading={saving} onClick={handleSave}>
                 Save Changes
               </Button>
             </div>

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import type React from 'react';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -12,35 +13,53 @@ import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Loader } from '@/components/ui/loader';
-import { fetchCustomers, createCustomer, updateCustomer, deleteCustomer, fetchBusinesses } from '@/lib/api';
+import {
+  useFetchCustomersQuery,
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useDeleteCustomerMutation,
+} from '@/lib/api/endpoints/customerApi';
+import { useFetchBusinessesQuery } from '@/lib/api/endpoints/businessApi';
 import type { ICustomer, IBusiness } from '@/types';
+import { useUser } from '@clerk/nextjs';
 
 export default function CustomersPage() {
+  const { user: clerkUser, isLoaded } = useUser();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [customers, setCustomers] = useState<ICustomer[]>([]);
-  const [businesses, setBusinesses] = useState<IBusiness[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<Partial<ICustomer>>({ is_active: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // RTK Query hooks
+  const {
+    data: customersResponse,
+    isLoading: loadingCustomers,
+    error: customersError,
+  } = useFetchCustomersQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+    console.log("🚀 ~ CustomersPage ~ customersResponse:", customersResponse)
+  const { data: businessesResponse, isLoading: loadingBusinesses } = useFetchBusinessesQuery();
+  const [createCustomer, { isLoading: isCreating }] = useCreateCustomerMutation();
+  const [updateCustomer, { isLoading: isUpdating }] = useUpdateCustomerMutation();
+  const [deleteCustomer, { isLoading: isDeleting }] = useDeleteCustomerMutation();
 
-  const loadData = async () => {
-    setLoading(true);
-    const [customersRes, businessesRes] = await Promise.all([fetchCustomers(), fetchBusinesses()]);
-    if (customersRes.success && Array.isArray(customersRes.data)) {
-      setCustomers(customersRes.data);
-    }
-    if (businessesRes.success && Array.isArray(businessesRes.data)) {
-      setBusinesses(businessesRes.data);
-    }
-    setLoading(false);
-  };
+  // Extract data from responses (handle both direct data and wrapped responses)
+  const customers: ICustomer[] = Array.isArray(customersResponse?.data)
+    ? customersResponse.data
+    : Array.isArray(customersResponse)
+      ? customersResponse
+      : [];
+  const businesses: IBusiness[] = Array.isArray(businessesResponse?.data)
+    ? businessesResponse.data
+    : Array.isArray(businessesResponse)
+      ? businessesResponse
+      : [];
+
+  const loading = loadingCustomers || loadingBusinesses;
+  const submitting = isCreating || isUpdating;
 
   const handleOpenModal = (customer?: ICustomer) => {
     if (customer) {
@@ -83,40 +102,58 @@ export default function CustomersPage() {
       return;
     }
 
-    setSubmitting(true);
     try {
-      let result;
+      setErrors({});
       if (isEditMode && editingId) {
-        result = await updateCustomer(editingId, formData);
+        await updateCustomer({ id: editingId, data: formData }).unwrap();
       } else {
-        result = await createCustomer(formData);
+        await createCustomer(formData).unwrap();
       }
-
-      if (result.success) {
-        await loadData();
-        setIsModalOpen(false);
-        setFormData({ is_active: true });
-      } else {
-        setErrors({ submit: result.error || 'Failed to save customer' });
-      }
-    } finally {
-      setSubmitting(false);
+      setIsModalOpen(false);
+      setFormData({ is_active: true });
+    } catch (err: any) {
+      console.error('Error saving customer:', err);
+      setErrors({
+        submit: err.data?.message || err.message || 'Failed to save customer',
+      });
     }
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this customer?')) {
-      const result = await deleteCustomer(id);
-      if (result.success) {
-        await loadData();
-      } else {
-        alert('Failed to delete customer');
+      try {
+        await deleteCustomer(id).unwrap();
+      } catch (err: any) {
+        console.error('Error deleting customer:', err);
+        alert(err.data?.message || err.message || 'Failed to delete customer');
       }
     }
   };
 
   if (loading) {
-    return <Loader />;
+    return (
+      <>
+        <Header title="Customers" subtitle="Manage your customer base" />
+        <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  if (customersError) {
+    return (
+      <>
+        <Header title="Customers" subtitle="Manage your customer base" />
+        <div className="p-4 md:p-8">
+          <Card>
+            <CardBody>
+              <p className="text-red-500">Error loading customers. Please try again later.</p>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
   }
 
   return (

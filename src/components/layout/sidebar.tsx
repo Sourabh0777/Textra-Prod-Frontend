@@ -58,7 +58,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {menus.map((key) => {
+        {menus && menus.map((key) => {
           const item = SIDEBAR_CONFIG[key];
           if (!item) return null;
           const isActive = pathname === item.href;

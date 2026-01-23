@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from '../baseApi';
 
 export const customerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchCustomers: builder.query<any, string | void>({
-      query: (businessId) => (businessId ? `/customers?business_id=${businessId}` : '/customers'),
+      query: (body) => ({
+        url: '/customers',
+        method: 'GET',
+        body,
+      }),
       providesTags: ['Customer'],
     }),
     fetchCustomer: builder.query<any, string>({
