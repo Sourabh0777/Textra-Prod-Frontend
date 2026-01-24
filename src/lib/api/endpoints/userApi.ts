@@ -15,7 +15,15 @@ export const userApi = baseApi.injectEndpoints({
       query: (clerkId) => `/users?clerkId=${clerkId}`,
       providesTags: (result, error, id) => [{ type: 'User', id }],
     }),
+    assignUserRole: builder.mutation<User, { businessTypeId: string }>({
+      query: ({ businessTypeId }) => ({
+        url: `/users/${businessTypeId}/role`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 });
 
-export const { useFetchLoginUserQuery, useGetUserByIdQuery, useGetUserByClerkIdQuery } = userApi;
+export const { useFetchLoginUserQuery, useGetUserByIdQuery, useGetUserByClerkIdQuery, useAssignUserRoleMutation } =
+  userApi;
