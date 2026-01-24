@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import type React from 'react';
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -11,35 +11,47 @@ import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Loader } from '@/components/ui/loader';
-import { fetchVehicles, createVehicle, updateVehicle, deleteVehicle, fetchCustomers } from '@/lib/api';
+import {
+  useFetchVehiclesQuery,
+  useCreateVehicleMutation,
+  useUpdateVehicleMutation,
+  useDeleteVehicleMutation,
+} from '@/lib/api/endpoints/vehicleApi';
+import { useFetchCustomersQuery } from '@/lib/api/endpoints/customerApi';
 import type { IVehicle, ICustomer } from '@/types';
+import { useUser } from '@clerk/nextjs';
+import { toastPromise } from '@/lib/toast-utils';
 
 export default function VehiclesPage() {
+  const { user: clerkUser, isLoaded } = useUser();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [vehicles, setVehicles] = useState<IVehicle[]>([]);
-  const [customers, setCustomers] = useState<ICustomer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<Partial<IVehicle>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  /** RTK Query hooks */
+  const {
+    data: vehiclesResponse,
+    isLoading: loadingVehicles,
+    error: fetchError,
+  } = useFetchVehiclesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    const [vehiclesRes, customersRes] = await Promise.all([fetchVehicles(), fetchCustomers()]);
-    if (vehiclesRes.success && Array.isArray(vehiclesRes.data)) {
-      setVehicles(vehiclesRes.data);
-    }
-    if (customersRes.success && Array.isArray(customersRes.data)) {
-      setCustomers(customersRes.data);
-    }
-    setLoading(false);
-  };
+  const { data: customersResponse, isLoading: loadingCustomers } = useFetchCustomersQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  const [createVehicle, { isLoading: isCreating }] = useCreateVehicleMutation();
+  const [updateVehicle, { isLoading: isUpdating }] = useUpdateVehicleMutation();
+  const [deleteVehicle, { isLoading: isDeleting }] = useDeleteVehicleMutation();
+
+  const vehicles = Array.isArray(vehiclesResponse) ? vehiclesResponse : (vehiclesResponse as any)?.data || [];
+  const customers = Array.isArray(customersResponse) ? customersResponse : (customersResponse as any)?.data || [];
+
+  const loading = loadingVehicles || loadingCustomers;
 
   const handleOpenModal = (vehicle?: IVehicle) => {
     if (vehicle) {
@@ -57,12 +69,16 @@ export default function VehiclesPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: name === 'year' ? Number(value) : value,
-    });
+    }));
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
   };
 
@@ -85,40 +101,68 @@ export default function VehiclesPage() {
       return;
     }
 
-    setSubmitting(true);
     try {
-      let result;
+      setErrors({});
       if (isEditMode && editingId) {
-        result = await updateVehicle(editingId, formData);
+        await toastPromise(updateVehicle({ id: editingId, data: formData }).unwrap(), {
+          loading: 'Updating vehicle...',
+          success: 'Vehicle updated successfully',
+          error: (err) => err?.data?.message || 'Failed to update vehicle',
+        });
       } else {
-        result = await createVehicle(formData);
+        await toastPromise(createVehicle(formData).unwrap(), {
+          loading: 'Adding vehicle...',
+          success: 'Vehicle added successfully',
+          error: (err) => err?.data?.message || 'Failed to add vehicle',
+        });
       }
-
-      if (result.success) {
-        await loadData();
-        setIsModalOpen(false);
-        setFormData({});
-      } else {
-        setErrors({ submit: result.error || 'Failed to save vehicle' });
+      setIsModalOpen(false);
+      setFormData({});
+    } catch (err: any) {
+      if (err?.data?.errors) {
+        setErrors(err.data.errors);
       }
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
-      const result = await deleteVehicle(id);
-      if (result.success) {
-        await loadData();
-      } else {
-        alert('Failed to delete vehicle');
+      try {
+        await toastPromise(deleteVehicle(id).unwrap(), {
+          loading: 'Deleting vehicle...',
+          success: 'Vehicle deleted successfully',
+          error: (err) => err?.data?.message || 'Failed to delete vehicle',
+        });
+      } catch (err: any) {
+        console.error('Delete error', err);
       }
     }
   };
 
   if (loading) {
-    return <Loader />;
+    return (
+      <>
+        <Header title="Vehicles" subtitle="Manage all vehicles" />
+        <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <>
+        <Header title="Vehicles" subtitle="Manage all vehicles" />
+        <div className="p-4 md:p-8">
+          <Card>
+            <CardBody>
+              <p className="text-red-500">Error loading vehicles. Please try again later.</p>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -138,7 +182,6 @@ export default function VehiclesPage() {
                 <TableHead>
                   <TableRow>
                     <TableHeaderCell>Vehicle ID</TableHeaderCell>
-
                     <TableHeaderCell>Customer</TableHeaderCell>
                     <TableHeaderCell>Phone</TableHeaderCell>
                     <TableHeaderCell>Type</TableHeaderCell>
@@ -150,11 +193,11 @@ export default function VehiclesPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {vehicles.map((vehicle) => (
+                  {vehicles.map((vehicle: IVehicle) => (
                     <TableRow key={vehicle._id}>
                       <TableCell className="font-semibold">{vehicle._id}</TableCell>
-                      <TableCell className="font-semibold">{vehicle?.customer_id?.name}</TableCell>
-                      <TableCell className="font-semibold">{vehicle.customer_id.phone_number}</TableCell>
+                      <TableCell className="font-semibold">{vehicle?.customer_id?.name || '-'}</TableCell>
+                      <TableCell className="font-semibold">{vehicle?.customer_id?.phone_number || '-'}</TableCell>
                       <TableCell className="font-semibold">{vehicle.vehicle_type}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{vehicle.brand}</TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{vehicle.vehicle_model}</TableCell>
@@ -172,6 +215,13 @@ export default function VehiclesPage() {
                       </TableCell>
                     </TableRow>
                   ))}
+                  {vehicles.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-8 text-neutral-500">
+                        No vehicles found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -185,64 +235,70 @@ export default function VehiclesPage() {
         title={isEditMode ? 'Edit Vehicle' : 'Add New Vehicle'}
         onConfirm={handleSubmit}
         confirmText={isEditMode ? 'Update Vehicle' : 'Add Vehicle'}
-        loading={submitting}
+        loading={isCreating || isUpdating}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-          <Select
-            label="Customer"
-            name="customer_id"
-            // value={formData.customer_id || ""}
-            onChange={handleChange}
-            options={customers.map((customer) => ({
-              value: customer._id || '',
-              label: customer.name,
-            }))}
-            error={errors.customer_id}
-            fullWidth
-          />
-          <Input
-            label="Vehicle Type"
-            name="vehicle_type"
-            value={formData.vehicle_type || ''}
-            onChange={handleChange}
-            error={errors.vehicle_type}
-            fullWidth
-          />
-          <Input
-            label="Brand"
-            name="brand"
-            value={formData.brand || ''}
-            onChange={handleChange}
-            error={errors.brand}
-            fullWidth
-          />
-          <Input
-            label="Model"
-            name="vehicle_model"
-            value={formData.vehicle_model || ''}
-            onChange={handleChange}
-            error={errors.vehicle_model}
-            fullWidth
-          />
-          <Input
-            label="Registration Number"
-            name="registration_number"
-            value={formData.registration_number || ''}
-            onChange={handleChange}
-            error={errors.registration_number}
-            fullWidth
-          />
-          <Input
-            label="Year"
-            name="year"
-            type="number"
-            value={formData.year || ''}
-            onChange={handleChange}
-            error={errors.year}
-            fullWidth
-          />
-        </form>
+        <div className="p-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
+            <Select
+              label="Customer"
+              name="customer_id"
+              value={
+                typeof formData.customer_id === 'object'
+                  ? (formData.customer_id as any)?._id
+                  : formData.customer_id || ''
+              }
+              onChange={handleChange}
+              options={customers.map((customer: ICustomer) => ({
+                value: customer._id || '',
+                label: customer.name,
+              }))}
+              error={errors.customer_id}
+              fullWidth
+            />
+            <Input
+              label="Vehicle Type"
+              name="vehicle_type"
+              value={formData.vehicle_type || ''}
+              onChange={handleChange}
+              error={errors.vehicle_type}
+              fullWidth
+            />
+            <Input
+              label="Brand"
+              name="brand"
+              value={formData.brand || ''}
+              onChange={handleChange}
+              error={errors.brand}
+              fullWidth
+            />
+            <Input
+              label="Model"
+              name="vehicle_model"
+              value={formData.vehicle_model || ''}
+              onChange={handleChange}
+              error={errors.vehicle_model}
+              fullWidth
+            />
+            <Input
+              label="Registration Number"
+              name="registration_number"
+              value={formData.registration_number || ''}
+              onChange={handleChange}
+              error={errors.registration_number}
+              fullWidth
+            />
+            <Input
+              label="Year"
+              name="year"
+              type="number"
+              value={formData.year || ''}
+              onChange={handleChange}
+              error={errors.year}
+              fullWidth
+            />
+          </form>
+        </div>
       </Modal>
     </>
   );

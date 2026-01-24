@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import type React from 'react';
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -12,17 +12,23 @@ import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Loader } from '@/components/ui/loader';
-import { fetchReminders, createReminder, updateReminder, deleteReminder, fetchServices } from '@/lib/api';
+import {
+  useFetchRemindersQuery,
+  useCreateReminderMutation,
+  useUpdateReminderMutation,
+  useDeleteReminderMutation,
+} from '@/lib/api/endpoints/reminderApi';
+import { useFetchServicesQuery } from '@/lib/api/endpoints/serviceApi';
 import type { IReminder, IService } from '@/types';
+import { useUser } from '@clerk/nextjs';
+import { toastPromise } from '@/lib/toast-utils';
 
 export default function RemindersPage() {
+  const { user: clerkUser, isLoaded } = useUser();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [reminders, setReminders] = useState<IReminder[]>([]);
-  const [services, setServices] = useState<IService[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: 'pending' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -32,21 +38,27 @@ export default function RemindersPage() {
     failed: 'danger',
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  /** RTK Query hooks */
+  const {
+    data: remindersResponse,
+    isLoading: loadingReminders,
+    error: fetchError,
+  } = useFetchRemindersQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    const [remindersRes, servicesRes] = await Promise.all([fetchReminders(), fetchServices()]);
-    if (remindersRes.success && Array.isArray(remindersRes.data)) {
-      setReminders(remindersRes.data);
-    }
-    if (servicesRes.success && Array.isArray(servicesRes.data)) {
-      setServices(servicesRes.data);
-    }
-    setLoading(false);
-  };
+  const { data: servicesResponse, isLoading: loadingServices } = useFetchServicesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  const [createReminder, { isLoading: isCreating }] = useCreateReminderMutation();
+  const [updateReminder, { isLoading: isUpdating }] = useUpdateReminderMutation();
+  const [deleteReminder, { isLoading: isDeleting }] = useDeleteReminderMutation();
+
+  const reminders = Array.isArray(remindersResponse) ? remindersResponse : (remindersResponse as any)?.data || [];
+  const services = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse as any)?.data || [];
+
+  const loading = loadingReminders || loadingServices;
 
   const handleOpenModal = (reminder?: IReminder) => {
     if (reminder) {
@@ -64,12 +76,16 @@ export default function RemindersPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === 'retry_count' || name === 'scheduled_for' ? new Date(value) : value,
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'retry_count' ? Number(value) : value,
+    }));
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
   };
 
@@ -89,40 +105,68 @@ export default function RemindersPage() {
       return;
     }
 
-    setSubmitting(true);
     try {
-      let result;
+      setErrors({});
       if (isEditMode && editingId) {
-        result = await updateReminder(editingId, formData);
+        await toastPromise(updateReminder({ id: editingId, data: formData }).unwrap(), {
+          loading: 'Updating reminder...',
+          success: 'Reminder updated successfully',
+          error: (err) => err?.data?.message || 'Failed to update reminder',
+        });
       } else {
-        result = await createReminder(formData);
+        await toastPromise(createReminder(formData).unwrap(), {
+          loading: 'Adding reminder...',
+          success: 'Reminder added successfully',
+          error: (err) => err?.data?.message || 'Failed to add reminder',
+        });
       }
-
-      if (result.success) {
-        await loadData();
-        setIsModalOpen(false);
-        setFormData({ retry_count: 0, status: 'pending' });
-      } else {
-        setErrors({ submit: result.error || 'Failed to save reminder' });
+      setIsModalOpen(false);
+      setFormData({ retry_count: 0, status: 'pending' });
+    } catch (err: any) {
+      if (err?.data?.errors) {
+        setErrors(err.data.errors);
       }
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this reminder?')) {
-      const result = await deleteReminder(id);
-      if (result.success) {
-        await loadData();
-      } else {
-        alert('Failed to delete reminder');
+      try {
+        await toastPromise(deleteReminder(id).unwrap(), {
+          loading: 'Deleting reminder...',
+          success: 'Reminder deleted successfully',
+          error: (err) => err?.data?.message || 'Failed to delete reminder',
+        });
+      } catch (err: any) {
+        console.error('Delete error', err);
       }
     }
   };
 
   if (loading) {
-    return <Loader />;
+    return (
+      <>
+        <Header title="Reminders" subtitle="Manage service reminders" />
+        <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <>
+        <Header title="Reminders" subtitle="Manage service reminders" />
+        <div className="p-4 md:p-8">
+          <Card>
+            <CardBody>
+              <p className="text-red-500">Error loading reminders. Please try again later.</p>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
   }
 
   const formatDate = (date: any) => {
@@ -155,9 +199,11 @@ export default function RemindersPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {reminders.map((reminder) => (
+                  {reminders.map((reminder: IReminder) => (
                     <TableRow key={reminder._id}>
-                      <TableCell className="font-semibold text-sm">{reminder.service_id._id}</TableCell>
+                      <TableCell className="font-semibold text-sm">
+                        {reminder.service_id?._id || (reminder.service_id as any)}
+                      </TableCell>
                       <TableCell className="hidden md:table-cell text-sm">
                         {formatDate(reminder.scheduled_for)}
                       </TableCell>
@@ -180,6 +226,13 @@ export default function RemindersPage() {
                       </TableCell>
                     </TableRow>
                   ))}
+                  {reminders.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
+                        No reminders found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -193,53 +246,57 @@ export default function RemindersPage() {
         title={isEditMode ? 'Edit Reminder' : 'Add New Reminder'}
         onConfirm={handleSubmit}
         confirmText={isEditMode ? 'Update Reminder' : 'Add Reminder'}
-        loading={submitting}
+        loading={isCreating || isUpdating}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-          <Select
-            label="Service"
-            name="service_id"
-            value={formData.service_id?._id || ''}
-            onChange={handleChange}
-            options={services.map((service) => ({
-              value: service._id || '',
-              label: `Service ${service._id}`,
-            }))}
-            error={errors.service_id}
-            fullWidth
-          />
-          <Input
-            label="Scheduled For"
-            name="scheduled_for"
-            type="date"
-            value={formData.scheduled_for ? new Date(formData.scheduled_for).toISOString().split('T')[0] : ''}
-            onChange={handleChange}
-            error={errors.scheduled_for}
-            fullWidth
-          />
-          <Select
-            label="Status"
-            name="status"
-            value={formData.status || 'pending'}
-            onChange={handleChange}
-            options={[
-              { value: 'pending', label: 'Pending' },
-              { value: 'sent', label: 'Sent' },
-              { value: 'failed', label: 'Failed' },
-            ]}
-            error={errors.status}
-            fullWidth
-          />
-          <Input
-            label="Retry Count"
-            name="retry_count"
-            type="number"
-            value={formData.retry_count || 0}
-            onChange={handleChange}
-            fullWidth
-          />
-        </form>
+        <div className="p-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
+            <Select
+              label="Service"
+              name="service_id"
+              value={
+                typeof formData.service_id === 'object' ? (formData.service_id as any)?._id : formData.service_id || ''
+              }
+              onChange={handleChange}
+              options={services.map((service: IService) => ({
+                value: service._id || '',
+                label: `Service ${service._id}`,
+              }))}
+              error={errors.service_id}
+              fullWidth
+            />
+            <Input
+              label="Scheduled For"
+              name="scheduled_for"
+              type="date"
+              value={formData.scheduled_for ? new Date(formData.scheduled_for).toISOString().split('T')[0] : ''}
+              onChange={handleChange}
+              error={errors.scheduled_for}
+              fullWidth
+            />
+            <Select
+              label="Status"
+              name="status"
+              value={formData.status || 'pending'}
+              onChange={handleChange}
+              options={[
+                { value: 'pending', label: 'Pending' },
+                { value: 'sent', label: 'Sent' },
+                { value: 'failed', label: 'Failed' },
+              ]}
+              error={errors.status}
+              fullWidth
+            />
+            <Input
+              label="Retry Count"
+              name="retry_count"
+              type="number"
+              value={formData.retry_count || 0}
+              onChange={handleChange}
+              fullWidth
+            />
+          </form>
+        </div>
       </Modal>
     </>
   );

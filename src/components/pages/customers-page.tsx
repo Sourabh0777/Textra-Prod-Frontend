@@ -2,7 +2,6 @@
 'use client';
 
 import type React from 'react';
-
 import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,7 @@ import {
 import { useFetchBusinessesQuery } from '@/lib/api/endpoints/businessApi';
 import type { ICustomer, IBusiness } from '@/types';
 import { useUser } from '@clerk/nextjs';
+import { toastPromise } from '@/lib/toast-utils';
 
 export default function CustomersPage() {
   const { user: clerkUser, isLoaded } = useUser();
@@ -40,23 +40,22 @@ export default function CustomersPage() {
   } = useFetchCustomersQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
-    console.log("🚀 ~ CustomersPage ~ customersResponse:", customersResponse)
-  const { data: businessesResponse, isLoading: loadingBusinesses } = useFetchBusinessesQuery();
+
+  const { data: businessesResponse, isLoading: loadingBusinesses } = useFetchBusinessesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
   const [createCustomer, { isLoading: isCreating }] = useCreateCustomerMutation();
   const [updateCustomer, { isLoading: isUpdating }] = useUpdateCustomerMutation();
   const [deleteCustomer, { isLoading: isDeleting }] = useDeleteCustomerMutation();
 
   // Extract data from responses (handle both direct data and wrapped responses)
-  const customers: ICustomer[] = Array.isArray(customersResponse?.data)
-    ? customersResponse.data
-    : Array.isArray(customersResponse)
-      ? customersResponse
-      : [];
-  const businesses: IBusiness[] = Array.isArray(businessesResponse?.data)
-    ? businessesResponse.data
-    : Array.isArray(businessesResponse)
-      ? businessesResponse
-      : [];
+  const customers: ICustomer[] = Array.isArray(customersResponse)
+    ? customersResponse
+    : (customersResponse as any)?.data || [];
+  const businesses: IBusiness[] = Array.isArray(businessesResponse)
+    ? businessesResponse
+    : (businessesResponse as any)?.data || [];
 
   const loading = loadingCustomers || loadingBusinesses;
   const submitting = isCreating || isUpdating;
@@ -77,12 +76,16 @@ export default function CustomersPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: name === 'is_active' ? value === 'true' : value,
-    });
+    }));
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
   };
 
@@ -105,27 +108,37 @@ export default function CustomersPage() {
     try {
       setErrors({});
       if (isEditMode && editingId) {
-        await updateCustomer({ id: editingId, data: formData }).unwrap();
+        await toastPromise(updateCustomer({ id: editingId, data: formData }).unwrap(), {
+          loading: 'Updating customer...',
+          success: 'Customer updated successfully',
+          error: (err) => err?.data?.message || 'Failed to update customer',
+        });
       } else {
-        await createCustomer(formData).unwrap();
+        await toastPromise(createCustomer(formData).unwrap(), {
+          loading: 'Adding customer...',
+          success: 'Customer added successfully',
+          error: (err) => err?.data?.message || 'Failed to add customer',
+        });
       }
       setIsModalOpen(false);
       setFormData({ is_active: true });
     } catch (err: any) {
-      console.error('Error saving customer:', err);
-      setErrors({
-        submit: err.data?.message || err.message || 'Failed to save customer',
-      });
+      if (err?.data?.errors) {
+        setErrors(err.data.errors);
+      }
     }
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this customer?')) {
       try {
-        await deleteCustomer(id).unwrap();
+        await toastPromise(deleteCustomer(id).unwrap(), {
+          loading: 'Deleting customer...',
+          success: 'Customer deleted successfully',
+          error: (err) => err?.data?.message || 'Failed to delete customer',
+        });
       } catch (err: any) {
-        console.error('Error deleting customer:', err);
-        alert(err.data?.message || err.message || 'Failed to delete customer');
+        console.error('Delete error', err);
       }
     }
   };
@@ -181,7 +194,7 @@ export default function CustomersPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {customers.map((customer) => (
+                  {customers.map((customer: ICustomer) => (
                     <TableRow key={customer._id}>
                       <TableCell className="font-semibold">{customer.name}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{customer.phone_number}</TableCell>
@@ -204,6 +217,13 @@ export default function CustomersPage() {
                       </TableCell>
                     </TableRow>
                   ))}
+                  {customers.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
+                        No customers found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -219,63 +239,69 @@ export default function CustomersPage() {
         confirmText={isEditMode ? 'Update Customer' : 'Add Customer'}
         loading={submitting}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-          <Select
-            label="Business"
-            name="business_id"
-            value={formData.business_id || ''}
-            onChange={handleChange}
-            options={businesses.map((business) => ({
-              value: business._id || '',
-              label: business.business_name,
-            }))}
-            error={errors.business_id}
-            fullWidth
-          />
-          <Input
-            label="Name"
-            name="name"
-            value={formData.name || ''}
-            onChange={handleChange}
-            error={errors.name}
-            fullWidth
-          />
-          <Input
-            label="Phone Number"
-            name="phone_number"
-            value={formData.phone_number || ''}
-            onChange={handleChange}
-            error={errors.phone_number}
-            fullWidth
-          />
-          <Input
-            label="Email (Optional)"
-            name="email"
-            type="email"
-            value={formData.email || ''}
-            onChange={handleChange}
-            fullWidth
-          />
-          <Input
-            label="Address (Optional)"
-            name="address"
-            value={formData.address || ''}
-            onChange={handleChange}
-            fullWidth
-          />
-          <Select
-            label="Status"
-            name="is_active"
-            value={String(formData.is_active)}
-            onChange={handleChange}
-            options={[
-              { value: 'true', label: 'Active' },
-              { value: 'false', label: 'Inactive' },
-            ]}
-            fullWidth
-          />
-        </form>
+        <div className="p-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
+            <Select
+              label="Business"
+              name="business_id"
+              value={
+                typeof formData.business_id === 'object'
+                  ? (formData.business_id as any)?._id
+                  : formData.business_id || ''
+              }
+              onChange={handleChange}
+              options={businesses.map((business: IBusiness) => ({
+                value: business._id || '',
+                label: business.business_name,
+              }))}
+              error={errors.business_id}
+              fullWidth
+            />
+            <Input
+              label="Name"
+              name="name"
+              value={formData.name || ''}
+              onChange={handleChange}
+              error={errors.name}
+              fullWidth
+            />
+            <Input
+              label="Phone Number"
+              name="phone_number"
+              value={formData.phone_number || ''}
+              onChange={handleChange}
+              error={errors.phone_number}
+              fullWidth
+            />
+            <Input
+              label="Email (Optional)"
+              name="email"
+              type="email"
+              value={formData.email || ''}
+              onChange={handleChange}
+              fullWidth
+            />
+            <Input
+              label="Address (Optional)"
+              name="address"
+              value={formData.address || ''}
+              onChange={handleChange}
+              fullWidth
+            />
+            <Select
+              label="Status"
+              name="is_active"
+              value={String(formData.is_active ?? true)}
+              onChange={handleChange}
+              options={[
+                { value: 'true', label: 'Active' },
+                { value: 'false', label: 'Inactive' },
+              ]}
+              fullWidth
+            />
+          </form>
+        </div>
       </Modal>
     </>
   );

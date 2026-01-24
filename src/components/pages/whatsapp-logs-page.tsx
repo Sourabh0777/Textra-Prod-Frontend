@@ -1,17 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { Card, CardBody } from '@/components/ui/card';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Loader } from '@/components/ui/loader';
-import { fetchWhatsAppLogs } from '@/lib/api';
+import { useFetchWhatsAppLogsQuery } from '@/lib/api/endpoints/whatsappApi';
 import type { IWhatsAppLog } from '@/types';
+import { useUser } from '@clerk/nextjs';
 
 export default function WhatsAppLogsPage() {
-  const [logs, setLogs] = useState<IWhatsAppLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user: clerkUser, isLoaded } = useUser();
 
   const statusVariant: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
     sent: 'success',
@@ -20,21 +20,41 @@ export default function WhatsAppLogsPage() {
     failed: 'danger',
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  /** RTK Query hooks */
+  const {
+    data: logsResponse,
+    isLoading: loading,
+    error: fetchError,
+  } = useFetchWhatsAppLogsQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    const result = await fetchWhatsAppLogs();
-    if (result.success && Array.isArray(result.data)) {
-      setLogs(result.data);
-    }
-    setLoading(false);
-  };
+  const logs = Array.isArray(logsResponse) ? logsResponse : (logsResponse as any)?.data || [];
 
   if (loading) {
-    return <Loader />;
+    return (
+      <>
+        <Header title="WhatsApp Logs" subtitle="View message delivery logs" />
+        <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <>
+        <Header title="WhatsApp Logs" subtitle="View message delivery logs" />
+        <div className="p-4 md:p-8">
+          <Card>
+            <CardBody>
+              <p className="text-red-500">Error loading logs. Please try again later.</p>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
   }
 
   const formatDate = (date: any) => {
@@ -68,7 +88,7 @@ export default function WhatsAppLogsPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    logs.map((log) => (
+                    logs.map((log: IWhatsAppLog) => (
                       <TableRow key={log._id}>
                         <TableCell className="font-semibold">{log.phone_number}</TableCell>
                         <TableCell className="hidden md:table-cell text-sm">{log.template_name}</TableCell>

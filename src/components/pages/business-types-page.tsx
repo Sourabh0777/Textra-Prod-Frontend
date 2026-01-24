@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import type React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
@@ -10,31 +11,40 @@ import { Badge } from '@/components/ui/badge';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Loader } from '@/components/ui/loader';
-import { fetchBusinessTypes, createBusinessType, updateBusinessType, deleteBusinessType } from '@/lib/api';
+import {
+  useFetchBusinessTypesQuery,
+  useCreateBusinessTypeMutation,
+  useUpdateBusinessTypeMutation,
+  useDeleteBusinessTypeMutation,
+} from '@/lib/api/endpoints/businessApi';
 import type { IBusinessType } from '@/types';
+import { useUser } from '@clerk/nextjs';
+import { toastPromise } from '@/lib/toast-utils';
 
 export default function BusinessTypesPage() {
+  const { user: clerkUser, isLoaded } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [businessTypes, setBusinessTypes] = useState<IBusinessType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<Partial<IBusinessType>>({ is_active: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  /** RTK Query hooks */
+  const {
+    data: businessTypesResponse,
+    isLoading: loading,
+    error: fetchError,
+  } = useFetchBusinessTypesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    const res = await fetchBusinessTypes();
-    if (res.success && Array.isArray(res.data)) {
-      setBusinessTypes(res.data);
-    }
-    setLoading(false);
-  };
+  const [createBusinessType, { isLoading: isCreating }] = useCreateBusinessTypeMutation();
+  const [updateBusinessType, { isLoading: isUpdating }] = useUpdateBusinessTypeMutation();
+  const [deleteBusinessType, { isLoading: isDeleting }] = useDeleteBusinessTypeMutation();
+
+  const businessTypes = Array.isArray(businessTypesResponse)
+    ? businessTypesResponse
+    : (businessTypesResponse as any)?.data || [];
 
   const handleOpenModal = (type?: IBusinessType) => {
     if (type) {
@@ -57,7 +67,11 @@ export default function BusinessTypesPage() {
       [name]: value,
     });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
   };
 
@@ -75,39 +89,67 @@ export default function BusinessTypesPage() {
       return;
     }
 
-    setSubmitting(true);
     try {
-      let result;
+      setErrors({});
       if (isEditMode && editingId) {
-        result = await updateBusinessType(editingId, formData);
+        await toastPromise(updateBusinessType({ id: editingId, data: formData as IBusinessType }).unwrap(), {
+          loading: 'Updating business type...',
+          success: 'Business type updated successfully',
+          error: (err) => err?.data?.message || 'Failed to update business type',
+        });
       } else {
-        result = await createBusinessType(formData);
+        await toastPromise(createBusinessType(formData as any).unwrap(), {
+          loading: 'Adding business type...',
+          success: 'Business type added successfully',
+          error: (err) => err?.data?.message || 'Failed to add business type',
+        });
       }
-
-      if (result.success) {
-        await loadData();
-        setIsModalOpen(false);
-      } else {
-        setErrors({ submit: result.error || 'Failed to save business type' });
+      setIsModalOpen(false);
+    } catch (err: any) {
+      if (err?.data?.errors) {
+        setErrors(err.data.errors);
       }
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this business type?')) {
-      const result = await deleteBusinessType(id);
-      if (result.success) {
-        await loadData();
-      } else {
-        alert('Failed to delete business type');
+      try {
+        await toastPromise(deleteBusinessType(id).unwrap(), {
+          loading: 'Deleting business type...',
+          success: 'Business type deleted successfully',
+          error: (err) => err?.data?.message || 'Failed to delete business type',
+        });
+      } catch (err) {
+        console.error('Delete error', err);
       }
     }
   };
 
   if (loading) {
-    return <Loader />;
+    return (
+      <>
+        <Header title="Business Types" subtitle="Manage categories for your businesses" />
+        <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <>
+        <Header title="Business Types" subtitle="Manage categories for your businesses" />
+        <div className="p-4 md:p-8">
+          <Card>
+            <CardBody>
+              <p className="text-red-500">Error loading business types. Please try again later.</p>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -133,7 +175,7 @@ export default function BusinessTypesPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {businessTypes.map((type) => (
+                  {businessTypes.map((type: IBusinessType) => (
                     <TableRow key={type._id}>
                       <TableCell className="font-semibold">{type.name}</TableCell>
                       <TableCell className="text-sm">{type.description || '-'}</TableCell>
@@ -154,6 +196,13 @@ export default function BusinessTypesPage() {
                       </TableCell>
                     </TableRow>
                   ))}
+                  {businessTypes.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-neutral-500">
+                        No business types found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -167,7 +216,7 @@ export default function BusinessTypesPage() {
         title={isEditMode ? 'Edit Business Type' : 'Add New Business Type'}
         onConfirm={handleSubmit}
         confirmText={isEditMode ? 'Update' : 'Add'}
-        loading={submitting}
+        loading={isCreating || isUpdating}
       >
         <div className="p-4">
           <form onSubmit={handleSubmit} className="space-y-4">
