@@ -35,7 +35,7 @@ export default function SelectBusinessTypePage() {
         businessTypeId: selectedBusinessTypeId,
       }).unwrap();
 
-      router.push('/businesses');
+      router.push('/');
     } catch (err: any) {
       setError(err?.data?.message || 'Something went wrong');
     }
