@@ -71,7 +71,7 @@ export const businessApi = baseApi.injectEndpoints({
     }),
 
     // Update business details endpoint
-    updateBusinessDetails: builder.mutation<IBusiness, void>({
+    updateBusinessDetails: builder.mutation({
       query: (body) => ({
         url: '/businesses/update-business',
         method: 'PUT',

@@ -8,10 +8,6 @@ const baseQuery = fetchBaseQuery({
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
-    // Convert Headers object to plain object for logging
-    const headersObj = Object.fromEntries(headers.entries());
-    console.log('🚀 ~ headers:', headersObj);
-
     return headers;
   },
 });

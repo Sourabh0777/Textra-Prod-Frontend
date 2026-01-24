@@ -34,7 +34,9 @@ const BusinessPage = () => {
   });
 
   /** Fetch business types */
-  const { data: businessTypes } = useFetchBusinessTypesQuery();
+  const { data: businessTypes } = useFetchBusinessTypesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
 
   /** Update mutation */
   const [updateBusinessDetails, { isLoading: saving }] = useUpdateBusinessDetailsMutation();
@@ -67,6 +69,8 @@ const BusinessPage = () => {
 
   /** Save business details */
   const handleSave = async () => {
+    console.log('formData', formData);
+
     try {
       setErrors({});
       await updateBusinessDetails(formData).unwrap();
@@ -128,8 +132,8 @@ const BusinessPage = () => {
               onChange={handleChange}
               options={
                 businessTypes?.map((type) => ({
-                  value: type._id, // ✅ ID-based
-                  label: type.name,
+                  value: type?._id, // ✅ ID-based
+                  label: type?.name,
                 })) || []
               }
               error={errors.business_type_id}
