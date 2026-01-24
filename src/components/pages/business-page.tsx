@@ -139,6 +139,7 @@ const BusinessPage = () => {
               }
               error={errors.business_type_id}
               fullWidth
+              disabled
             />
 
             <Input
@@ -196,6 +197,7 @@ const BusinessPage = () => {
                 onChange={handleChange}
                 error={errors.waba_id}
                 fullWidth
+                disabled
               />
 
               <Input
@@ -205,6 +207,7 @@ const BusinessPage = () => {
                 onChange={handleChange}
                 error={errors.phone_number_id}
                 fullWidth
+                disabled
               />
 
               <Input
@@ -214,21 +217,9 @@ const BusinessPage = () => {
                 onChange={handleChange}
                 error={errors.phone_number_display}
                 fullWidth
+                disabled
               />
             </div>
-
-            <Select
-              label="Business Status"
-              name="is_active"
-              value={String(formData.is_active ?? true)}
-              onChange={handleChange}
-              options={[
-                { value: 'true', label: 'Active' },
-                { value: 'false', label: 'Inactive' },
-              ]}
-              fullWidth
-            />
-
             <div className="flex justify-end pt-4">
               <Button loading={saving} onClick={handleSave}>
                 Save Changes
