@@ -17,6 +17,7 @@ import {
   useFetchBusinessTypesQuery,
 } from '@/lib/api/endpoints/businessApi';
 import { useUser } from '@clerk/nextjs';
+import { toastPromise } from '@/lib/toast-utils';
 
 const BusinessPage = () => {
   const { user: clerkUser, isLoaded } = useUser();
@@ -73,14 +74,14 @@ const BusinessPage = () => {
 
     try {
       setErrors({});
-      await updateBusinessDetails(formData).unwrap();
+      await toastPromise(updateBusinessDetails(formData).unwrap(), {
+        loading: 'Saving business details...',
+        success: 'Business details updated successfully',
+        error: (err) => err?.data?.message || 'Failed to update business details',
+      });
     } catch (err: any) {
       if (err?.data?.errors) {
         setErrors(err.data.errors);
-      } else {
-        setErrors({
-          general: err?.data?.message || 'Failed to update business details',
-        });
       }
     }
   };
