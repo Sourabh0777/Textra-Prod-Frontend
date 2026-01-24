@@ -9,6 +9,7 @@ export const env = createEnv({
   server: {
     // Node Environment
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+    CLERK_SECRET_KEY: z.string().min(1),
   },
 
   /**
@@ -33,6 +34,7 @@ export const env = createEnv({
   runtimeEnv: {
     // Server
     NODE_ENV: process.env.NODE_ENV,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
 
     // Client
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
