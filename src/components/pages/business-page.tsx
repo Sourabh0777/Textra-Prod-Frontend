@@ -1,66 +1,87 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import React from 'react';
-import { useEffect, useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Card, CardBody } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
+
 import type { IBusiness } from '@/types';
-import { useGetBusinessDetailsQuery, useUpdateBusinessDetailsMutation } from '@/lib/api/endpoints/businessApi';
+import {
+  useGetBusinessDetailsQuery,
+  useUpdateBusinessDetailsMutation,
+  useFetchBusinessTypesQuery,
+} from '@/lib/api/endpoints/businessApi';
+import { useUser } from '@clerk/nextjs';
 
 const BusinessPage = () => {
+  const { user: clerkUser, isLoaded } = useUser();
+
   const [formData, setFormData] = useState<Partial<IBusiness>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const { data: businessResponse, isLoading: loading, error } = useGetBusinessDetailsQuery();
+  /** Fetch business details */
+  const {
+    data: businessResponse,
+    isLoading: loading,
+    error,
+  } = useGetBusinessDetailsQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  /** Fetch business types */
+  const { data: businessTypes } = useFetchBusinessTypesQuery();
+
+  /** Update mutation */
   const [updateBusinessDetails, { isLoading: saving }] = useUpdateBusinessDetailsMutation();
 
+  /** Populate form on load */
   useEffect(() => {
-    // RTK Query returns the response body directly
-    // Handle both cases: direct object or wrapped in { data: {...} }
     const businessData = businessResponse?.data || businessResponse;
     if (businessData) {
       setFormData(businessData);
     }
   }, [businessResponse]);
 
+  /** Handle input/select change */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: name === 'is_active' ? value === 'true' : value,
     }));
-    // Clear error for this field
+
     if (errors[name]) {
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
+        const next = { ...prev };
+        delete next[name];
+        return next;
       });
     }
   };
 
+  /** Save business details */
   const handleSave = async () => {
     try {
       setErrors({});
-      const result = await updateBusinessDetails(formData).unwrap();
-      if (result) {
-        // Success - you might want to show a toast notification here
-        console.log('Business updated successfully', result);
-      }
+      await updateBusinessDetails(formData).unwrap();
     } catch (err: any) {
-      console.error('Error updating business:', err);
-      if (err.data?.errors) {
+      if (err?.data?.errors) {
         setErrors(err.data.errors);
       } else {
-        setErrors({ general: err.data?.message || 'Failed to update business details' });
+        setErrors({
+          general: err?.data?.message || 'Failed to update business details',
+        });
       }
     }
   };
+
+  /** Loading state */
   if (loading) {
     return (
       <>
@@ -72,6 +93,7 @@ const BusinessPage = () => {
     );
   }
 
+  /** Error state */
   if (error) {
     return (
       <>
@@ -95,10 +117,24 @@ const BusinessPage = () => {
         <Card>
           <CardBody className="space-y-6">
             {errors.general && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
-                {errors.general}
-              </div>
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">{errors.general}</div>
             )}
+
+            {/* Business Type */}
+            <Select
+              label="Business Type"
+              name="business_type_id"
+              value={formData.business_type_id || ''}
+              onChange={handleChange}
+              options={
+                businessTypes?.map((type) => ({
+                  value: type._id, // ✅ ID-based
+                  label: type.name,
+                })) || []
+              }
+              error={errors.business_type_id}
+              fullWidth
+            />
 
             <Input
               label="Business Name"
