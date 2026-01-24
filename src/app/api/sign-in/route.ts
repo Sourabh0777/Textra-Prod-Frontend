@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/env';
-import { API_BASE_URL } from '@/lib/api';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { type NextRequest } from 'next/server';
@@ -16,7 +15,7 @@ export async function GET(req: NextRequest) {
     // Call the external backend to sync user/session
     // We don't care about the response body for now, just ensuring it's called.
     // If you need to handle errors (e.g. backend down), add logic here.
-    const response = await fetch(`http://localhost:5000/api/sign-in`, {
+    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/sign-in`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

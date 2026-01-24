@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Wrench, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '@/lib/api';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -12,6 +11,7 @@ interface SidebarProps {
 }
 import { useAuth } from '@clerk/nextjs';
 import { SIDEBAR_CONFIG, SidebarKey } from '@/config/sidebarConfig';
+import { env } from '@/env';
 
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken, userId } = useAuth();
@@ -21,7 +21,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   useEffect(() => {
     const fetchSideBar = async () => {
       try {
-        const url = `${API_BASE_URL}/business-types/side-bar`; // removed space
+        const url = `${env.NEXT_PUBLIC_API_URL}/business-types/side-bar`; // removed space
 
         const token = await getToken();
 
@@ -58,29 +58,30 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {menus && menus.map((key) => {
-          const item = SIDEBAR_CONFIG[key];
-          if (!item) return null;
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
+        {menus &&
+          menus.map((key) => {
+            const item = SIDEBAR_CONFIG[key];
+            if (!item) return null;
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={`
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={`
                 relative flex items-center gap-3 p-[12px] rounded-xl transition-all duration-300 group text-white shadow-sm
               `}
-            >
-              <Icon className={`w-5 h-5 transition-colors duration-300 text-white`} />
-              <span className="font-semibold text-sm tracking-wide  text-white">{item.label}</span>
-              {isActive && (
-                <ChevronRight className="ml-auto w-4 h-4 text-[#FFFFFF] animate-in fade-in slide-in-from-left-2" />
-              )}
-            </Link>
-          );
-        })}
+              >
+                <Icon className={`w-5 h-5 transition-colors duration-300 text-white`} />
+                <span className="font-semibold text-sm tracking-wide  text-white">{item.label}</span>
+                {isActive && (
+                  <ChevronRight className="ml-auto w-4 h-4 text-[#FFFFFF] animate-in fade-in slide-in-from-left-2" />
+                )}
+              </Link>
+            );
+          })}
       </nav>
 
       {/* Footer */}
