@@ -209,8 +209,8 @@ export default function RemindersPage() {
           <Button onClick={() => handleOpenModal()}>+ Add Reminder</Button>
         </div>
 
-        <Card>
-          <CardBody className="p-0">
+        <Card className="!px-0 !py-0">
+          <CardBody className="!px-2 !py-2">
             <ReminderTable
               reminders={reminders}
               onResend={handleResend}
