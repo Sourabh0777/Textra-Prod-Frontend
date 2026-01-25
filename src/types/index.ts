@@ -62,10 +62,15 @@ export interface IReminder {
   service_id: IService;
   customer_id?: ICustomer;
   vehicle_id?: IVehicle;
+  business_id?: string;
   scheduled_for: Date;
+  due_date: Date;
   status: string;
   retry_count: number;
   last_attempt_at?: Date;
+  last_sent_at?: Date;
+  sent_history?: Date[];
+  pending_details?: string;
   created_at?: Date;
 }
 

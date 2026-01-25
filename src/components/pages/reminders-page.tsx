@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
-import { Loader } from '@/components/ui/loader';
+import { Bell, Calendar, Loader } from 'lucide-react';
 import {
   useFetchRemindersQuery,
   useCreateReminderMutation,
@@ -74,7 +74,7 @@ export default function RemindersPage() {
     setIsModalOpen(true);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -214,9 +214,10 @@ export default function RemindersPage() {
                   <TableRow>
                     <TableHeaderCell>Customer</TableHeaderCell>
                     <TableHeaderCell>Vehicle</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Scheduled For</TableHeaderCell>
+                    <TableHeaderCell className="hidden md:table-cell">Notification</TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell">Due Date</TableHeaderCell>
                     <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell text-center">Retries</TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell">Activity</TableHeaderCell>
                     <TableHeaderCell className="text-right">Actions</TableHeaderCell>
                   </TableRow>
                 </TableHead>
@@ -243,18 +244,27 @@ export default function RemindersPage() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell text-sm">
-                          <div className="flex flex-col">
+                          <div className="flex items-center gap-2" title="Scheduled Notification Date">
+                            <Bell className="w-3.5 h-3.5 text-blue-500" />
                             <span>{formatDate(reminder.scheduled_for)}</span>
-                            <span className="text-[10px] text-neutral-400">
-                              Added: {formatDate(reminder.created_at)}
-                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-sm">
+                          <div className="flex items-center gap-2 text-neutral-500" title="Next Service Due Date">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{formatDate(reminder.due_date)}</span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <Badge variant={statusVariant[reminder.status] || 'info'}>{reminder.status}</Badge>
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell text-sm text-center">
-                          {reminder.retry_count}
+                        <TableCell className="hidden lg:table-cell text-sm">
+                          <div className="flex flex-col text-xs">
+                            <span title="Last Notification Sent">
+                              Sent: {reminder.last_sent_at ? formatDate(reminder.last_sent_at) : 'Never'}
+                            </span>
+                            <span className="text-neutral-400">Retries: {reminder.retry_count}</span>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-2">
@@ -337,36 +347,61 @@ export default function RemindersPage() {
               error={errors.service_id}
               fullWidth
             />
-            <Input
-              label="Scheduled For"
-              name="scheduled_for"
-              type="date"
-              value={formData.scheduled_for ? new Date(formData.scheduled_for).toISOString().split('T')[0] : ''}
-              onChange={handleChange}
-              error={errors.scheduled_for}
-              fullWidth
-            />
-            <Select
-              label="Status"
-              name="status"
-              value={formData.status || 'pending'}
-              onChange={handleChange}
-              options={[
-                { value: 'pending', label: 'Pending' },
-                { value: 'sent', label: 'Sent' },
-                { value: 'failed', label: 'Failed' },
-              ]}
-              error={errors.status}
-              fullWidth
-            />
-            <Input
-              label="Retry Count"
-              name="retry_count"
-              type="number"
-              value={formData.retry_count || 0}
-              onChange={handleChange}
-              fullWidth
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Scheduled For (Notification)"
+                name="scheduled_for"
+                type="date"
+                value={formData.scheduled_for ? new Date(formData.scheduled_for).toISOString().split('T')[0] : ''}
+                onChange={handleChange}
+                error={errors.scheduled_for}
+                fullWidth
+              />
+              <Input
+                label="Due Date (Next Service)"
+                name="due_date"
+                type="date"
+                value={formData.due_date ? new Date(formData.due_date).toISOString().split('T')[0] : ''}
+                onChange={handleChange}
+                error={errors.due_date}
+                fullWidth
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Select
+                label="Status"
+                name="status"
+                value={formData.status || 'pending'}
+                onChange={handleChange}
+                options={[
+                  { value: 'pending', label: 'Pending' },
+                  { value: 'sent', label: 'Sent' },
+                  { value: 'failed', label: 'Failed' },
+                ]}
+                error={errors.status}
+                fullWidth
+              />
+              <Input
+                label="Retry Count"
+                name="retry_count"
+                type="number"
+                value={formData.retry_count || 0}
+                onChange={handleChange}
+                fullWidth
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-900 mb-1">
+                Pending Details / Internal Notes
+              </label>
+              <textarea
+                name="pending_details"
+                value={formData.pending_details || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
+                rows={3}
+              />
+            </div>
           </form>
         </div>
       </Modal>
