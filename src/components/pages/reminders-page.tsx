@@ -6,37 +6,37 @@ import { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
-import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Modal } from '@/components/ui/modal';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Bell, Calendar, Loader } from 'lucide-react';
+import { Loader } from 'lucide-react';
 import {
   useFetchRemindersQuery,
   useCreateReminderMutation,
   useUpdateReminderMutation,
   useDeleteReminderMutation,
+  useMarkVisitedMutation,
 } from '@/lib/api/endpoints/reminderApi';
 import { useFetchServicesQuery } from '@/lib/api/endpoints/serviceApi';
-import type { IReminder, IService } from '@/types';
+import type { IReminder } from '@/types';
 import { useUser } from '@clerk/nextjs';
 import { toastPromise } from '@/lib/toast-utils';
+
+// Sub-components
+import { ReminderTable } from '@/components/reminders/reminder-table';
+import { ReminderModal } from '@/components/reminders/reminder-modal';
+import { CheckInDialog } from '@/components/reminders/check-in-dialog';
 
 export default function RemindersPage() {
   const { user: clerkUser, isLoaded } = useUser();
 
+  // State for Add/Edit Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: 'pending' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const statusVariant: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
-    pending: 'warning',
-    sent: 'success',
-    failed: 'danger',
-  };
+  // State for Check-in Dialog
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState<IReminder | null>(null);
 
   /** RTK Query hooks */
   const {
@@ -53,7 +53,8 @@ export default function RemindersPage() {
 
   const [createReminder, { isLoading: isCreating }] = useCreateReminderMutation();
   const [updateReminder, { isLoading: isUpdating }] = useUpdateReminderMutation();
-  const [deleteReminder, { isLoading: isDeleting }] = useDeleteReminderMutation();
+  const [deleteReminder] = useDeleteReminderMutation();
+  const [markVisited, { isLoading: isMarkingVisited }] = useMarkVisitedMutation();
 
   const reminders = Array.isArray(remindersResponse) ? remindersResponse : (remindersResponse as any)?.data || [];
   const services = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse as any)?.data || [];
@@ -143,21 +144,28 @@ export default function RemindersPage() {
     }
   };
 
-  const handleCheckIn = async (reminder: IReminder) => {
+  const handleCheckInClick = (reminder: IReminder) => {
+    setSelectedReminder(reminder);
+    setIsCheckInOpen(true);
+  };
+
+  const handleMarkVisited = async () => {
+    if (!selectedReminder?._id) return;
+
     try {
-      await toastPromise(updateReminder({ id: reminder._id!, data: { ...reminder, status: 'sent' } }).unwrap(), {
-        loading: 'Checking in...',
-        success: 'Customer checked in successfully',
-        error: (err) => err?.data?.message || 'Failed to check in',
+      await toastPromise(markVisited(selectedReminder._id).unwrap(), {
+        loading: 'Recording shop visit...',
+        success: 'Shop visit recorded successfully',
+        error: (err) => err?.data?.message || 'Failed to record shop visit',
       });
+      setIsCheckInOpen(false);
+      setSelectedReminder(null);
     } catch (err) {
       console.error('Check-in error', err);
     }
   };
 
   const handleResend = async (reminder: IReminder) => {
-    // For now, we just show a toast as there's no specific resend endpoint yet.
-    // If there was an endpoint, we would call it here.
     toastPromise(Promise.resolve(), {
       loading: 'Preparing to resend...',
       success: 'Reminder notification queued for resending',
@@ -170,7 +178,7 @@ export default function RemindersPage() {
       <>
         <Header title="Reminders" subtitle="Manage service reminders" />
         <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
-          <Loader />
+          <Loader className="animate-spin text-blue-500" />
         </div>
       </>
     );
@@ -183,18 +191,13 @@ export default function RemindersPage() {
         <div className="p-4 md:p-8">
           <Card>
             <CardBody>
-              <p className="text-red-500">Error loading reminders. Please try again later.</p>
+              <p className="text-red-500 text-center py-8">Error loading reminders. Please try again later.</p>
             </CardBody>
           </Card>
         </div>
       </>
     );
   }
-
-  const formatDate = (date: any) => {
-    if (!date) return '-';
-    return new Date(date).toLocaleDateString();
-  };
 
   return (
     <>
@@ -208,203 +211,37 @@ export default function RemindersPage() {
 
         <Card>
           <CardBody className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableHeaderCell>Customer</TableHeaderCell>
-                    <TableHeaderCell>Vehicle</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Notification</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Due Date</TableHeaderCell>
-                    <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Activity</TableHeaderCell>
-                    <TableHeaderCell className="text-right">Actions</TableHeaderCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {reminders.map((reminder: IReminder) => {
-                    const customer = reminder.customer_id as any;
-                    const vehicle = reminder.vehicle_id as any;
-                    return (
-                      <TableRow key={reminder._id}>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-bold text-neutral-900">{customer?.name || 'Unknown'}</span>
-                            <span className="text-xs text-neutral-500">{customer?.phone_number || '-'}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-semibold text-neutral-800">
-                              {vehicle?.brand} {vehicle?.vehicle_model}
-                            </span>
-                            <span className="text-xs font-mono bg-neutral-100 text-neutral-600 px-1 rounded w-fit">
-                              {vehicle?.registration_number}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell text-sm">
-                          <div className="flex items-center gap-2" title="Scheduled Notification Date">
-                            <Bell className="w-3.5 h-3.5 text-blue-500" />
-                            <span>{formatDate(reminder.scheduled_for)}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell text-sm">
-                          <div className="flex items-center gap-2 text-neutral-500" title="Next Service Due Date">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>{formatDate(reminder.due_date)}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={statusVariant[reminder.status] || 'info'}>{reminder.status}</Badge>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell text-sm">
-                          <div className="flex flex-col text-xs">
-                            <span title="Last Notification Sent">
-                              Sent: {reminder.last_sent_at ? formatDate(reminder.last_sent_at) : 'Never'}
-                            </span>
-                            <span className="text-neutral-400">Retries: {reminder.retry_count}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-blue-600 hover:bg-blue-50"
-                              onClick={() => handleResend(reminder)}
-                              title="Resend Notification"
-                            >
-                              Resend
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-green-600 hover:bg-green-50"
-                              onClick={() => handleCheckIn(reminder)}
-                              title="Customer Check-in"
-                            >
-                              Check-in
-                            </Button>
-                            <div className="border-l border-neutral-200 h-6 mx-1 self-center" />
-                            <Button variant="ghost" size="sm" onClick={() => handleOpenModal(reminder)} title="Edit">
-                              Edit
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => handleDelete(reminder._id || '')}
-                              title="Delete"
-                            >
-                              Del
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {reminders.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
-                        No reminders found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <ReminderTable
+              reminders={reminders}
+              onResend={handleResend}
+              onCheckIn={handleCheckInClick}
+              onEdit={handleOpenModal}
+              onDelete={handleDelete}
+              isCheckInLoading={isMarkingVisited}
+            />
           </CardBody>
         </Card>
       </div>
 
-      <Modal
+      <ReminderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={isEditMode ? 'Edit Reminder' : 'Add New Reminder'}
-        onConfirm={handleSubmit}
-        confirmText={isEditMode ? 'Update Reminder' : 'Add Reminder'}
+        isEditMode={isEditMode}
+        formData={formData}
+        errors={errors}
+        services={services}
         loading={isCreating || isUpdating}
-      >
-        <div className="p-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-            <Select
-              label="Service"
-              name="service_id"
-              value={
-                typeof formData.service_id === 'object' ? (formData.service_id as any)?._id : formData.service_id || ''
-              }
-              onChange={handleChange}
-              options={services.map((service: IService) => {
-                const vehicle = service.vehicle_id as any;
-                const regNo = typeof vehicle === 'object' ? vehicle?.registration_number : 'Unknown';
-                const model = typeof vehicle === 'object' ? `${vehicle?.brand} ${vehicle?.vehicle_model}` : '';
-                return {
-                  value: service._id || '',
-                  label: `${model} (${regNo}) - ${service._id?.slice(-6)}`,
-                };
-              })}
-              error={errors.service_id}
-              fullWidth
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Scheduled For (Notification)"
-                name="scheduled_for"
-                type="date"
-                value={formData.scheduled_for ? new Date(formData.scheduled_for).toISOString().split('T')[0] : ''}
-                onChange={handleChange}
-                error={errors.scheduled_for}
-                fullWidth
-              />
-              <Input
-                label="Due Date (Next Service)"
-                name="due_date"
-                type="date"
-                value={formData.due_date ? new Date(formData.due_date).toISOString().split('T')[0] : ''}
-                onChange={handleChange}
-                error={errors.due_date}
-                fullWidth
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Select
-                label="Status"
-                name="status"
-                value={formData.status || 'pending'}
-                onChange={handleChange}
-                options={[
-                  { value: 'pending', label: 'Pending' },
-                  { value: 'sent', label: 'Sent' },
-                  { value: 'failed', label: 'Failed' },
-                ]}
-                error={errors.status}
-                fullWidth
-              />
-              <Input
-                label="Retry Count"
-                name="retry_count"
-                type="number"
-                value={formData.retry_count || 0}
-                onChange={handleChange}
-                fullWidth
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1">
-                Pending Details / Internal Notes
-              </label>
-              <textarea
-                name="pending_details"
-                value={formData.pending_details || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:border-blue-500 resize-none"
-                rows={3}
-              />
-            </div>
-          </form>
-        </div>
-      </Modal>
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+      />
+
+      <CheckInDialog
+        isOpen={isCheckInOpen}
+        onClose={() => setIsCheckInOpen(false)}
+        onConfirm={handleMarkVisited}
+        reminder={selectedReminder}
+        loading={isMarkingVisited}
+      />
     </>
   );
 }

@@ -8,7 +8,14 @@ export const reminderApi = baseApi.injectEndpoints({
     }),
     fetchReminder: builder.query<any, string>({
       query: (id) => `/reminders/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Reminder', id }],
+      providesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder'],
+    }),
+    markVisited: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/reminders/${id}/mark-visited`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder', { type: 'Service' as any }],
     }),
     createReminder: builder.mutation<any, any>({
       query: (body) => ({
@@ -42,4 +49,5 @@ export const {
   useCreateReminderMutation,
   useUpdateReminderMutation,
   useDeleteReminderMutation,
+  useMarkVisitedMutation,
 } = reminderApi;
