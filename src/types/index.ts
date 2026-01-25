@@ -43,6 +43,7 @@ export interface IVehicle {
   registration_number: string;
   year: number;
   daily_travel: number;
+  service_date?: Date;
   created_at?: Date;
 }
 

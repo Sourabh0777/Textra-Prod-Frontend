@@ -20,6 +20,7 @@ import {
   useDeleteVehicleMutation,
 } from '@/lib/api/endpoints/vehicleApi';
 import { useFetchCustomersQuery } from '@/lib/api/endpoints/customerApi';
+import { useCreateServiceMutation } from '@/lib/api/endpoints/serviceApi';
 import type { IVehicle, ICustomer } from '@/types';
 import { useUser } from '@clerk/nextjs';
 import { toastPromise } from '@/lib/toast-utils';
@@ -50,6 +51,7 @@ export default function VehiclesPage() {
   const [createVehicle, { isLoading: isCreating }] = useCreateVehicleMutation();
   const [updateVehicle, { isLoading: isUpdating }] = useUpdateVehicleMutation();
   const [deleteVehicle, { isLoading: isDeleting }] = useDeleteVehicleMutation();
+  const [createService, { isLoading: isServiceCreating }] = useCreateServiceMutation();
 
   const vehicles = Array.isArray(vehiclesResponse) ? vehiclesResponse : (vehiclesResponse as any)?.data || [];
 
@@ -120,19 +122,40 @@ export default function VehiclesPage() {
 
     try {
       setErrors({});
+      let vehicleId: string | undefined;
+
       if (isEditMode && editingId) {
-        await toastPromise(updateVehicle({ id: editingId, data: formData }).unwrap(), {
+        const result = await toastPromise(updateVehicle({ id: editingId, data: formData }).unwrap(), {
           loading: 'Updating vehicle...',
           success: 'Vehicle updated successfully',
           error: (err) => err?.data?.message || 'Failed to update vehicle',
         });
+        vehicleId = editingId;
       } else {
-        await toastPromise(createVehicle(formData).unwrap(), {
+        const result = await toastPromise(createVehicle(formData).unwrap(), {
           loading: 'Adding vehicle...',
           success: 'Vehicle added successfully',
           error: (err) => err?.data?.message || 'Failed to add vehicle',
         });
+        vehicleId = result?.data?._id || result?._id;
       }
+
+      // If service_date is provided, create a service record
+      if (formData.service_date && vehicleId) {
+        await toastPromise(
+          createService({
+            vehicle_id: vehicleId,
+            last_service_date: formData.service_date,
+            notes: 'Service created from vehicle page',
+          }).unwrap(),
+          {
+            loading: 'Creating service record...',
+            success: 'Service record & reminder created!',
+            error: (err) => err?.data?.message || 'Failed to create service record',
+          },
+        );
+      }
+
       setIsModalOpen(false);
       setFormData({});
     } catch (err: any) {
@@ -405,6 +428,26 @@ export default function VehiclesPage() {
               error={errors.daily_travel}
               fullWidth
             />
+            <div className="pt-2 border-t border-neutral-100">
+              <Input
+                label="Service Date"
+                name="service_date"
+                type="date"
+                value={formData.service_date ? new Date(formData.service_date).toISOString().split('T')[0] : ''}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    service_date: e.target.value as any,
+                  }));
+                }}
+                error={errors.service_date}
+                fullWidth
+              />
+              <p className="mt-1 text-xs text-blue-600 font-medium bg-blue-50 p-2 rounded">
+                💡 If the bike is getting service today, please select the date here so that a service record and
+                reminder will be automatically created.
+              </p>
+            </div>
           </form>
         </div>
       </Modal>
