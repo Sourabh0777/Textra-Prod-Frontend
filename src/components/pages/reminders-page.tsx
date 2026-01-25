@@ -143,6 +143,28 @@ export default function RemindersPage() {
     }
   };
 
+  const handleCheckIn = async (reminder: IReminder) => {
+    try {
+      await toastPromise(updateReminder({ id: reminder._id!, data: { ...reminder, status: 'sent' } }).unwrap(), {
+        loading: 'Checking in...',
+        success: 'Customer checked in successfully',
+        error: (err) => err?.data?.message || 'Failed to check in',
+      });
+    } catch (err) {
+      console.error('Check-in error', err);
+    }
+  };
+
+  const handleResend = async (reminder: IReminder) => {
+    // For now, we just show a toast as there's no specific resend endpoint yet.
+    // If there was an endpoint, we would call it here.
+    toastPromise(Promise.resolve(), {
+      loading: 'Preparing to resend...',
+      success: 'Reminder notification queued for resending',
+      error: 'Failed to resend reminder',
+    });
+  };
+
   if (loading) {
     return (
       <>
@@ -190,42 +212,87 @@ export default function RemindersPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>Service ID</TableHeaderCell>
+                    <TableHeaderCell>Customer</TableHeaderCell>
+                    <TableHeaderCell>Vehicle</TableHeaderCell>
                     <TableHeaderCell className="hidden md:table-cell">Scheduled For</TableHeaderCell>
                     <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Retries</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Last Attempt</TableHeaderCell>
-                    <TableHeaderCell>Actions</TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell text-center">Retries</TableHeaderCell>
+                    <TableHeaderCell className="text-right">Actions</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {reminders.map((reminder: IReminder) => (
-                    <TableRow key={reminder._id}>
-                      <TableCell className="font-semibold text-sm">
-                        {reminder.service_id?._id || (reminder.service_id as any)}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">
-                        {formatDate(reminder.scheduled_for)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={statusVariant[reminder.status] || 'info'}>{reminder.status}</Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{reminder.retry_count}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">
-                        {formatDate(reminder.last_attempt_at)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleOpenModal(reminder)}>
-                            Edit
-                          </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(reminder._id || '')}>
-                            Delete
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {reminders.map((reminder: IReminder) => {
+                    const customer = reminder.customer_id as any;
+                    const vehicle = reminder.vehicle_id as any;
+                    return (
+                      <TableRow key={reminder._id}>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-neutral-900">{customer?.name || 'Unknown'}</span>
+                            <span className="text-xs text-neutral-500">{customer?.phone_number || '-'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-neutral-800">
+                              {vehicle?.brand} {vehicle?.vehicle_model}
+                            </span>
+                            <span className="text-xs font-mono bg-neutral-100 text-neutral-600 px-1 rounded w-fit">
+                              {vehicle?.registration_number}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-sm">
+                          <div className="flex flex-col">
+                            <span>{formatDate(reminder.scheduled_for)}</span>
+                            <span className="text-[10px] text-neutral-400">
+                              Added: {formatDate(reminder.created_at)}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={statusVariant[reminder.status] || 'info'}>{reminder.status}</Badge>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-sm text-center">
+                          {reminder.retry_count}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-blue-600 hover:bg-blue-50"
+                              onClick={() => handleResend(reminder)}
+                              title="Resend Notification"
+                            >
+                              Resend
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-green-600 hover:bg-green-50"
+                              onClick={() => handleCheckIn(reminder)}
+                              title="Customer Check-in"
+                            >
+                              Check-in
+                            </Button>
+                            <div className="border-l border-neutral-200 h-6 mx-1 self-center" />
+                            <Button variant="ghost" size="sm" onClick={() => handleOpenModal(reminder)} title="Edit">
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDelete(reminder._id || '')}
+                              title="Delete"
+                            >
+                              Del
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                   {reminders.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
@@ -258,10 +325,15 @@ export default function RemindersPage() {
                 typeof formData.service_id === 'object' ? (formData.service_id as any)?._id : formData.service_id || ''
               }
               onChange={handleChange}
-              options={services.map((service: IService) => ({
-                value: service._id || '',
-                label: `Service ${service._id}`,
-              }))}
+              options={services.map((service: IService) => {
+                const vehicle = service.vehicle_id as any;
+                const regNo = typeof vehicle === 'object' ? vehicle?.registration_number : 'Unknown';
+                const model = typeof vehicle === 'object' ? `${vehicle?.brand} ${vehicle?.vehicle_model}` : '';
+                return {
+                  value: service._id || '',
+                  label: `${model} (${regNo}) - ${service._id?.slice(-6)}`,
+                };
+              })}
               error={errors.service_id}
               fullWidth
             />

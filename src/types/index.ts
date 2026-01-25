@@ -60,6 +60,8 @@ export interface IService {
 export interface IReminder {
   _id?: string;
   service_id: IService;
+  customer_id?: ICustomer;
+  vehicle_id?: IVehicle;
   scheduled_for: Date;
   status: string;
   retry_count: number;
