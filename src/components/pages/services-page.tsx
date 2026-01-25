@@ -10,6 +10,7 @@ import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } fro
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
 import { Loader } from '@/components/ui/loader';
 import {
   useFetchServicesQuery,
@@ -68,12 +69,30 @@ export default function ServicesPage() {
     setIsModalOpen(true);
   };
 
+  const calculateNextServiceDate = (lastDate: string | Date | undefined, interval: number | undefined) => {
+    if (!lastDate || !interval) return undefined;
+    const date = new Date(lastDate);
+    date.setDate(date.getDate() + interval);
+    return date;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'service_interval_days' ? Number(value) : name.includes('date') ? new Date(value) : value,
-    }));
+    setFormData((prev) => {
+      const nextValue =
+        name === 'service_interval_days' ? Number(value) : name.includes('date') ? new Date(value) : value;
+      const updated = { ...prev, [name]: nextValue };
+
+      // Auto-calculate next service date
+      if (name === 'last_service_date' || name === 'service_interval_days') {
+        const nextDate = calculateNextServiceDate(updated.last_service_date, updated.service_interval_days);
+        if (nextDate) {
+          updated.next_service_date = nextDate;
+        }
+      }
+
+      return updated;
+    });
     if (errors[name]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -254,22 +273,39 @@ export default function ServicesPage() {
         <div className="p-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-            <Select
+            <Combobox
               label="Vehicle"
-              name="vehicle_id"
+              placeholder="Select a vehicle"
+              searchPlaceholder="Search by customer name, phone, email or registration number..."
               value={
                 typeof formData.vehicle_id === 'object' ? (formData.vehicle_id as any)?._id : formData.vehicle_id || ''
               }
-              onChange={handleChange}
-              options={vehicles.map((vehicle: IVehicle) => ({
-                value: vehicle._id || '',
-                label: `${vehicle.brand} ${vehicle.vehicle_model}`,
-              }))}
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, vehicle_id: val as any }));
+                if (errors.vehicle_id) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.vehicle_id;
+                    return next;
+                  });
+                }
+              }}
+              options={vehicles.map((vehicle: IVehicle) => {
+                const customer = vehicle.customer_id as any;
+                const label = `${vehicle.brand} ${vehicle.vehicle_model} (${vehicle.registration_number}) - ${customer?.name || 'No Owner'}`;
+                const searchTerms =
+                  `${customer?.name || ''} ${customer?.phone_number || ''} ${customer?.email || ''} ${vehicle.registration_number} ${vehicle.brand} ${vehicle.vehicle_model}`.toLowerCase();
+                return {
+                  value: vehicle._id || '',
+                  label,
+                  searchTerms,
+                };
+              })}
               error={errors.vehicle_id}
               fullWidth
             />
             <Input
-              label="Last Service Date"
+              label="Service Date"
               name="last_service_date"
               type="date"
               value={formData.last_service_date ? new Date(formData.last_service_date).toISOString().split('T')[0] : ''}
@@ -278,13 +314,14 @@ export default function ServicesPage() {
               fullWidth
             />
             <Input
-              label="Next Service Date"
+              label="Next Service Date (Auto-calculated)"
               name="next_service_date"
               type="date"
               value={formData.next_service_date ? new Date(formData.next_service_date).toISOString().split('T')[0] : ''}
               onChange={handleChange}
               error={errors.next_service_date}
               fullWidth
+              disabled
             />
             <Input
               label="Service Interval (days)"
