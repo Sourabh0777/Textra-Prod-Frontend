@@ -26,9 +26,9 @@ export function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="px-4 md:px-6 py-4 border-b border-neutral-200 flex justify-between items-center sticky top-0 bg-white">
+        <div className="px-4 md:px-6 py-4 border-b border-neutral-200 flex justify-between items-center sticky top-0 bg-white z-10">
           <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
           <button
             onClick={onClose}
@@ -39,7 +39,7 @@ export function Modal({
           </button>
         </div>
         <div className="px-4 md:px-6 py-4">{children}</div>
-        <div className="px-4 md:px-6 py-4 border-t border-neutral-200 flex justify-end gap-2 sticky bottom-0 bg-white">
+        <div className="px-4 md:px-6 py-4 border-t border-neutral-200 flex justify-end gap-2 sticky bottom-0 bg-white z-10">
           <Button variant="secondary" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
