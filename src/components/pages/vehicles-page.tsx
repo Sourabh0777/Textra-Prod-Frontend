@@ -32,6 +32,7 @@ export default function VehiclesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IVehicle>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   /** RTK Query hooks */
   const {
@@ -51,6 +52,19 @@ export default function VehiclesPage() {
   const [deleteVehicle, { isLoading: isDeleting }] = useDeleteVehicleMutation();
 
   const vehicles = Array.isArray(vehiclesResponse) ? vehiclesResponse : (vehiclesResponse as any)?.data || [];
+
+  const filteredVehicles = vehicles.filter((vehicle: IVehicle) => {
+    const searchLower = searchQuery.toLowerCase();
+    const customer = vehicle?.customer_id;
+    return (
+      customer?.name?.toLowerCase().includes(searchLower) ||
+      customer?.phone_number?.toLowerCase().includes(searchLower) ||
+      vehicle.brand?.toLowerCase().includes(searchLower) ||
+      vehicle.vehicle_model?.toLowerCase().includes(searchLower) ||
+      vehicle.registration_number?.toLowerCase().includes(searchLower)
+    );
+  });
+
   const customers = Array.isArray(customersResponse) ? customersResponse : (customersResponse as any)?.data || [];
 
   const loading = loadingVehicles || loadingCustomers;
@@ -174,7 +188,23 @@ export default function VehiclesPage() {
 
       <div className="p-4 md:p-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h2 className="text-xl font-semibold text-neutral-900">All Vehicles</h2>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-xl font-semibold text-neutral-900 whitespace-nowrap">Vehicles</h2>
+              <span className="text-sm text-neutral-500 font-medium">
+                ({filteredVehicles.length}
+                {filteredVehicles.length !== vehicles.length ? ` of ${vehicles.length}` : ''})
+              </span>
+            </div>
+            <div className="w-full md:w-72">
+              <Input
+                placeholder="Search customer, registration, brand..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </div>
           <Button onClick={() => handleOpenModal()}>+ Add Vehicle</Button>
         </div>
 
@@ -184,44 +214,72 @@ export default function VehiclesPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>Customer</TableHeaderCell>
-                    <TableHeaderCell>Phone</TableHeaderCell>
-                    <TableHeaderCell>Type</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Brand</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Model</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Registration</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Year</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Daily Travel</TableHeaderCell>
-                    <TableHeaderCell>Actions</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3">Vehicle & Owner</TableHeaderCell>
+                    <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Details</TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3 text-center">
+                      Year / Travel
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {vehicles.map((vehicle: IVehicle) => (
+                  {filteredVehicles.map((vehicle: IVehicle) => (
                     <TableRow key={vehicle._id}>
-                      <TableCell className="font-semibold">{vehicle?.customer_id?.name || '-'}</TableCell>
-                      <TableCell className="font-semibold">{vehicle?.customer_id?.phone_number || '-'}</TableCell>
-                      <TableCell className="font-semibold">{vehicle.vehicle_type}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{vehicle.brand}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{vehicle.vehicle_model}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{vehicle.registration_number}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{vehicle.year}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{vehicle.daily_travel} KM</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleOpenModal(vehicle)}>
-                            Edit
+                      <TableCell className="px-2 md:px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-neutral-900 text-sm sm:text-base">
+                            {vehicle.registration_number}
+                          </span>
+                          <span className="text-xs text-neutral-500">{vehicle?.customer_id?.name || '-'}</span>
+                          <span className="text-[10px] text-neutral-400 md:hidden">
+                            {vehicle.brand} {vehicle.vehicle_model}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell px-2 md:px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-neutral-700 font-medium">
+                            {vehicle.brand} {vehicle.vehicle_model}
+                          </span>
+                          <span className="text-xs text-neutral-500 uppercase">{vehicle.vehicle_type}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3 text-center">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-neutral-700">{vehicle.year}</span>
+                          <span className="text-xs text-neutral-500">{vehicle.daily_travel} KM/day</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-2 md:px-4 py-3 text-right">
+                        <div className="flex justify-end gap-1 sm:gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenModal(vehicle)}
+                            className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                          >
+                            <span className="hidden sm:inline">Edit</span>
+                            <span className="sm:hidden">✎</span>
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(vehicle._id || '')}>
-                            Delete
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDelete(vehicle._id || '')}
+                            className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                          >
+                            <span className="hidden sm:inline">Delete</span>
+                            <span className="sm:hidden">✕</span>
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
-                  {vehicles.length === 0 && (
+                  {filteredVehicles.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-8 text-neutral-500">
-                        No vehicles found.
+                      <TableCell colSpan={4} className="text-center py-12 text-neutral-500">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="text-lg font-medium text-neutral-400">No Vehicles Found</span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}

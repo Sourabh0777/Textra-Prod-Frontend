@@ -35,6 +35,7 @@ export default function CustomersPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<ICustomer>>({ is_active: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   // RTK Query hooks
   const {
@@ -57,6 +58,16 @@ export default function CustomersPage() {
   const customers: ICustomer[] = Array.isArray(customersResponse)
     ? customersResponse
     : (customersResponse as any)?.data || [];
+
+  const filteredCustomers = customers.filter((customer) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      customer.name?.toLowerCase().includes(searchLower) ||
+      customer.phone_number?.toLowerCase().includes(searchLower) ||
+      customer.email?.toLowerCase().includes(searchLower)
+    );
+  });
+
   const businesses: IBusiness[] = Array.isArray(businessesResponse)
     ? businessesResponse
     : (businessesResponse as any)?.data || [];
@@ -182,7 +193,23 @@ export default function CustomersPage() {
 
       <div className="p-4 md:p-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h2 className="text-xl font-semibold text-neutral-900">All Customers</h2>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-xl font-semibold text-neutral-900 whitespace-nowrap">Customers</h2>
+              <span className="text-sm text-neutral-500 font-medium">
+                ({filteredCustomers.length}
+                {filteredCustomers.length !== customers.length ? ` of ${customers.length}` : ''})
+              </span>
+            </div>
+            <div className="w-full md:w-72">
+              <Input
+                placeholder="Search name, phone, email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </div>
           <Button onClick={() => handleOpenModal()}>+ Add Customer</Button>
         </div>
 
@@ -192,42 +219,77 @@ export default function CustomersPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>Name</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Phone</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Email</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Address</TableHeaderCell>
-                    <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell>Actions</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3">Customer Information</TableHeaderCell>
+                    <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">
+                      Contact Details
+                    </TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Joined On</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">Status</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {customers.map((customer: ICustomer) => (
+                  {filteredCustomers.map((customer: ICustomer) => (
                     <TableRow key={customer._id}>
-                      <TableCell className="font-semibold">{customer.name}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{customer.phone_number}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{customer.email || '-'}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{customer.address || '-'}</TableCell>
-                      <TableCell>
-                        <Badge variant={customer.is_active ? 'success' : 'danger'}>
+                      <TableCell className="px-2 md:px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-neutral-900 text-sm sm:text-base">{customer.name}</span>
+                          <span className="text-xs text-neutral-500 sm:hidden">{customer.phone_number}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell px-2 md:px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-neutral-700 font-medium">{customer.phone_number}</span>
+                          {customer.email && <span className="text-xs text-neutral-500">{customer.email}</span>}
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">
+                        <span className="text-sm text-neutral-600">
+                          {customer.created_at
+                            ? new Date(customer.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                              })
+                            : '-'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-2 md:px-4 py-3 text-center sm:text-left">
+                        <Badge variant={customer.is_active ? 'success' : 'danger'} className="text-[10px] sm:text-xs">
                           {customer.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleOpenModal(customer)}>
-                            Edit
+                      <TableCell className="px-2 md:px-4 py-3 text-right">
+                        <div className="flex justify-end gap-1 sm:gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenModal(customer)}
+                            className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                          >
+                            <span className="hidden sm:inline">Edit</span>
+                            <span className="sm:hidden">✎</span>
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(customer._id || '')}>
-                            Delete
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDelete(customer._id || '')}
+                            className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                          >
+                            <span className="hidden sm:inline">Delete</span>
+                            <span className="sm:hidden">✕</span>
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
-                  {customers.length === 0 && (
+                  {filteredCustomers.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
-                        No customers found.
+                      <TableCell colSpan={5} className="text-center py-12 text-neutral-500">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="text-lg font-medium text-neutral-400">No Customers Found</span>
+                          <p className="text-sm">Try adjusting your search criteria</p>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}

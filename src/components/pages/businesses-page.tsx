@@ -30,6 +30,7 @@ export default function BusinessesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IBusiness>>({ is_active: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   /** RTK Query hooks */
   const {
@@ -49,6 +50,16 @@ export default function BusinessesPage() {
   const [deleteBusiness, { isLoading: isDeleting }] = useDeleteBusinessMutation();
 
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
+  const filteredBusinesses = businesses.filter((business: IBusiness) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      business.business_name?.toLowerCase().includes(searchLower) ||
+      business.owner_name?.toLowerCase().includes(searchLower) ||
+      business.city?.toLowerCase().includes(searchLower) ||
+      business.phone_number?.toLowerCase().includes(searchLower)
+    );
+  });
+
   const businessTypes = Array.isArray(businessTypesResponse)
     ? businessTypesResponse
     : (businessTypesResponse as any)?.data || [];
@@ -175,7 +186,23 @@ export default function BusinessesPage() {
 
       <div className="p-4 md:p-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h2 className="text-xl font-semibold text-neutral-900">All Businesses</h2>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-xl font-semibold text-neutral-900 whitespace-nowrap">Businesses</h2>
+              <span className="text-sm text-neutral-500 font-medium">
+                ({filteredBusinesses.length}
+                {filteredBusinesses.length !== businesses.length ? ` of ${businesses.length}` : ''})
+              </span>
+            </div>
+            <div className="w-full md:w-72">
+              <Input
+                placeholder="Search name, owner, city..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </div>
           <Button onClick={() => handleOpenModal()}>+ Add Business</Button>
         </div>
 
@@ -185,42 +212,68 @@ export default function BusinessesPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>Business Name</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">Owner</TableHeaderCell>
-                    <TableHeaderCell className="hidden lg:table-cell">Phone</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell">City</TableHeaderCell>
-                    <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell>Actions</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3">Business Details</TableHeaderCell>
+                    <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Owner Info</TableHeaderCell>
+                    <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Location</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">Status</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {businesses.map((business: IBusiness) => (
+                  {filteredBusinesses.map((business: IBusiness) => (
                     <TableRow key={business._id}>
-                      <TableCell className="font-semibold">{business.business_name}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{business.owner_name}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm">{business.phone_number}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm">{business.city}</TableCell>
-                      <TableCell>
-                        <Badge variant={business.is_active ? 'success' : 'danger'}>
+                      <TableCell className="px-2 md:px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-neutral-900 text-sm sm:text-base whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px] sm:max-w-none">
+                            {business.business_name}
+                          </span>
+                          <span className="text-xs text-neutral-500 md:hidden">{business.owner_name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell px-2 md:px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="text-sm text-neutral-700 font-medium">{business.owner_name}</span>
+                          <span className="text-xs text-neutral-500">{business.phone_number}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">
+                        <span className="text-sm text-neutral-600">{business.city}</span>
+                      </TableCell>
+                      <TableCell className="px-2 md:px-4 py-3 text-center sm:text-left">
+                        <Badge variant={business.is_active ? 'success' : 'danger'} className="text-[10px] sm:text-xs">
                           {business.is_active ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleOpenModal(business)}>
-                            Edit
+                      <TableCell className="px-2 md:px-4 py-3 text-right">
+                        <div className="flex justify-end gap-1 sm:gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleOpenModal(business)}
+                            className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                          >
+                            <span className="hidden sm:inline">Edit</span>
+                            <span className="sm:hidden">✎</span>
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDelete(business._id || '')}>
-                            Delete
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDelete(business._id || '')}
+                            className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                          >
+                            <span className="hidden sm:inline">Delete</span>
+                            <span className="sm:hidden">✕</span>
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
-                  {businesses.length === 0 && (
+                  {filteredBusinesses.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
-                        No businesses found.
+                      <TableCell colSpan={5} className="text-center py-12 text-neutral-500">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="text-lg font-medium text-neutral-400">No Businesses Found</span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}
