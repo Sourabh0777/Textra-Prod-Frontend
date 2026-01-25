@@ -214,8 +214,8 @@ export default function VehiclesPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell className="px-2 md:px-4 py-3">Vehicle & Owner</TableHeaderCell>
-                    <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Details</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3">Vehicle</TableHeaderCell>
+                    <TableHeaderCell className="px-2 md:px-4 py-3">Owner</TableHeaderCell>
                     <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3 text-center">
                       Year / Travel
                     </TableHeaderCell>
@@ -227,21 +227,22 @@ export default function VehiclesPage() {
                     <TableRow key={vehicle._id}>
                       <TableCell className="px-2 md:px-4 py-3">
                         <div className="flex flex-col">
-                          <span className="font-semibold text-neutral-900 text-sm sm:text-base">
+                          <span className="font-bold text-neutral-900 text-sm sm:text-base tracking-wide">
                             {vehicle.registration_number}
                           </span>
-                          <span className="text-xs text-neutral-500">{vehicle?.customer_id?.name || '-'}</span>
-                          <span className="text-[10px] text-neutral-400 md:hidden">
+                          <span className="text-xs text-neutral-600 font-medium">
                             {vehicle.brand} {vehicle.vehicle_model}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell px-2 md:px-4 py-3">
+                      <TableCell className="px-2 md:px-4 py-3">
                         <div className="flex flex-col">
-                          <span className="text-sm text-neutral-700 font-medium">
-                            {vehicle.brand} {vehicle.vehicle_model}
+                          <span className="text-sm text-neutral-800 font-medium">
+                            {vehicle?.customer_id?.name || '-'}
                           </span>
-                          <span className="text-xs text-neutral-500 uppercase">{vehicle.vehicle_type}</span>
+                          <span className="text-[11px] text-neutral-500">
+                            {vehicle?.customer_id?.phone_number || ''}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3 text-center">
