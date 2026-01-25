@@ -22,9 +22,13 @@ import { useFetchBusinessesQuery } from '@/lib/api/endpoints/businessApi';
 import type { ICustomer, IBusiness } from '@/types';
 import { useUser } from '@clerk/nextjs';
 import { toastPromise } from '@/lib/toast-utils';
+import { useFetchUserData } from '@/lib/hooks/useFetchUserData';
 
 export default function CustomersPage() {
   const { user: clerkUser, isLoaded } = useUser();
+  const { user } = useFetchUserData();
+  const businessDetails = user?.business_id;
+  console.log('🚀 ~ CustomersPage ~ businessDetails:', businessDetails);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -66,7 +70,10 @@ export default function CustomersPage() {
       setEditingId(customer._id || null);
       setIsEditMode(true);
     } else {
-      setFormData({ is_active: true });
+      setFormData({
+        is_active: true,
+        business_id: typeof businessDetails === 'object' ? (businessDetails as any)?._id : businessDetails || '',
+      });
       setEditingId(null);
       setIsEditMode(false);
     }
@@ -257,6 +264,7 @@ export default function CustomersPage() {
               }))}
               error={errors.business_id}
               fullWidth
+              disabled
             />
             <Input
               label="Name"
