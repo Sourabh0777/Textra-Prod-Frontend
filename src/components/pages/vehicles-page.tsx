@@ -92,6 +92,7 @@ export default function VehiclesPage() {
     if (!formData.vehicle_model) newErrors.vehicle_model = 'Model is required';
     if (!formData.registration_number) newErrors.registration_number = 'Registration number is required';
     if (!formData.year) newErrors.year = 'Year is required';
+    if (!formData.daily_travel) newErrors.daily_travel = 'Daily travel is required';
     return newErrors;
   };
 
@@ -183,7 +184,6 @@ export default function VehiclesPage() {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>Vehicle ID</TableHeaderCell>
                     <TableHeaderCell>Customer</TableHeaderCell>
                     <TableHeaderCell>Phone</TableHeaderCell>
                     <TableHeaderCell>Type</TableHeaderCell>
@@ -191,13 +191,13 @@ export default function VehiclesPage() {
                     <TableHeaderCell className="hidden lg:table-cell">Model</TableHeaderCell>
                     <TableHeaderCell className="hidden lg:table-cell">Registration</TableHeaderCell>
                     <TableHeaderCell className="hidden md:table-cell">Year</TableHeaderCell>
+                    <TableHeaderCell className="hidden md:table-cell">Daily Travel</TableHeaderCell>
                     <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {vehicles.map((vehicle: IVehicle) => (
                     <TableRow key={vehicle._id}>
-                      <TableCell className="font-semibold">{vehicle._id}</TableCell>
                       <TableCell className="font-semibold">{vehicle?.customer_id?.name || '-'}</TableCell>
                       <TableCell className="font-semibold">{vehicle?.customer_id?.phone_number || '-'}</TableCell>
                       <TableCell className="font-semibold">{vehicle.vehicle_type}</TableCell>
@@ -205,6 +205,7 @@ export default function VehiclesPage() {
                       <TableCell className="hidden lg:table-cell text-sm">{vehicle.vehicle_model}</TableCell>
                       <TableCell className="hidden lg:table-cell text-sm">{vehicle.registration_number}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm">{vehicle.year}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm">{vehicle.daily_travel} KM</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" size="sm" onClick={() => handleOpenModal(vehicle)}>
@@ -321,6 +322,28 @@ export default function VehiclesPage() {
               value={formData.year || ''}
               onChange={handleChange}
               error={errors.year}
+              fullWidth
+            />
+            <Input
+              label="Daily Travel (KM)"
+              name="daily_travel"
+              type="number"
+              placeholder="e.g. 30"
+              value={formData.daily_travel || ''}
+              onChange={(e) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  daily_travel: Number(e.target.value),
+                }));
+                if (errors.daily_travel) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.daily_travel;
+                    return next;
+                  });
+                }
+              }}
+              error={errors.daily_travel}
               fullWidth
             />
           </form>

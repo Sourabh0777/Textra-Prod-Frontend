@@ -42,6 +42,7 @@ export interface IVehicle {
   vehicle_model: string;
   registration_number: string;
   year: number;
+  daily_travel: number;
   created_at?: Date;
 }
 
