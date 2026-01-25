@@ -71,6 +71,7 @@ const BusinessPage = () => {
   /** Save business details */
   const handleSave = async () => {
     console.log('formData', formData);
+    console.log('formData', formData);
 
     try {
       setErrors({});
