@@ -179,7 +179,7 @@ export default function ServicesPage() {
         </div>
 
         <Card>
-          <CardBody className="p-0">
+          <CardBody className="!p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHead>

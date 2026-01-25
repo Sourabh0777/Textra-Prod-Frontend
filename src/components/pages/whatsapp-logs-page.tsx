@@ -68,7 +68,7 @@ export default function WhatsAppLogsPage() {
 
       <div className="p-4 md:p-8">
         <Card>
-          <CardBody className="p-0">
+          <CardBody className="!p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHead>

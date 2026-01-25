@@ -163,7 +163,7 @@ export default function BusinessTypesPage() {
         </div>
 
         <Card>
-          <CardBody className="p-0">
+          <CardBody className="!p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHead>
