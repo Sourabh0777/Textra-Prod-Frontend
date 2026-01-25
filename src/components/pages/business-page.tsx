@@ -44,7 +44,7 @@ const BusinessPage = () => {
 
   /** Populate form on load */
   useEffect(() => {
-    const businessData = businessResponse?.data || businessResponse;
+    const businessData = (businessResponse as any)?.data || businessResponse;
     if (businessData) {
       setFormData(businessData);
     }
@@ -133,8 +133,8 @@ const BusinessPage = () => {
               onChange={handleChange}
               options={
                 businessTypes?.map((type) => ({
-                  value: type?._id, // ✅ ID-based
-                  label: type?.name,
+                  value: type?._id || '',
+                  label: type?.name || '',
                 })) || []
               }
               error={errors.business_type_id}
