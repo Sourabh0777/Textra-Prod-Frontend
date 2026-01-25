@@ -78,21 +78,10 @@ export default function ServicesPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => {
-      const nextValue =
-        name === 'service_interval_days' ? Number(value) : name.includes('date') ? new Date(value) : value;
-      const updated = { ...prev, [name]: nextValue };
-
-      // Auto-calculate next service date
-      if (name === 'last_service_date' || name === 'service_interval_days') {
-        const nextDate = calculateNextServiceDate(updated.last_service_date, updated.service_interval_days);
-        if (nextDate) {
-          updated.next_service_date = nextDate;
-        }
-      }
-
-      return updated;
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'service_interval_days' ? Number(value) : name.includes('date') ? new Date(value) : value,
+    }));
     if (errors[name]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -106,7 +95,6 @@ export default function ServicesPage() {
     const newErrors: Record<string, string> = {};
     if (!formData.vehicle_id) newErrors.vehicle_id = 'Vehicle is required';
     if (!formData.last_service_date) newErrors.last_service_date = 'Last service date is required';
-    if (!formData.next_service_date) newErrors.next_service_date = 'Next service date is required';
     if (!formData.service_interval_days) newErrors.service_interval_days = 'Service interval is required';
     return newErrors;
   };
@@ -312,16 +300,6 @@ export default function ServicesPage() {
               onChange={handleChange}
               error={errors.last_service_date}
               fullWidth
-            />
-            <Input
-              label="Next Service Date (Auto-calculated)"
-              name="next_service_date"
-              type="date"
-              value={formData.next_service_date ? new Date(formData.next_service_date).toISOString().split('T')[0] : ''}
-              onChange={handleChange}
-              error={errors.next_service_date}
-              fullWidth
-              disabled
             />
             <Input
               label="Service Interval (days)"
