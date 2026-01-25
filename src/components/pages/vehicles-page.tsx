@@ -10,7 +10,9 @@ import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } fro
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
 import { Loader } from '@/components/ui/loader';
+import { VEHICLE_TYPES, INDIAN_TWO_WHEELER_BRANDS } from '@/config/vehicle-config';
 import {
   useFetchVehiclesQuery,
   useCreateVehicleMutation,
@@ -240,35 +242,57 @@ export default function VehiclesPage() {
         <div className="p-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-            <Select
+            <Combobox
               label="Customer"
-              name="customer_id"
+              placeholder="Select a customer"
+              searchPlaceholder="Search by name, phone or email..."
               value={
                 typeof formData.customer_id === 'object'
                   ? (formData.customer_id as any)?._id
                   : formData.customer_id || ''
               }
-              onChange={handleChange}
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, customer_id: val as any }));
+                if (errors.customer_id) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.customer_id;
+                    return next;
+                  });
+                }
+              }}
               options={customers.map((customer: ICustomer) => ({
                 value: customer._id || '',
-                label: customer.name,
+                label: `${customer.name} | ${customer.phone_number} ${customer.email ? `| ${customer.email}` : ''}`,
+                searchTerms: `${customer.name} ${customer.phone_number} ${customer.email || ''}`.toLowerCase(),
               }))}
               error={errors.customer_id}
               fullWidth
             />
-            <Input
+            <Select
               label="Vehicle Type"
               name="vehicle_type"
               value={formData.vehicle_type || ''}
               onChange={handleChange}
+              options={VEHICLE_TYPES}
               error={errors.vehicle_type}
               fullWidth
             />
-            <Input
+            <Combobox
               label="Brand"
-              name="brand"
+              placeholder="Select or search brand"
               value={formData.brand || ''}
-              onChange={handleChange}
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, brand: val }));
+                if (errors.brand) {
+                  setErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.brand;
+                    return next;
+                  });
+                }
+              }}
+              options={INDIAN_TWO_WHEELER_BRANDS}
               error={errors.brand}
               fullWidth
             />
@@ -281,17 +305,19 @@ export default function VehiclesPage() {
               fullWidth
             />
             <Input
-              label="Registration Number"
+              label="Registration Number / Number Plate"
               name="registration_number"
+              placeholder="e.g. MH 12 AB 1234"
               value={formData.registration_number || ''}
               onChange={handleChange}
               error={errors.registration_number}
               fullWidth
             />
             <Input
-              label="Year"
+              label="Model Year"
               name="year"
               type="number"
+              placeholder="e.g. 2023"
               value={formData.year || ''}
               onChange={handleChange}
               error={errors.year}
