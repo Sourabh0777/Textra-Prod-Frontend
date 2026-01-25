@@ -20,7 +20,8 @@ import { useUser } from '@clerk/nextjs';
 import { toastPromise } from '@/lib/toast-utils';
 
 // Sub-components
-import { ReminderTable } from '@/components/reminders/reminder-table';
+// Sub-components
+import { ReminderTabs } from '@/components/reminders/reminder-tabs';
 import { ReminderModal } from '@/components/reminders/reminder-modal';
 import { CheckInDialog } from '@/components/reminders/check-in-dialog';
 
@@ -209,18 +210,14 @@ export default function RemindersPage() {
           <Button onClick={() => handleOpenModal()}>+ Add Reminder</Button>
         </div>
 
-        <Card className="!px-0 !py-0">
-          <CardBody className="!px-2 !py-2">
-            <ReminderTable
-              reminders={reminders}
-              onResend={handleResend}
-              onCheckIn={handleCheckInClick}
-              onEdit={handleOpenModal}
-              onDelete={handleDelete}
-              isCheckInLoading={isMarkingVisited}
-            />
-          </CardBody>
-        </Card>
+        <ReminderTabs
+          reminders={reminders}
+          onResend={handleResend}
+          onCheckIn={handleCheckInClick}
+          onEdit={handleOpenModal}
+          onDelete={handleDelete}
+          isCheckInLoading={isMarkingVisited}
+        />
       </div>
 
       <ReminderModal
