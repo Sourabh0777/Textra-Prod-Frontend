@@ -60,7 +60,7 @@ export function ReminderModal({
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Scheduled For (Notification)"
+              label="Scheduled Reminder"
               name="scheduled_for"
               type="date"
               value={formData.scheduled_for ? new Date(formData.scheduled_for).toISOString().split('T')[0] : ''}
