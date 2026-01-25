@@ -69,19 +69,9 @@ export default function ServicesPage() {
     setIsModalOpen(true);
   };
 
-  const calculateNextServiceDate = (lastDate: string | Date | undefined, interval: number | undefined) => {
-    if (!lastDate || !interval) return undefined;
-    const date = new Date(lastDate);
-    date.setDate(date.getDate() + interval);
-    return date;
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'service_interval_days' ? Number(value) : name.includes('date') ? new Date(value) : value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -95,7 +85,6 @@ export default function ServicesPage() {
     const newErrors: Record<string, string> = {};
     if (!formData.vehicle_id) newErrors.vehicle_id = 'Vehicle is required';
     if (!formData.last_service_date) newErrors.last_service_date = 'Last service date is required';
-    if (!formData.service_interval_days) newErrors.service_interval_days = 'Service interval is required';
     return newErrors;
   };
 
@@ -183,7 +172,10 @@ export default function ServicesPage() {
       <div className="p-4 md:p-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h2 className="text-xl font-semibold text-neutral-900">All Services</h2>
-          <Button onClick={() => handleOpenModal()}>+ Add Service</Button>
+          <div className="flex flex-row gap-4">
+            <Button onClick={() => handleOpenModal()}>+ General Repair</Button>
+            <Button onClick={() => handleOpenModal()}>+ Regular Service</Button>
+          </div>
         </div>
 
         <Card>
@@ -301,7 +293,7 @@ export default function ServicesPage() {
               error={errors.last_service_date}
               fullWidth
             />
-            <Input
+            {/* <Input
               label="Service Interval (days)"
               name="service_interval_days"
               type="number"
@@ -309,7 +301,7 @@ export default function ServicesPage() {
               onChange={handleChange}
               error={errors.service_interval_days}
               fullWidth
-            />
+            /> */}
             <div>
               <label className="block text-sm font-medium text-neutral-900 mb-1">Notes (Optional)</label>
               <textarea
