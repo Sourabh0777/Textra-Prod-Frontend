@@ -67,7 +67,7 @@ export function ReminderTabs({
       </div>
 
       <Card className="!px-0 !py-0">
-        <CardBody className="!px-2 !py-2">
+        <CardBody className="!px-0 !py-0">
           <ReminderTable
             reminders={filteredReminders}
             onResend={onResend}
