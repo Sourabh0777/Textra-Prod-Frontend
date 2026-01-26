@@ -7,9 +7,10 @@ import {
   useUpdateReminderMutation,
   useDeleteReminderMutation,
   useMarkVisitedMutation,
+  useTriggerReminderWorkerMutation,
 } from '@/lib/api/endpoints/reminderApi';
 import { useFetchServicesQuery } from '@/lib/api/endpoints/serviceApi';
-import type { IReminder } from '@/types';
+import { IReminder, ReminderStatus } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 
 export function useRemindersPage() {
@@ -19,7 +20,7 @@ export function useRemindersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: 'pending' });
+  const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: ReminderStatus.PENDING });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -57,7 +58,7 @@ export function useRemindersPage() {
       setEditingId(reminder._id || null);
       setIsEditMode(true);
     } else {
-      setFormData({ retry_count: 0, status: 'pending' });
+      setFormData({ retry_count: 0, status: ReminderStatus.PENDING });
       setEditingId(null);
       setIsEditMode(false);
     }
@@ -112,7 +113,7 @@ export function useRemindersPage() {
         });
       }
       setIsModalOpen(false);
-      setFormData({ retry_count: 0, status: 'pending' });
+      setFormData({ retry_count: 0, status: ReminderStatus.PENDING });
     } catch (err: any) {
       if (err?.data?.errors) {
         setErrors(err.data.errors);
@@ -155,12 +156,20 @@ export function useRemindersPage() {
     }
   };
 
+  const [triggerWorker, { isLoading: isTriggeringWorker }] = useTriggerReminderWorkerMutation();
+
   const handleResend = async (reminder: IReminder) => {
-    toastPromise(Promise.resolve(), {
-      loading: 'Preparing to resend...',
-      success: 'Reminder notification queued for resending',
-      error: 'Failed to resend reminder',
-    });
+    if (!reminder._id) return;
+
+    try {
+      await toastPromise(triggerWorker({ reminder_id: reminder._id }).unwrap(), {
+        loading: 'Preparing to resend...',
+        success: (res) => res?.message || 'Reminder notification queued for resending',
+        error: (err) => err?.data?.error || err?.data?.message || 'Failed to resend reminder',
+      });
+    } catch (err) {
+      console.error('Resend error', err);
+    }
   };
 
   const filteredReminders = reminders.filter((reminder: IReminder) => {

@@ -40,6 +40,14 @@ export const reminderApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Reminder'],
     }),
+    triggerReminderWorker: builder.mutation<any, { reminder_id: string }>({
+      query: (body) => ({
+        url: '/reminders/trigger-worker',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Reminder'],
+    }),
   }),
 });
 
@@ -50,4 +58,5 @@ export const {
   useUpdateReminderMutation,
   useDeleteReminderMutation,
   useMarkVisitedMutation,
+  useTriggerReminderWorkerMutation,
 } = reminderApi;
