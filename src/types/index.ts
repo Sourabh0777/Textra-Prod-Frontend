@@ -44,6 +44,8 @@ export interface IVehicle {
   year: number;
   daily_travel: number;
   service_date?: Date;
+  reminders?: IReminder[];
+  active_reminder?: IReminder;
   created_at?: Date;
 }
 

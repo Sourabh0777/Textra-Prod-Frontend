@@ -21,6 +21,7 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
             <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3 text-center">
               Year / Travel
             </TableHeaderCell>
+            <TableHeaderCell className="px-2 md:px-4 py-3 text-center">Reminder</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
           </TableRow>
         </TableHead>
@@ -49,6 +50,30 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
                   <span className="text-xs text-neutral-500">{vehicle.daily_travel} KM/day</span>
                 </div>
               </TableCell>
+              <TableCell className="px-2 md:px-4 py-3 text-center">
+                {vehicle.active_reminder ? (
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full mb-1">
+                      Set
+                    </span>
+                    <span className="text-sm text-neutral-700">
+                      {new Date(vehicle.active_reminder.scheduled_for).toLocaleDateString()}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                      Not Set
+                    </span>
+                    <button
+                      onClick={() => onEdit(vehicle)}
+                      className="text-[11px] text-primary hover:underline font-medium"
+                    >
+                      Create Reminder
+                    </button>
+                  </div>
+                )}
+              </TableCell>
               <TableCell className="px-2 md:px-4 py-3 text-right">
                 <div className="flex justify-end gap-1 sm:gap-2">
                   <Button
@@ -75,7 +100,7 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
           ))}
           {vehicles.length === 0 && (
             <TableRow>
-              <TableCell colSpan={4} className="text-center py-12 text-neutral-500">
+              <TableCell colSpan={5} className="text-center py-12 text-neutral-500">
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-lg font-medium text-neutral-400">No Vehicles Found</span>
                 </div>
