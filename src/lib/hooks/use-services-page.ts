@@ -46,11 +46,11 @@ export function useServicesPage() {
     const vehicle = service.vehicle_id as any;
     const customer = vehicle?.customer_id as any;
     return (
-      vehicle?.registration_number?.toLowerCase().includes(searchLower) ||
-      vehicle?.brand?.toLowerCase().includes(searchLower) ||
-      vehicle?.vehicle_model?.toLowerCase().includes(searchLower) ||
-      customer?.name?.toLowerCase().includes(searchLower) ||
-      customer?.phone_number?.toLowerCase().includes(searchLower)
+      (vehicle?.registration_number?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle?.brand?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle?.vehicle_model?.toLowerCase() || '').includes(searchLower) ||
+      (customer?.name?.toLowerCase() || '').includes(searchLower) ||
+      (customer?.phone_number?.toLowerCase() || '').includes(searchLower)
     );
   });
 

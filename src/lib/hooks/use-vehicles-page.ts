@@ -47,11 +47,11 @@ export function useVehiclesPage() {
     const searchLower = searchQuery.toLowerCase();
     const customer = vehicle?.customer_id;
     return (
-      customer?.name?.toLowerCase().includes(searchLower) ||
-      customer?.phone_number?.toLowerCase().includes(searchLower) ||
-      vehicle.brand?.toLowerCase().includes(searchLower) ||
-      vehicle.vehicle_model?.toLowerCase().includes(searchLower) ||
-      vehicle.registration_number?.toLowerCase().includes(searchLower)
+      (customer?.name?.toLowerCase() || '').includes(searchLower) ||
+      (customer?.phone_number?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle.brand?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle.vehicle_model?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle.registration_number?.toLowerCase() || '').includes(searchLower)
     );
   });
 

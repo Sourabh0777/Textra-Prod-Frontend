@@ -41,10 +41,10 @@ export function useBusinessesPage() {
   const filteredBusinesses = businesses.filter((business: IBusiness) => {
     const searchLower = searchQuery.toLowerCase();
     return (
-      business.business_name?.toLowerCase().includes(searchLower) ||
-      business.owner_name?.toLowerCase().includes(searchLower) ||
-      business.city?.toLowerCase().includes(searchLower) ||
-      business.phone_number?.toLowerCase().includes(searchLower)
+      (business.business_name?.toLowerCase() || '').includes(searchLower) ||
+      (business.owner_name?.toLowerCase() || '').includes(searchLower) ||
+      (business.city?.toLowerCase() || '').includes(searchLower) ||
+      (business.phone_number?.toLowerCase() || '').includes(searchLower)
     );
   });
 

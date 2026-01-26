@@ -21,6 +21,7 @@ export function useRemindersPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: 'pending' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   // State for Check-in Dialog
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
@@ -162,8 +163,21 @@ export function useRemindersPage() {
     });
   };
 
+  const filteredReminders = reminders.filter((reminder: IReminder) => {
+    const searchLower = searchQuery.toLowerCase();
+    const customer = reminder.customer_id;
+    const vehicle = reminder.vehicle_id;
+    return (
+      (customer?.name?.toLowerCase() || '').includes(searchLower) ||
+      (customer?.phone_number?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle?.registration_number?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle?.brand?.toLowerCase() || '').includes(searchLower)
+    );
+  });
+
   return {
     reminders,
+    filteredReminders,
     services,
     loading,
     fetchError,
@@ -177,6 +191,8 @@ export function useRemindersPage() {
     selectedReminder,
     isMarkingVisited,
     isSubmitting,
+    searchQuery,
+    setSearchQuery,
     handleOpenModal,
     handleChange,
     handleSubmit,

@@ -5,6 +5,7 @@ import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Loader } from 'lucide-react';
 import { useRemindersPage } from '@/lib/hooks/use-reminders-page';
 
@@ -16,6 +17,7 @@ import { CheckInDialog } from '@/components/reminders/check-in-dialog';
 export default function RemindersPage() {
   const {
     reminders,
+    filteredReminders,
     services,
     loading,
     fetchError,
@@ -29,6 +31,8 @@ export default function RemindersPage() {
     selectedReminder,
     isMarkingVisited,
     isSubmitting,
+    searchQuery,
+    setSearchQuery,
     handleOpenModal,
     handleChange,
     handleSubmit,
@@ -70,12 +74,25 @@ export default function RemindersPage() {
 
       <div className="p-4 md:p-8">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h2 className="text-xl font-semibold text-neutral-900">All Reminders</h2>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-xl font-semibold text-neutral-900 whitespace-nowrap">Reminders</h2>
+              <span className="text-sm text-neutral-500 font-medium">({filteredReminders.length})</span>
+            </div>
+            <div className="w-full md:w-72">
+              <Input
+                placeholder="Search customer, registration..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </div>
           <Button onClick={() => handleOpenModal()}>+ Add Reminder</Button>
         </div>
 
         <ReminderTabs
-          reminders={reminders}
+          reminders={filteredReminders}
           onResend={handleResend}
           onCheckIn={handleCheckInClick}
           onEdit={handleOpenModal}

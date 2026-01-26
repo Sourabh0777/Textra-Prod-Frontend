@@ -35,6 +35,16 @@ export function useBusinessTypesPage() {
     ? businessTypesResponse
     : (businessTypesResponse as any)?.data || [];
 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredBusinessTypes = businessTypes.filter((type: IBusinessType) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      (type.name?.toLowerCase() || '').includes(searchLower) ||
+      (type.description?.toLowerCase() || '').includes(searchLower)
+    );
+  });
+
   const handleOpenModal = (type?: IBusinessType) => {
     if (type) {
       setFormData(type);
@@ -119,6 +129,7 @@ export function useBusinessTypesPage() {
 
   return {
     businessTypes,
+    filteredBusinessTypes,
     loading,
     isSubmitting,
     fetchError,
@@ -129,6 +140,8 @@ export function useBusinessTypesPage() {
     setFormData,
     errors,
     setErrors,
+    searchQuery,
+    setSearchQuery,
     handleOpenModal,
     handleChange,
     handleSubmit,

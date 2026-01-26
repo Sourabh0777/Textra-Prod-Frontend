@@ -48,9 +48,9 @@ export function useCustomersPage() {
   const filteredCustomers = customers.filter((customer) => {
     const searchLower = searchQuery.toLowerCase();
     return (
-      customer.name?.toLowerCase().includes(searchLower) ||
-      customer.phone_number?.toLowerCase().includes(searchLower) ||
-      customer.email?.toLowerCase().includes(searchLower)
+      (customer.name?.toLowerCase() || '').includes(searchLower) ||
+      (customer.phone_number?.toLowerCase() || '').includes(searchLower) ||
+      (customer.email?.toLowerCase() || '').includes(searchLower)
     );
   });
 

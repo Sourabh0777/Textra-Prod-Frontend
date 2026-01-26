@@ -4,12 +4,14 @@
 import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Card, CardBody } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Loader } from '@/components/ui/loader';
 import { useWhatsAppLogsPage } from '@/lib/hooks/use-whatsapp-logs-page';
 import { WhatsAppLogTable } from '@/components/whatsapp-logs/whatsapp-log-table';
 
 export default function WhatsAppLogsPage() {
-  const { logs, loading, fetchError, statusVariant, formatDate } = useWhatsAppLogsPage();
+  const { logs, loading, fetchError, statusVariant, formatDate, searchQuery, setSearchQuery, filteredLogs } =
+    useWhatsAppLogsPage();
 
   if (loading) {
     return (
@@ -42,9 +44,26 @@ export default function WhatsAppLogsPage() {
       <Header title="WhatsApp Logs" subtitle="View message delivery logs" />
 
       <div className="p-4 md:p-8">
+        <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 w-full md:w-auto">
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-xl font-semibold text-neutral-900 whitespace-nowrap">Logs</h2>
+              <span className="text-sm text-neutral-500 font-medium">({filteredLogs.length})</span>
+            </div>
+            <div className="w-full md:w-72">
+              <Input
+                placeholder="Search phone, template..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </div>
+        </div>
+
         <Card>
           <CardBody className="!p-0">
-            <WhatsAppLogTable logs={logs} statusVariant={statusVariant} onFormatDate={formatDate} />
+            <WhatsAppLogTable logs={filteredLogs} statusVariant={statusVariant} onFormatDate={formatDate} />
           </CardBody>
         </Card>
       </div>
