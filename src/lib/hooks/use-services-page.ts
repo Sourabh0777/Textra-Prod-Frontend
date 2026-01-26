@@ -104,13 +104,13 @@ export function useServicesPage() {
         await toastPromise(updateService({ id: editingId, data: formData }).unwrap(), {
           loading: 'Updating service...',
           success: 'Service updated successfully',
-          error: (err) => err?.data?.message || 'Failed to update service',
+          error: (err) => err?.data?.error || err?.data?.message || 'Failed to update service',
         });
       } else {
         await toastPromise(createService(formData).unwrap(), {
           loading: 'Adding service...',
           success: (data) => data?.message || 'Service added successfully',
-          error: (err) => err?.data?.message || 'Failed to add service',
+          error: (err) => err?.data?.error || err?.data?.message || 'Failed to add service',
         });
       }
       setIsModalOpen(false);
@@ -128,7 +128,7 @@ export function useServicesPage() {
         await toastPromise(deleteService(id).unwrap(), {
           loading: 'Deleting service...',
           success: 'Service deleted successfully',
-          error: (err) => err?.data?.message || 'Failed to delete service',
+          error: (err) => err?.data?.error || err?.data?.message || 'Failed to delete service',
         });
       } catch (err: any) {
         console.error('Delete error', err);
