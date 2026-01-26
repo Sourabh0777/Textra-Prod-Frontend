@@ -16,19 +16,19 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
       <Table>
         <TableHead>
           <TableRow>
-            <TableHeaderCell className="px-2 md:px-4 py-3">Vehicle</TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3">Owner</TableHeaderCell>
-            <TableHeaderCell className="hidden xl:table-cell px-2 md:px-4 py-3 text-center">
+            <TableHeaderCell className="!px-3 md:px-4 py-3">Vehicle</TableHeaderCell>
+            <TableHeaderCell className="!px-3 md:px-4 py-3">Owner</TableHeaderCell>
+            <TableHeaderCell className="hidden xl:table-cell !px-3 md:px-4 py-3 text-center">
               Year / Travel
             </TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3 text-center">Reminder</TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
+            <TableHeaderCell className="!px-3 md:px-4 py-3 text-center">Reminder</TableHeaderCell>
+            <TableHeaderCell className="!px-3 md:px-4 py-3 text-right">Actions</TableHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {vehicles.map((vehicle: IVehicle) => (
             <TableRow key={vehicle._id}>
-              <TableCell className="px-2 md:px-4 py-3">
+              <TableCell className="!px-3 md:px-4 py-3">
                 <div className="flex flex-col">
                   <span className="font-bold text-neutral-900 text-sm sm:text-base tracking-wide">
                     {vehicle.registration_number}
@@ -38,19 +38,19 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
                   </span>
                 </div>
               </TableCell>
-              <TableCell className="px-2 md:px-4 py-3">
+              <TableCell className="!px-3 md:px-4 py-3">
                 <div className="flex flex-col">
                   <span className="text-sm text-neutral-800 font-medium">{vehicle?.customer_id?.name || '-'}</span>
                   <span className="text-[11px] text-neutral-500">{vehicle?.customer_id?.phone_number || ''}</span>
                 </div>
               </TableCell>
-              <TableCell className="hidden xl:table-cell px-2 md:px-4 py-3 text-center">
+              <TableCell className="hidden xl:table-cell !px-3 md:px-4 py-3 text-center">
                 <div className="flex flex-col">
                   <span className="text-sm text-neutral-700">{vehicle.year}</span>
                   <span className="text-xs text-neutral-500">{vehicle.daily_travel} KM/day</span>
                 </div>
               </TableCell>
-              <TableCell className="px-2 md:px-4 py-3 text-center">
+              <TableCell className="!px-3 md:px-4 py-3 text-center">
                 {vehicle.active_reminder ? (
                   <div className="flex flex-col items-center">
                     <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded-full mb-1">
@@ -74,7 +74,7 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
                   </div>
                 )}
               </TableCell>
-              <TableCell className="px-2 md:px-4 py-3 text-right">
+              <TableCell className="!px-3 md:px-4 py-3 text-right">
                 <div className="flex justify-end gap-1 sm:gap-2">
                   <Button
                     variant="ghost"
