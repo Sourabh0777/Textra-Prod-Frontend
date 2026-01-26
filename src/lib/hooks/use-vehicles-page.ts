@@ -75,9 +75,10 @@ export function useVehiclesPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    const normalizedValue = name === 'registration_number' ? value.toUpperCase() : value;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'year' ? Number(value) : value,
+      [name]: name === 'year' ? Number(value) : normalizedValue,
     }));
     if (errors[name]) {
       setErrors((prev) => {

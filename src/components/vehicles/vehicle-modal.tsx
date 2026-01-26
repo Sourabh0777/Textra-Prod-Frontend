@@ -93,12 +93,16 @@ export function VehicleModal({
           <Input
             label="Registration Number / Number Plate"
             name="registration_number"
-            placeholder="e.g. MH 12 AB 1234"
+            placeholder="e.g. MH12AB1234"
+            className="uppercase"
             value={formData.registration_number || ''}
             onChange={onInputChange}
             error={errors.registration_number}
             fullWidth
           />
+          <p className="mt-[-12px] text-[10px] text-neutral-500">
+            Format: State Code + District + Series + Number (e.g., MH 12 AB 1234)
+          </p>
           <Input
             label="Model Year"
             name="year"
