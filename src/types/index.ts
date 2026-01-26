@@ -48,6 +48,14 @@ export interface IVehicle {
   created_at?: Date;
 }
 
+export enum ReminderStatus {
+  PENDING = 'pending',
+  SENT_1 = 'sent_1',
+  SENT_2 = 'sent_2',
+  CUSTOMER_NOT_RESPONDING = 'customer_not_responding',
+  COMPLETED = 'completed',
+}
+
 export interface IService {
   _id?: string;
   vehicle_id: IVehicle;
@@ -67,7 +75,7 @@ export interface IReminder {
   business_id?: string;
   scheduled_for: Date;
   due_date: Date;
-  status: string;
+  status: ReminderStatus;
   retry_count: number;
   last_attempt_at?: Date;
   last_sent_at?: Date;
