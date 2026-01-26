@@ -16,10 +16,10 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
       <Table>
         <TableHead>
           <TableRow>
-            <TableHeaderCell className="px-2 md:px-4 py-3">Vehicle</TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3">Service Info</TableHeaderCell>
-            <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Status</TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
+            <TableHeaderCell className="!px-3 md:px-4 py-3">Vehicle</TableHeaderCell>
+            <TableHeaderCell className="!px-3 md:px-4 py-3">Service Info</TableHeaderCell>
+            <TableHeaderCell className="hidden lg:table-cell !px-3 md:px-4 py-3">Status</TableHeaderCell>
+            <TableHeaderCell className="!px-3 md:px-4 py-3 text-right">Actions</TableHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -28,7 +28,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
             const customer = vehicle?.customer_id as any;
             return (
               <TableRow key={service._id}>
-                <TableCell className="px-2 md:px-4 py-3">
+                <TableCell className="!px-3 md:px-4 py-3">
                   <div className="flex flex-col">
                     <span className="font-bold text-neutral-900 text-sm sm:text-base tracking-wide">
                       {vehicle?.registration_number || 'N/A'}
@@ -41,7 +41,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="px-2 md:px-4 py-3">
+                <TableCell className="!px-3 md:px-4 py-3">
                   <div className="flex flex-col">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[10px] text-neutral-400 font-bold uppercase">Last:</span>
@@ -68,7 +68,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">
+                <TableCell className="hidden lg:table-cell px-1 md:px-4 py-3">
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
                       service.status === 'completed'
@@ -79,7 +79,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
                     {service.status}
                   </span>
                 </TableCell>
-                <TableCell className="px-2 md:px-4 py-3 text-right">
+                <TableCell className="!px-3 md:px-4 py-3 text-right">
                   <div className="flex justify-end gap-1 sm:gap-2">
                     <Button
                       variant="ghost"
