@@ -1,0 +1,86 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import {
+  useGetBusinessDetailsQuery,
+  useUpdateBusinessDetailsMutation,
+  useFetchBusinessTypesQuery,
+} from '@/lib/api/endpoints/businessApi';
+import type { IBusiness } from '@/types';
+import { toastPromise } from '@/lib/toast-utils';
+
+export function useBusinessProfile() {
+  const { user: clerkUser, isLoaded } = useUser();
+  const [formData, setFormData] = useState<Partial<IBusiness>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  /** Fetch business details */
+  const {
+    data: businessResponse,
+    isLoading: loading,
+    error,
+  } = useGetBusinessDetailsQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  /** Fetch business types */
+  const { data: businessTypes } = useFetchBusinessTypesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  /** Update mutation */
+  const [updateBusinessDetails, { isLoading: saving }] = useUpdateBusinessDetailsMutation();
+
+  /** Populate form on load */
+  useEffect(() => {
+    const businessData = (businessResponse as any)?.data || businessResponse;
+    if (businessData) {
+      setFormData(businessData);
+    }
+  }, [businessResponse]);
+
+  /** Handle input/select change */
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'is_active' ? value === 'true' : value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+  };
+
+  /** Save business details */
+  const handleSave = async () => {
+    try {
+      setErrors({});
+      await toastPromise(updateBusinessDetails(formData).unwrap(), {
+        loading: 'Saving business details...',
+        success: 'Business details updated successfully',
+        error: (err) => err?.data?.message || 'Failed to update business details',
+      });
+    } catch (err: any) {
+      if (err?.data?.errors) {
+        setErrors(err.data.errors);
+      }
+    }
+  };
+
+  return {
+    formData,
+    businessTypes,
+    loading,
+    saving,
+    error,
+    errors,
+    handleChange,
+    handleSave,
+  };
+}
