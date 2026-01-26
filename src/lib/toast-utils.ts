@@ -29,7 +29,7 @@ export const toastPromise = async <T>(promise: Promise<T>, options: ToastPromise
         return error(err);
       }
       // Handle RTK Query error objects if they exist
-      const message = err?.data?.message || err?.message || error;
+      const message = err?.data?.error || err?.data?.message || err?.message || error;
       return message;
     },
   });
