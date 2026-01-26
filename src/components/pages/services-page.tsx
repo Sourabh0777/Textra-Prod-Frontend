@@ -122,7 +122,7 @@ export default function ServicesPage() {
       } else {
         await toastPromise(createService(formData).unwrap(), {
           loading: 'Adding service...',
-          success: 'Service added successfully',
+          success: (data) => data?.message || 'Service added successfully',
           error: (err) => err?.data?.message || 'Failed to add service',
         });
       }

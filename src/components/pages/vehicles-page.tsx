@@ -150,7 +150,7 @@ export default function VehiclesPage() {
           }).unwrap(),
           {
             loading: 'Creating service record...',
-            success: 'Service record & reminder created!',
+            success: (data) => data?.message || 'Service record & reminder created!',
             error: (err) => err?.data?.message || 'Failed to create service record',
           },
         );
