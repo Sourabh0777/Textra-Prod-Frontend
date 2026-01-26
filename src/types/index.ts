@@ -29,7 +29,6 @@ export interface ICustomer {
   name: string;
   phone_number: string;
   email?: string;
-  address?: string;
   is_active: boolean;
   created_at?: Date;
 }

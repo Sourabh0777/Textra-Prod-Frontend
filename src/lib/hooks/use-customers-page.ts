@@ -11,6 +11,7 @@ import { useFetchBusinessesQuery } from '@/lib/api/endpoints/businessApi';
 import { useFetchUserData } from '@/lib/hooks/useFetchUserData';
 import type { ICustomer } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
+import { customerSchema } from '@/lib/validations/schemas';
 
 export function useCustomersPage() {
   const { user: clerkUser, isLoaded } = useUser();
@@ -92,11 +93,18 @@ export function useCustomersPage() {
   };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.business_id) newErrors.business_id = 'Business is required';
-    if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
-    return newErrors;
+    const result = customerSchema.safeParse(formData);
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        const path = issue.path[0] as string;
+        if (!newErrors[path]) {
+          newErrors[path] = issue.message;
+        }
+      });
+      return newErrors;
+    }
+    return {};
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

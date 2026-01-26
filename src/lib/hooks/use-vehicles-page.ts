@@ -11,6 +11,7 @@ import { useFetchCustomersQuery } from '@/lib/api/endpoints/customerApi';
 import { useCreateServiceMutation } from '@/lib/api/endpoints/serviceApi';
 import type { IVehicle } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
+import { vehicleSchema } from '@/lib/validations/schemas';
 
 export function useVehiclesPage() {
   const { user: clerkUser, isLoaded } = useUser();
@@ -88,15 +89,18 @@ export function useVehiclesPage() {
   };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.customer_id) newErrors.customer_id = 'Customer is required';
-    if (!formData.vehicle_type) newErrors.vehicle_type = 'Vehicle type is required';
-    if (!formData.brand) newErrors.brand = 'Brand is required';
-    if (!formData.vehicle_model) newErrors.vehicle_model = 'Model is required';
-    if (!formData.registration_number) newErrors.registration_number = 'Registration number is required';
-    if (!formData.year) newErrors.year = 'Year is required';
-    if (!formData.daily_travel) newErrors.daily_travel = 'Daily travel is required';
-    return newErrors;
+    const result = vehicleSchema.safeParse(formData);
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        const path = issue.path[0] as string;
+        if (!newErrors[path]) {
+          newErrors[path] = issue.message;
+        }
+      });
+      return newErrors;
+    }
+    return {};
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

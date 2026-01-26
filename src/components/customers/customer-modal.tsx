@@ -79,13 +79,6 @@ export function CustomerModal({
             onChange={onInputChange}
             fullWidth
           />
-          <Input
-            label="Address (Optional)"
-            name="address"
-            value={formData.address || ''}
-            onChange={onInputChange}
-            fullWidth
-          />
           <Select
             label="Status"
             name="is_active"
