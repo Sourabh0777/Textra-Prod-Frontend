@@ -9,9 +9,10 @@ export interface IBusinessType {
 
 export interface IBusiness {
   _id?: string;
-  business_type_id: string;
+  business_type_id: string | IBusinessType;
   business_name: string;
   owner_name: string;
+  email?: string;
   phone_number: string;
   address: string;
   city: string;

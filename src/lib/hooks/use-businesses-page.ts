@@ -44,7 +44,8 @@ export function useBusinessesPage() {
       (business.business_name?.toLowerCase() || '').includes(searchLower) ||
       (business.owner_name?.toLowerCase() || '').includes(searchLower) ||
       (business.city?.toLowerCase() || '').includes(searchLower) ||
-      (business.phone_number?.toLowerCase() || '').includes(searchLower)
+      (business.phone_number?.toLowerCase() || '').includes(searchLower) ||
+      (business.email?.toLowerCase() || '').includes(searchLower)
     );
   });
 
@@ -57,7 +58,15 @@ export function useBusinessesPage() {
 
   const handleOpenModal = (business?: IBusiness) => {
     if (business) {
-      setFormData(business);
+      // Normalize business_type_id if it's an object
+      const normalizedBusiness = {
+        ...business,
+        business_type_id:
+          typeof business.business_type_id === 'object'
+            ? (business.business_type_id as any)._id
+            : business.business_type_id,
+      };
+      setFormData(normalizedBusiness);
       setEditingId(business._id || null);
       setIsEditMode(true);
     } else {

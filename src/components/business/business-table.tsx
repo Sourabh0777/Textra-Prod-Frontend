@@ -18,6 +18,7 @@ export function BusinessTable({ businesses, onEdit, onDelete }: BusinessTablePro
         <TableHead>
           <TableRow>
             <TableHeaderCell className="px-2 md:px-4 py-3">Business Details</TableHeaderCell>
+            <TableHeaderCell className="hidden sm:table-cell px-2 md:px-4 py-3">Business Type</TableHeaderCell>
             <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Owner Info</TableHeaderCell>
             <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Location</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">Status</TableHeaderCell>
@@ -35,10 +36,21 @@ export function BusinessTable({ businesses, onEdit, onDelete }: BusinessTablePro
                   <span className="text-xs text-neutral-500 md:hidden">{business.owner_name}</span>
                 </div>
               </TableCell>
+              <TableCell className="hidden sm:table-cell px-2 md:px-4 py-3">
+                <Badge variant="info" className="text-[10px] sm:text-xs">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {typeof business.business_type_id === 'object'
+                    ? (business.business_type_id as any).name
+                    : business.business_type_id}
+                </Badge>
+              </TableCell>
               <TableCell className="hidden md:table-cell px-2 md:px-4 py-3">
                 <div className="flex flex-col">
                   <span className="text-sm text-neutral-700 font-medium">{business.owner_name}</span>
-                  <span className="text-xs text-neutral-500">{business.phone_number}</span>
+                  <div className="flex flex-col text-xs text-neutral-500">
+                    <span>{business.phone_number}</span>
+                    {business.email && <span className="text-neutral-400">{business.email}</span>}
+                  </div>
                 </div>
               </TableCell>
               <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">

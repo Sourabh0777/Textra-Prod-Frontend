@@ -41,9 +41,9 @@ export function BusinessModal({
         <form onSubmit={onSubmit} className="space-y-4">
           {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
           <Select
-            label="Business Type"
+            label="Business Type *"
             name="business_type_id"
-            value={formData.business_type_id || ''}
+            value={(formData.business_type_id as any) || ''}
             onChange={onInputChange}
             options={businessTypes.map((type: IBusinessType) => ({
               value: type._id || '',
@@ -51,9 +51,10 @@ export function BusinessModal({
             }))}
             error={errors.business_type_id}
             fullWidth
+            disabled={isEditMode}
           />
           <Input
-            label="Business Name"
+            label="Business Name *"
             name="business_name"
             value={formData.business_name || ''}
             onChange={onInputChange}
@@ -61,7 +62,7 @@ export function BusinessModal({
             fullWidth
           />
           <Input
-            label="Owner Name"
+            label="Owner Name *"
             name="owner_name"
             value={formData.owner_name || ''}
             onChange={onInputChange}
@@ -69,7 +70,15 @@ export function BusinessModal({
             fullWidth
           />
           <Input
-            label="Phone Number"
+            label="Email (Optional)"
+            name="email"
+            value={formData.email || ''}
+            onChange={onInputChange}
+            error={errors.email}
+            fullWidth
+          />
+          <Input
+            label="Phone Number *"
             name="phone_number"
             value={formData.phone_number || ''}
             onChange={onInputChange}
@@ -77,7 +86,7 @@ export function BusinessModal({
             fullWidth
           />
           <Input
-            label="Address"
+            label="Address *"
             name="address"
             value={formData.address || ''}
             onChange={onInputChange}
@@ -85,7 +94,7 @@ export function BusinessModal({
             fullWidth
           />
           <Input
-            label="City"
+            label="City *"
             name="city"
             value={formData.city || ''}
             onChange={onInputChange}
@@ -93,7 +102,7 @@ export function BusinessModal({
             fullWidth
           />
           <Input
-            label="WABA ID"
+            label="WABA ID *"
             name="waba_id"
             value={formData.waba_id || ''}
             onChange={onInputChange}
@@ -101,7 +110,7 @@ export function BusinessModal({
             fullWidth
           />
           <Input
-            label="Phone Number ID"
+            label="Phone Number ID *"
             name="phone_number_id"
             value={formData.phone_number_id || ''}
             onChange={onInputChange}
