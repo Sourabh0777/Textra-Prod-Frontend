@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Loader } from '@/components/ui/loader';
 import { useBusinessesPage } from '@/lib/hooks/use-businesses-page';
 import { BusinessTable } from '@/components/business/business-table';
-import { BusinessModal } from '@/components/business/business-modal';
+import { BusinessDetailsModal } from '@/components/business/business-details-modal';
+import { WhatsAppConnectionModal } from '@/components/business/whatsapp-connection-modal';
 
 export default function BusinessesPage() {
   const {
@@ -18,14 +19,17 @@ export default function BusinessesPage() {
     loading,
     isSubmitting,
     fetchError,
-    isModalOpen,
-    setIsModalOpen,
+    isDetailsModalOpen,
+    setIsDetailsModalOpen,
+    isWhatsAppModalOpen,
+    setIsWhatsAppModalOpen,
     isEditMode,
     formData,
     errors,
     searchQuery,
     setSearchQuery,
-    handleOpenModal,
+    handleOpenDetailsModal,
+    handleOpenWhatsAppModal,
     handleChange,
     handleSubmit,
     handleDelete,
@@ -78,26 +82,41 @@ export default function BusinessesPage() {
               />
             </div>
           </div>
-          <Button onClick={() => handleOpenModal()}>+ Add Business</Button>
+          <Button onClick={() => handleOpenDetailsModal()}>+ Add Business</Button>
         </div>
 
         <Card>
           <CardBody className="!p-0">
-            <BusinessTable businesses={filteredBusinesses} onEdit={handleOpenModal} onDelete={handleDelete} />
+            <BusinessTable
+              businesses={filteredBusinesses}
+              onEditDetails={handleOpenDetailsModal}
+              onEditWhatsApp={handleOpenWhatsAppModal}
+              onDelete={handleDelete}
+            />
           </CardBody>
         </Card>
       </div>
 
-      <BusinessModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      <BusinessDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
         isEditMode={isEditMode}
         formData={formData}
         errors={errors}
         businessTypes={businessTypes}
         submitting={isSubmitting}
         onInputChange={handleChange}
-        onSubmit={handleSubmit}
+        onSubmit={(e) => handleSubmit(e, 'details')}
+      />
+
+      <WhatsAppConnectionModal
+        isOpen={isWhatsAppModalOpen}
+        onClose={() => setIsWhatsAppModalOpen(false)}
+        formData={formData}
+        errors={errors}
+        submitting={isSubmitting}
+        onInputChange={handleChange}
+        onSubmit={(e) => handleSubmit(e, 'whatsapp')}
       />
     </>
   );

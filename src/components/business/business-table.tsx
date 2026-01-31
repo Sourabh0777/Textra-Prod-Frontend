@@ -7,11 +7,12 @@ import { IBusiness } from '@/types';
 
 interface BusinessTableProps {
   businesses: IBusiness[];
-  onEdit: (business: IBusiness) => void;
+  onEditDetails: (business: IBusiness) => void;
+  onEditWhatsApp: (business: IBusiness) => void;
   onDelete: (id: string) => void;
 }
 
-export function BusinessTable({ businesses, onEdit, onDelete }: BusinessTableProps) {
+export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDelete }: BusinessTableProps) {
   return (
     <div className="overflow-x-auto">
       <Table>
@@ -66,17 +67,29 @@ export function BusinessTable({ businesses, onEdit, onDelete }: BusinessTablePro
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => onEdit(business)}
+                    onClick={() => onEditDetails(business)}
                     className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                    title="Edit Details"
                   >
                     <span className="hidden sm:inline">Edit</span>
                     <span className="sm:hidden">✎</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEditWhatsApp(business)}
+                    className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    title="WhatsApp Settings"
+                  >
+                    <span className="hidden sm:inline">WhatsApp</span>
+                    <span className="sm:hidden">📱</span>
                   </Button>
                   <Button
                     variant="danger"
                     size="sm"
                     onClick={() => onDelete(business._id || '')}
                     className="h-8 w-8 p-0 sm:w-auto sm:px-3 sm:py-1"
+                    title="Delete Business"
                   >
                     <span className="hidden sm:inline">Delete</span>
                     <span className="sm:hidden">✕</span>

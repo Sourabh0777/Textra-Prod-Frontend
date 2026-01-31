@@ -13,7 +13,8 @@ import { toastPromise } from '@/lib/toast-utils';
 
 export function useBusinessesPage() {
   const { user: clerkUser, isLoaded } = useUser();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IBusiness>>({ is_active: true });
@@ -56,7 +57,7 @@ export function useBusinessesPage() {
   const loading = loadingBusinesses || loadingTypes;
   const isSubmitting = isCreating || isUpdating;
 
-  const handleOpenModal = (business?: IBusiness) => {
+  const handleOpenDetailsModal = (business?: IBusiness) => {
     if (business) {
       // Normalize business_type_id if it's an object
       const normalizedBusiness = {
@@ -75,7 +76,15 @@ export function useBusinessesPage() {
       setIsEditMode(false);
     }
     setErrors({});
-    setIsModalOpen(true);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleOpenWhatsAppModal = (business: IBusiness) => {
+    setFormData(business);
+    setEditingId(business._id || null);
+    setIsEditMode(true);
+    setErrors({});
+    setIsWhatsAppModalOpen(true);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -93,22 +102,27 @@ export function useBusinessesPage() {
     }
   };
 
-  const validateForm = () => {
+  const validateDetailsForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.business_name) newErrors.business_name = 'Business name is required';
     if (!formData.owner_name) newErrors.owner_name = 'Owner name is required';
-    if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
     if (!formData.business_type_id) newErrors.business_type_id = 'Business type is required';
     if (!formData.address) newErrors.address = 'Address is required';
-    if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
+    return newErrors;
+  };
+
+  const validateWhatsAppForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
     if (!formData.waba_id) newErrors.waba_id = 'WABA ID is required';
     if (!formData.phone_number_id) newErrors.phone_number_id = 'Phone Number ID is required';
     return newErrors;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, type: 'details' | 'whatsapp') => {
     e.preventDefault();
-    const newErrors = validateForm();
+    const newErrors = type === 'details' ? validateDetailsForm() : validateWhatsAppForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -129,7 +143,8 @@ export function useBusinessesPage() {
           error: (err) => err?.data?.message || 'Failed to add business',
         });
       }
-      setIsModalOpen(false);
+      setIsDetailsModalOpen(false);
+      setIsWhatsAppModalOpen(false);
       setFormData({ is_active: true });
     } catch (err: any) {
       if (err?.data?.errors) {
@@ -159,8 +174,10 @@ export function useBusinessesPage() {
     loading,
     isSubmitting,
     fetchError,
-    isModalOpen,
-    setIsModalOpen,
+    isDetailsModalOpen,
+    setIsDetailsModalOpen,
+    isWhatsAppModalOpen,
+    setIsWhatsAppModalOpen,
     isEditMode,
     formData,
     setFormData,
@@ -168,7 +185,8 @@ export function useBusinessesPage() {
     setErrors,
     searchQuery,
     setSearchQuery,
-    handleOpenModal,
+    handleOpenDetailsModal,
+    handleOpenWhatsAppModal,
     handleChange,
     handleSubmit,
     handleDelete,
