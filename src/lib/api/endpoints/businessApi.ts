@@ -79,6 +79,14 @@ export const businessApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Business'],
     }),
+    updateBusinessWaba: builder.mutation<IBusiness, { id: string; data: Partial<IBusiness> }>({
+      query: ({ id, data }) => ({
+        url: `/businesses/waba/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Business', id }, 'Business'],
+    }),
   }),
 });
 
@@ -94,4 +102,5 @@ export const {
   useDeleteBusinessMutation,
   useGetBusinessDetailsQuery,
   useUpdateBusinessDetailsMutation,
+  useUpdateBusinessWabaMutation,
 } = businessApi;

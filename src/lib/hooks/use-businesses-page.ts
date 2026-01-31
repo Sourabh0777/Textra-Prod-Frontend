@@ -7,6 +7,7 @@ import {
   useUpdateBusinessMutation,
   useDeleteBusinessMutation,
   useFetchBusinessTypesQuery,
+  useUpdateBusinessWabaMutation,
 } from '@/lib/api/endpoints/businessApi';
 import type { IBusiness } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
@@ -36,6 +37,7 @@ export function useBusinessesPage() {
 
   const [createBusiness, { isLoading: isCreating }] = useCreateBusinessMutation();
   const [updateBusiness, { isLoading: isUpdating }] = useUpdateBusinessMutation();
+  const [updateBusinessWaba, { isLoading: isUpdatingWaba }] = useUpdateBusinessWabaMutation();
   const [deleteBusiness] = useDeleteBusinessMutation();
 
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
@@ -55,7 +57,7 @@ export function useBusinessesPage() {
     : (businessTypesResponse as any)?.data || [];
 
   const loading = loadingBusinesses || loadingTypes;
-  const isSubmitting = isCreating || isUpdating;
+  const isSubmitting = isCreating || isUpdating || isUpdatingWaba;
 
   const handleOpenDetailsModal = (business?: IBusiness) => {
     if (business) {
@@ -131,11 +133,19 @@ export function useBusinessesPage() {
     try {
       setErrors({});
       if (isEditMode && editingId) {
-        await toastPromise(updateBusiness({ id: editingId, data: formData as IBusiness }).unwrap(), {
-          loading: 'Updating business...',
-          success: 'Business updated successfully',
-          error: (err) => err?.data?.message || 'Failed to update business',
-        });
+        if (type === 'whatsapp') {
+          await toastPromise(updateBusinessWaba({ id: editingId, data: formData }).unwrap(), {
+            loading: 'Updating WhatsApp credentials...',
+            success: 'WhatsApp credentials updated successfully',
+            error: (err: any) => err?.data?.message || 'Failed to update WhatsApp credentials',
+          });
+        } else {
+          await toastPromise(updateBusiness({ id: editingId, data: formData as IBusiness }).unwrap(), {
+            loading: 'Updating business...',
+            success: 'Business updated successfully',
+            error: (err) => err?.data?.message || 'Failed to update business',
+          });
+        }
       } else {
         await toastPromise(createBusiness(formData as any).unwrap(), {
           loading: 'Adding business...',
