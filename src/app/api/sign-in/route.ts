@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     // Call the external backend to sync user/session
     // We don't care about the response body for now, just ensuring it's called.
     // If you need to handle errors (e.g. backend down), add logic here.
-    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/sign-in`, {
+    const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/core/sign-in`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

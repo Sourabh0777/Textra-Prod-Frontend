@@ -21,7 +21,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   useEffect(() => {
     const fetchSideBar = async () => {
       try {
-        const url = `${env.NEXT_PUBLIC_API_URL}/business-types/side-bar`; // removed space
+        const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`; // removed space
 
         const token = await getToken();
 

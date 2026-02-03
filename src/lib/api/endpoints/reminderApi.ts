@@ -3,23 +3,23 @@ import { baseApi } from '../baseApi';
 export const reminderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchReminders: builder.query<any, string | void>({
-      query: (serviceId) => (serviceId ? `/reminders?service_id=${serviceId}` : '/reminders'),
+      query: (serviceId) => (serviceId ? `/bike-service/reminders?service_id=${serviceId}` : '/bike-service/reminders'),
       providesTags: ['Reminder'],
     }),
     fetchReminder: builder.query<any, string>({
-      query: (id) => `/reminders/${id}`,
+      query: (id) => `/bike-service/reminders/${id}`,
       providesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder'],
     }),
     markVisited: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/reminders/${id}/mark-visited`,
+        url: `/bike-service/reminders/${id}/mark-visited`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder', { type: 'Service' as any }],
     }),
     createReminder: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/reminders',
+        url: '/bike-service/reminders',
         method: 'POST',
         body,
       }),
@@ -27,7 +27,7 @@ export const reminderApi = baseApi.injectEndpoints({
     }),
     updateReminder: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/reminders/${id}`,
+        url: `/bike-service/reminders/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -35,14 +35,14 @@ export const reminderApi = baseApi.injectEndpoints({
     }),
     deleteReminder: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/reminders/${id}`,
+        url: `/bike-service/reminders/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Reminder'],
     }),
     triggerReminderWorker: builder.mutation<any, { reminder_id: string }>({
       query: (body) => ({
-        url: '/reminders/trigger-worker',
+        url: '/bike-service/reminders/trigger-worker',
         method: 'POST',
         body,
       }),

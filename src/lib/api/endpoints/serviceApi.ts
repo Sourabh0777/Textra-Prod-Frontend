@@ -3,16 +3,16 @@ import { baseApi } from '../baseApi';
 export const serviceApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchServices: builder.query<any, string | void>({
-      query: (vehicleId) => (vehicleId ? `/services?vehicle_id=${vehicleId}` : '/services'),
+      query: (vehicleId) => (vehicleId ? `/bike-service/services?vehicle_id=${vehicleId}` : '/bike-service/services'),
       providesTags: ['Service'],
     }),
     fetchService: builder.query<any, string>({
-      query: (id) => `/services/${id}`,
+      query: (id) => `/bike-service/services/${id}`,
       providesTags: (result, error, id) => [{ type: 'Service', id }],
     }),
     createService: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/services',
+        url: '/bike-service/services',
         method: 'POST',
         body,
       }),
@@ -20,7 +20,7 @@ export const serviceApi = baseApi.injectEndpoints({
     }),
     updateService: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/services/${id}`,
+        url: `/bike-service/services/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -28,7 +28,7 @@ export const serviceApi = baseApi.injectEndpoints({
     }),
     deleteService: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/services/${id}`,
+        url: `/bike-service/services/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Service'],

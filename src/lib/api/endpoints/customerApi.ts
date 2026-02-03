@@ -5,19 +5,19 @@ export const customerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchCustomers: builder.query<any, string | void>({
       query: (body) => ({
-        url: '/customers',
+        url: '/core/customers',
         method: 'GET',
         body,
       }),
       providesTags: ['Customer'],
     }),
     fetchCustomer: builder.query<any, string>({
-      query: (id) => `/customers/${id}`,
+      query: (id) => `/core/customers/${id}`,
       providesTags: (result, error, id) => [{ type: 'Customer', id }],
     }),
     createCustomer: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/customers',
+        url: '/core/customers',
         method: 'POST',
         body,
       }),
@@ -25,7 +25,7 @@ export const customerApi = baseApi.injectEndpoints({
     }),
     updateCustomer: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/customers/${id}`,
+        url: `/core/customers/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -33,7 +33,7 @@ export const customerApi = baseApi.injectEndpoints({
     }),
     deleteCustomer: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/customers/${id}`,
+        url: `/core/customers/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Customer'],
