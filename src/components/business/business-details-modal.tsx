@@ -3,7 +3,7 @@ import React from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
-import { IBusiness, IBusinessType, States, DelhiZone } from '@/types';
+import type { IBusiness, IBusinessType, IState, IZone } from '@/types';
 
 interface BusinessDetailsModalProps {
   isOpen: boolean;
@@ -12,6 +12,8 @@ interface BusinessDetailsModalProps {
   formData: Partial<IBusiness>;
   errors: Record<string, string>;
   businessTypes: IBusinessType[];
+  states?: IState[];
+  zones?: IZone[];
   submitting: boolean;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -24,6 +26,8 @@ export function BusinessDetailsModal({
   formData,
   errors,
   businessTypes,
+  states,
+  zones,
   submitting,
   onInputChange,
   onSubmit,
@@ -91,12 +95,14 @@ export function BusinessDetailsModal({
           <Select
             label="State *"
             name="state"
-            value={formData.state || States.NEW_DELHI}
+            value={typeof formData.state === 'object' ? (formData.state as any)?._id : (formData.state as any) || ''}
             onChange={onInputChange}
-            options={Object.values(States).map((state) => ({
-              value: state,
-              label: state,
-            }))}
+            options={
+              states?.map((s) => ({
+                value: s._id || '',
+                label: s.name,
+              })) || []
+            }
             error={errors.state}
             fullWidth
             disabled
@@ -104,12 +110,14 @@ export function BusinessDetailsModal({
           <Select
             label="Zone *"
             name="zone"
-            value={formData.zone || ''}
+            value={typeof formData.zone === 'object' ? (formData.zone as any)?._id : (formData.zone as any) || ''}
             onChange={onInputChange}
-            options={Object.values(DelhiZone).map((zone) => ({
-              value: zone,
-              label: zone,
-            }))}
+            options={
+              zones?.map((z) => ({
+                value: z._id || '',
+                label: z.name,
+              })) || []
+            }
             error={errors.zone}
             fullWidth
           />

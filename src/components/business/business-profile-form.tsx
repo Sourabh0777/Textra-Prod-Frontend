@@ -4,13 +4,14 @@ import { Card, CardBody } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import type { IBusiness, IBusinessType } from '@/types';
-import { States, DelhiZone } from '@/types';
+import type { IBusiness, IBusinessType, IState, IZone } from '@/types';
 
 interface BusinessProfileFormProps {
   formData: Partial<IBusiness>;
   errors: Record<string, string>;
   businessTypes: IBusinessType[] | undefined;
+  states?: IState[];
+  zones?: IZone[];
   saving: boolean;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onSave: () => void;
@@ -20,6 +21,8 @@ export function BusinessProfileForm({
   formData,
   errors,
   businessTypes,
+  states,
+  zones,
   saving,
   onInputChange,
   onSave,
@@ -91,26 +94,30 @@ export function BusinessProfileForm({
         <Select
           label="State"
           name="state"
-          value={formData.state || States.NEW_DELHI}
+          value={typeof formData.state === 'object' ? formData.state?._id : formData.state || ''}
           onChange={onInputChange}
-          options={Object.values(States).map((state) => ({
-            value: state,
-            label: state,
-          }))}
+          options={
+            states?.map((s) => ({
+              value: s._id || '',
+              label: s.name,
+            })) || []
+          }
           error={errors.state}
           fullWidth
-          disabled
+          // disabled
         />
 
         <Select
           label="Zone"
           name="zone"
-          value={formData.zone || ''}
+          value={typeof formData.zone === 'object' ? formData.zone?._id : formData.zone || ''}
           onChange={onInputChange}
-          options={Object.values(DelhiZone).map((zone) => ({
-            value: zone,
-            label: zone,
-          }))}
+          options={
+            zones?.map((z) => ({
+              value: z._id || '',
+              label: z.name,
+            })) || []
+          }
           error={errors.zone}
           fullWidth
         />

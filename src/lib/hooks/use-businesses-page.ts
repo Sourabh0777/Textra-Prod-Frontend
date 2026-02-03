@@ -9,8 +9,8 @@ import {
   useFetchBusinessTypesQuery,
   useUpdateBusinessWabaMutation,
 } from '@/lib/api/endpoints/businessApi';
+import { useFetchStatesQuery, useFetchZonesQuery } from '@/lib/api/endpoints/configApi';
 import type { IBusiness } from '@/types';
-import { States } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 
 export function useBusinessesPage() {
@@ -19,7 +19,7 @@ export function useBusinessesPage() {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<IBusiness>>({ is_active: true, state: States.NEW_DELHI });
+  const [formData, setFormData] = useState<Partial<IBusiness>>({ is_active: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -36,6 +36,13 @@ export function useBusinessesPage() {
     skip: !isLoaded || !clerkUser,
   });
 
+  const { data: states } = useFetchStatesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+  const { data: zones } = useFetchZonesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
   const [createBusiness, { isLoading: isCreating }] = useCreateBusinessMutation();
   const [updateBusiness, { isLoading: isUpdating }] = useUpdateBusinessMutation();
   const [updateBusinessWaba, { isLoading: isUpdatingWaba }] = useUpdateBusinessWabaMutation();
@@ -44,11 +51,12 @@ export function useBusinessesPage() {
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
   const filteredBusinesses = businesses.filter((business: IBusiness) => {
     const searchLower = searchQuery.toLowerCase();
+    const zoneName = typeof business.zone === 'object' ? business.zone?.name : business.zone;
     return (
       (business.business_name?.toLowerCase() || '').includes(searchLower) ||
       (business.owner_name?.toLowerCase() || '').includes(searchLower) ||
       (business.city?.toLowerCase() || '').includes(searchLower) ||
-      (business.zone?.toLowerCase() || '').includes(searchLower) ||
+      (zoneName?.toLowerCase() || '').includes(searchLower) ||
       (business.phone_number?.toLowerCase() || '').includes(searchLower) ||
       (business.email?.toLowerCase() || '').includes(searchLower)
     );
@@ -70,12 +78,14 @@ export function useBusinessesPage() {
           typeof business.business_type_id === 'object'
             ? (business.business_type_id as any)._id
             : business.business_type_id,
+        state: typeof business.state === 'object' ? (business.state as any)._id : business.state,
+        zone: typeof business.zone === 'object' ? (business.zone as any)._id : business.zone,
       };
       setFormData(normalizedBusiness);
       setEditingId(business._id || null);
       setIsEditMode(true);
     } else {
-      setFormData({ is_active: true, state: States.NEW_DELHI });
+      setFormData({ is_active: true });
       setEditingId(null);
       setIsEditMode(false);
     }
@@ -160,7 +170,7 @@ export function useBusinessesPage() {
       }
       setIsDetailsModalOpen(false);
       setIsWhatsAppModalOpen(false);
-      setFormData({ is_active: true, state: States.NEW_DELHI });
+      setFormData({ is_active: true });
     } catch (err: any) {
       if (err?.data?.errors) {
         setErrors(err.data.errors);
@@ -200,6 +210,8 @@ export function useBusinessesPage() {
     setErrors,
     searchQuery,
     setSearchQuery,
+    states,
+    zones,
     handleOpenDetailsModal,
     handleOpenWhatsAppModal,
     handleChange,

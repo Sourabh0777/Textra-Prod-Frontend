@@ -1,19 +1,16 @@
-export enum States {
-  NEW_DELHI = 'New Delhi',
+export interface IState {
+  _id?: string;
+  name: string;
+  is_active: boolean;
+  created_at?: Date;
 }
 
-export enum DelhiZone {
-  CENTRAL_DELHI = 'Central Delhi',
-  NORTH_DELHI = 'North Delhi',
-  SOUTH_DELHI = 'South Delhi',
-  EAST_DELHI = 'East Delhi',
-  WEST_DELHI = 'West Delhi',
-  NEW_DELHI = 'New Delhi',
-  NORTH_EAST_DELHI = 'North East Delhi',
-  NORTH_WEST_DELHI = 'North West Delhi',
-  SOUTH_EAST_DELHI = 'South East Delhi',
-  SOUTH_WEST_DELHI = 'South West Delhi',
-  SHAHDARA = 'Shahdara',
+export interface IZone {
+  _id?: string;
+  name: string;
+  state_id: string | IState;
+  is_active: boolean;
+  created_at?: Date;
 }
 
 export interface IBusinessType {
@@ -34,8 +31,8 @@ export interface IBusiness {
   phone_number: string;
   address: string;
   city: string;
-  state: States;
-  zone: DelhiZone;
+  state: string | IState;
+  zone: string | IZone;
   is_active: boolean;
   created_at?: Date;
   waba_id: string;

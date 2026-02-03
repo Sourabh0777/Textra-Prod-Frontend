@@ -6,7 +6,8 @@ import {
   useUpdateBusinessDetailsMutation,
   useFetchBusinessTypesQuery,
 } from '@/lib/api/endpoints/businessApi';
-import { DelhiZone, States, type IBusiness } from '@/types';
+import { useFetchStatesQuery, useFetchZonesQuery } from '@/lib/api/endpoints/configApi';
+import type { IBusiness } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 
 export function useBusinessProfile() {
@@ -28,6 +29,14 @@ export function useBusinessProfile() {
     skip: !isLoaded || !clerkUser,
   });
 
+  /** Fetch states and zones */
+  const { data: states } = useFetchStatesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+  const { data: zones } = useFetchZonesQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
   /** Update mutation */
   const [updateBusinessDetails, { isLoading: saving }] = useUpdateBusinessDetailsMutation();
 
@@ -37,7 +46,14 @@ export function useBusinessProfile() {
     if (businessData) {
       console.log('🚀 ~ useBusinessProfile ~ businessData:', businessData);
 
-      setFormData(businessData);
+      // Normalize IDs if they are objects
+      const normalizedData = {
+        ...businessData,
+        state: typeof businessData.state === 'object' ? businessData.state?._id : businessData.state,
+        zone: typeof businessData.zone === 'object' ? businessData.zone?._id : businessData.zone,
+      };
+
+      setFormData(normalizedData);
     }
   }, [businessResponse]);
 
@@ -78,6 +94,8 @@ export function useBusinessProfile() {
   return {
     formData,
     businessTypes,
+    states,
+    zones,
     loading,
     saving,
     error,

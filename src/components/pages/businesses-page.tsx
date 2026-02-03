@@ -28,6 +28,8 @@ export default function BusinessesPage() {
     errors,
     searchQuery,
     setSearchQuery,
+    states,
+    zones,
     handleOpenDetailsModal,
     handleOpenWhatsAppModal,
     handleChange,
@@ -104,6 +106,8 @@ export default function BusinessesPage() {
         formData={formData}
         errors={errors}
         businessTypes={businessTypes}
+        states={states}
+        zones={zones}
         submitting={isSubmitting}
         onInputChange={handleChange}
         onSubmit={(e) => handleSubmit(e, 'details')}
