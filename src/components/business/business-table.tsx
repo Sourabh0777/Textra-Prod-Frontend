@@ -55,7 +55,10 @@ export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDel
                 </div>
               </TableCell>
               <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">
-                <span className="text-sm text-neutral-600">{business.city}</span>
+                <div className="flex flex-col">
+                  <span className="text-sm text-neutral-700">{business.city}</span>
+                  {business.zone && <span className="text-xs text-neutral-500">{business.zone}</span>}
+                </div>
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3 text-center sm:text-left">
                 <Badge variant={business.is_active ? 'success' : 'danger'} className="text-[10px] sm:text-xs">

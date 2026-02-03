@@ -6,7 +6,7 @@ import {
   useUpdateBusinessDetailsMutation,
   useFetchBusinessTypesQuery,
 } from '@/lib/api/endpoints/businessApi';
-import type { IBusiness } from '@/types';
+import { DelhiZone, States, type IBusiness } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 
 export function useBusinessProfile() {
@@ -35,6 +35,8 @@ export function useBusinessProfile() {
   useEffect(() => {
     const businessData = (businessResponse as any)?.data || businessResponse;
     if (businessData) {
+      console.log('🚀 ~ useBusinessProfile ~ businessData:', businessData);
+
       setFormData(businessData);
     }
   }, [businessResponse]);

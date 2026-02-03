@@ -10,6 +10,7 @@ import {
   useUpdateBusinessWabaMutation,
 } from '@/lib/api/endpoints/businessApi';
 import type { IBusiness } from '@/types';
+import { States } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 
 export function useBusinessesPage() {
@@ -18,7 +19,7 @@ export function useBusinessesPage() {
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<IBusiness>>({ is_active: true });
+  const [formData, setFormData] = useState<Partial<IBusiness>>({ is_active: true, state: States.NEW_DELHI });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -47,6 +48,7 @@ export function useBusinessesPage() {
       (business.business_name?.toLowerCase() || '').includes(searchLower) ||
       (business.owner_name?.toLowerCase() || '').includes(searchLower) ||
       (business.city?.toLowerCase() || '').includes(searchLower) ||
+      (business.zone?.toLowerCase() || '').includes(searchLower) ||
       (business.phone_number?.toLowerCase() || '').includes(searchLower) ||
       (business.email?.toLowerCase() || '').includes(searchLower)
     );
@@ -73,7 +75,7 @@ export function useBusinessesPage() {
       setEditingId(business._id || null);
       setIsEditMode(true);
     } else {
-      setFormData({ is_active: true });
+      setFormData({ is_active: true, state: States.NEW_DELHI });
       setEditingId(null);
       setIsEditMode(false);
     }
@@ -109,6 +111,8 @@ export function useBusinessesPage() {
     if (!formData.business_name) newErrors.business_name = 'Business name is required';
     if (!formData.owner_name) newErrors.owner_name = 'Owner name is required';
     if (!formData.business_type_id) newErrors.business_type_id = 'Business type is required';
+    if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.zone) newErrors.zone = 'Zone is required';
     if (!formData.address) newErrors.address = 'Address is required';
     if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
     return newErrors;
@@ -156,7 +160,7 @@ export function useBusinessesPage() {
       }
       setIsDetailsModalOpen(false);
       setIsWhatsAppModalOpen(false);
-      setFormData({ is_active: true });
+      setFormData({ is_active: true, state: States.NEW_DELHI });
     } catch (err: any) {
       if (err?.data?.errors) {
         setErrors(err.data.errors);

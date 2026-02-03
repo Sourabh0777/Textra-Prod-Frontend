@@ -3,7 +3,7 @@ import React from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
-import { IBusiness, IBusinessType } from '@/types';
+import { IBusiness, IBusinessType, States, DelhiZone } from '@/types';
 
 interface BusinessDetailsModalProps {
   isOpen: boolean;
@@ -78,6 +78,39 @@ export function BusinessDetailsModal({
             value={formData.email || ''}
             onChange={onInputChange}
             error={errors.email}
+            fullWidth
+          />
+          <Input
+            label="City *"
+            name="city"
+            value={formData.city || ''}
+            onChange={onInputChange}
+            error={errors.city}
+            fullWidth
+          />
+          <Select
+            label="State *"
+            name="state"
+            value={formData.state || States.NEW_DELHI}
+            onChange={onInputChange}
+            options={Object.values(States).map((state) => ({
+              value: state,
+              label: state,
+            }))}
+            error={errors.state}
+            fullWidth
+            disabled
+          />
+          <Select
+            label="Zone *"
+            name="zone"
+            value={formData.zone || ''}
+            onChange={onInputChange}
+            options={Object.values(DelhiZone).map((zone) => ({
+              value: zone,
+              label: zone,
+            }))}
+            error={errors.zone}
             fullWidth
           />
           <Input

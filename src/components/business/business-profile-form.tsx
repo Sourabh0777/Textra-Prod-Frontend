@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import type { IBusiness, IBusinessType } from '@/types';
+import { States, DelhiZone } from '@/types';
 
 interface BusinessProfileFormProps {
   formData: Partial<IBusiness>;
@@ -84,6 +85,33 @@ export function BusinessProfileForm({
           value={formData.city || ''}
           onChange={onInputChange}
           error={errors.city}
+          fullWidth
+        />
+
+        <Select
+          label="State"
+          name="state"
+          value={formData.state || States.NEW_DELHI}
+          onChange={onInputChange}
+          options={Object.values(States).map((state) => ({
+            value: state,
+            label: state,
+          }))}
+          error={errors.state}
+          fullWidth
+          disabled
+        />
+
+        <Select
+          label="Zone"
+          name="zone"
+          value={formData.zone || ''}
+          onChange={onInputChange}
+          options={Object.values(DelhiZone).map((zone) => ({
+            value: zone,
+            label: zone,
+          }))}
+          error={errors.zone}
           fullWidth
         />
 
