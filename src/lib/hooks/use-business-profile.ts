@@ -13,6 +13,7 @@ import { toastPromise } from '@/lib/toast-utils';
 export function useBusinessProfile() {
   const { user: clerkUser, isLoaded } = useUser();
   const [formData, setFormData] = useState<Partial<IBusiness>>({});
+  console.log('🚀 ~ useBusinessProfile ~ formData:', formData);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   /** Fetch business details */
@@ -49,8 +50,14 @@ export function useBusinessProfile() {
       // Normalize IDs if they are objects
       const normalizedData = {
         ...businessData,
-        state: typeof businessData.state === 'object' ? businessData.state?._id : businessData.state,
-        zone: typeof businessData.zone === 'object' ? businessData.zone?._id : businessData.zone,
+        state:
+          typeof businessData.state_id === 'object'
+            ? businessData.state_id?._id
+            : businessData.state_id || businessData.state,
+        zone:
+          typeof businessData.zone_id === 'object'
+            ? businessData.zone_id?._id
+            : businessData.zone_id || businessData.zone,
       };
 
       setFormData(normalizedData);
