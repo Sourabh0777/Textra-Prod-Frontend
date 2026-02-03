@@ -137,20 +137,21 @@ export function useBusinessesPage() {
           await toastPromise(updateBusinessWaba({ id: editingId, data: formData }).unwrap(), {
             loading: 'Updating WhatsApp credentials...',
             success: 'WhatsApp credentials updated successfully',
-            error: (err: any) => err?.data?.message || 'Failed to update WhatsApp credentials',
+            error: (err: any) =>
+              err?.data?.error?.reason || err?.data?.message || 'Failed to update WhatsApp credentials',
           });
         } else {
           await toastPromise(updateBusiness({ id: editingId, data: formData as IBusiness }).unwrap(), {
             loading: 'Updating business...',
             success: 'Business updated successfully',
-            error: (err) => err?.data?.message || 'Failed to update business',
+            error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update business',
           });
         }
       } else {
         await toastPromise(createBusiness(formData as any).unwrap(), {
           loading: 'Adding business...',
           success: 'Business added successfully',
-          error: (err) => err?.data?.message || 'Failed to add business',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to add business',
         });
       }
       setIsDetailsModalOpen(false);
@@ -169,7 +170,7 @@ export function useBusinessesPage() {
         await toastPromise(deleteBusiness(id).unwrap(), {
           loading: 'Deleting business...',
           success: 'Business deleted successfully',
-          error: (err) => err?.data?.message || 'Failed to delete business',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to delete business',
         });
       } catch (err) {
         console.error('Delete error', err);

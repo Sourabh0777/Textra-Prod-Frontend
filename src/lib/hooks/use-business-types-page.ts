@@ -94,13 +94,13 @@ export function useBusinessTypesPage() {
         await toastPromise(updateBusinessType({ id: editingId, data: formData as IBusinessType }).unwrap(), {
           loading: 'Updating business type...',
           success: 'Business type updated successfully',
-          error: (err) => err?.data?.message || 'Failed to update business type',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update business type',
         });
       } else {
         await toastPromise(createBusinessType(formData as any).unwrap(), {
           loading: 'Adding business type...',
           success: 'Business type added successfully',
-          error: (err) => err?.data?.message || 'Failed to add business type',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to add business type',
         });
       }
       setIsModalOpen(false);
@@ -117,7 +117,7 @@ export function useBusinessTypesPage() {
         await toastPromise(deleteBusinessType(id).unwrap(), {
           loading: 'Deleting business type...',
           success: 'Business type deleted successfully',
-          error: (err) => err?.data?.message || 'Failed to delete business type',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to delete business type',
         });
       } catch (err) {
         console.error('Delete error', err);

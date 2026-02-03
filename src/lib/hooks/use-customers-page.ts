@@ -121,13 +121,13 @@ export function useCustomersPage() {
         await toastPromise(updateCustomer({ id: editingId, data: formData }).unwrap(), {
           loading: 'Updating customer...',
           success: 'Customer updated successfully',
-          error: (err) => err?.data?.message || 'Failed to update customer',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update customer',
         });
       } else {
         await toastPromise(createCustomer(formData).unwrap(), {
           loading: 'Adding customer...',
           success: 'Customer added successfully',
-          error: (err) => err?.data?.message || 'Failed to add customer',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to add customer',
         });
       }
       setIsModalOpen(false);
@@ -145,7 +145,7 @@ export function useCustomersPage() {
         await toastPromise(deleteCustomer(id).unwrap(), {
           loading: 'Deleting customer...',
           success: 'Customer deleted successfully',
-          error: (err) => err?.data?.message || 'Failed to delete customer',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to delete customer',
         });
       } catch (err: any) {
         console.error('Delete error', err);

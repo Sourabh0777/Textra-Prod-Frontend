@@ -103,13 +103,13 @@ export function useRemindersPage() {
         await toastPromise(updateReminder({ id: editingId, data: formData }).unwrap(), {
           loading: 'Updating reminder...',
           success: 'Reminder updated successfully',
-          error: (err) => err?.data?.error || err?.data?.message || 'Failed to update reminder',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update reminder',
         });
       } else {
         await toastPromise(createReminder(formData).unwrap(), {
           loading: 'Adding reminder...',
           success: 'Reminder added successfully',
-          error: (err) => err?.data?.error || err?.data?.message || 'Failed to add reminder',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to add reminder',
         });
       }
       setIsModalOpen(false);
@@ -127,7 +127,7 @@ export function useRemindersPage() {
         await toastPromise(deleteReminder(id).unwrap(), {
           loading: 'Deleting reminder...',
           success: 'Reminder deleted successfully',
-          error: (err) => err?.data?.error || err?.data?.message || 'Failed to delete reminder',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to delete reminder',
         });
       } catch (err: any) {
         console.error('Delete error', err);
@@ -147,7 +147,7 @@ export function useRemindersPage() {
       await toastPromise(markVisited(selectedReminder._id).unwrap(), {
         loading: 'Recording shop visit...',
         success: 'Shop visit recorded successfully',
-        error: (err) => err?.data?.error || err?.data?.message || 'Failed to record shop visit',
+        error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to record shop visit',
       });
       setIsCheckInOpen(false);
       setSelectedReminder(null);
@@ -165,7 +165,7 @@ export function useRemindersPage() {
       await toastPromise(triggerWorker({ reminder_id: reminder._id }).unwrap(), {
         loading: 'Preparing to resend...',
         success: (res) => res?.message || 'Reminder notification queued for resending',
-        error: (err) => err?.data?.error || err?.data?.message || 'Failed to resend reminder',
+        error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to resend reminder',
       });
     } catch (err) {
       console.error('Resend error', err);

@@ -64,7 +64,7 @@ export function useBusinessProfile() {
       await toastPromise(updateBusinessDetails(formData).unwrap(), {
         loading: 'Saving business details...',
         success: 'Business details updated successfully',
-        error: (err) => err?.data?.message || 'Failed to update business details',
+        error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update business details',
       });
     } catch (err: any) {
       if (err?.data?.errors) {

@@ -120,14 +120,13 @@ export function useVehiclesPage() {
         await toastPromise(updateVehicle({ id: editingId, data: formData }).unwrap(), {
           loading: 'Updating vehicle...',
           success: 'Vehicle updated successfully',
-          error: (err) => err?.data?.error || err?.data?.message || 'Failed to update vehicle',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update vehicle',
         });
-        vehicleId = editingId;
       } else {
         const result = await toastPromise(createVehicle(formData).unwrap(), {
           loading: 'Adding vehicle...',
           success: 'Vehicle added successfully',
-          error: (err) => err?.data?.error || err?.data?.message || 'Failed to add vehicle',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to add vehicle',
         });
         vehicleId = result?.data?._id || result?._id;
       }
@@ -143,7 +142,7 @@ export function useVehiclesPage() {
           {
             loading: 'Creating service record...',
             success: (data) => data?.message || 'Service record & reminder created!',
-            error: (err) => err?.data?.error || err?.data?.message || 'Failed to create service record',
+            error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to create service record',
           },
         );
       }
@@ -163,7 +162,7 @@ export function useVehiclesPage() {
         await toastPromise(deleteVehicle(id).unwrap(), {
           loading: 'Deleting vehicle...',
           success: 'Vehicle deleted successfully',
-          error: (err) => err?.data?.error || err?.data?.message || 'Failed to delete vehicle',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to delete vehicle',
         });
       } catch (err: any) {
         console.error('Delete error', err);
