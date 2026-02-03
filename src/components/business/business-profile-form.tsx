@@ -34,7 +34,11 @@ export function BusinessProfileForm({
         <Select
           label="Business Type"
           name="business_type_id"
-          value={formData.business_type_id || ''}
+          value={
+            typeof formData.business_type_id === 'object'
+              ? formData.business_type_id?._id
+              : formData.business_type_id || ''
+          }
           onChange={onInputChange}
           options={
             businessTypes?.map((type) => ({

@@ -43,7 +43,11 @@ export function BusinessDetailsModal({
           <Select
             label="Business Type *"
             name="business_type_id"
-            value={(formData.business_type_id as any) || ''}
+            value={
+              typeof formData.business_type_id === 'object'
+                ? (formData.business_type_id as any)?._id
+                : (formData.business_type_id as any) || ''
+            }
             onChange={onInputChange}
             options={businessTypes.map((type: IBusinessType) => ({
               value: type._id || '',
