@@ -62,7 +62,11 @@ export function useCustomersPage() {
 
   const handleOpenModal = (customer?: ICustomer) => {
     if (customer) {
-      setFormData(customer);
+      setFormData({
+        ...customer,
+        business_id:
+          typeof customer.business_id === 'object' ? (customer.business_id as any)?._id : customer.business_id,
+      });
       setEditingId(customer._id || null);
       setIsEditMode(true);
     } else {
