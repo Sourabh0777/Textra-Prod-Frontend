@@ -97,3 +97,14 @@ export interface IWhatsAppLog {
   error_message?: string;
   sent_at?: Date;
 }
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  error?: {
+    reason: string;
+    code: number;
+    [key: string]: any;
+  };
+}
