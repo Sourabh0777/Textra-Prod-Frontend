@@ -63,7 +63,6 @@ export default function BusinessesPage() {
     );
   }
 
-  console.log('🚀 ~ BusinessesPage ~ filteredBusinesses:', filteredBusinesses);
   return (
     <>
       <Header title="Businesses" subtitle="Manage your business locations" />

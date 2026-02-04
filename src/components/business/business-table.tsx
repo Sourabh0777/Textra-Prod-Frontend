@@ -57,7 +57,11 @@ export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDel
               <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">
                 <div className="flex flex-col">
                   <span className="text-sm text-neutral-700">{business.city}</span>
-                  {business.zone && <span className="text-xs text-neutral-500">{business.zone}</span>}
+                  {(business.zone_id || business.zone) && (
+                    <span className="text-xs text-neutral-500">
+                      {typeof business.zone_id === 'object' ? business.zone_id.name : business.zone}
+                    </span>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3 text-center sm:text-left">

@@ -94,7 +94,7 @@ export function BusinessProfileForm({
         <Select
           label="State"
           name="state"
-          value={typeof formData.state === 'object' ? formData.state?._id : formData.state || ''}
+          value={formData.state || ''}
           onChange={onInputChange}
           options={
             states?.map((s) => ({
@@ -110,7 +110,7 @@ export function BusinessProfileForm({
         <Select
           label="Zone"
           name="zone"
-          value={typeof formData.zone === 'object' ? formData.zone?._id : formData.zone || ''}
+          value={formData.zone || ''}
           onChange={onInputChange}
           options={
             zones?.map((z) => ({

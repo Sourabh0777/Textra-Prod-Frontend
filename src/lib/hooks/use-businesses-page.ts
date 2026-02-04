@@ -51,14 +51,15 @@ export function useBusinessesPage() {
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
   const filteredBusinesses = businesses.filter((business: IBusiness) => {
     const searchLower = searchQuery.toLowerCase();
-    const zoneName = typeof business.zone === 'object' ? business.zone?.name : business.zone;
+    const zoneName = typeof business.zone_id === 'object' ? business.zone_id?.name : business.zone || '';
     return (
       (business.business_name?.toLowerCase() || '').includes(searchLower) ||
       (business.owner_name?.toLowerCase() || '').includes(searchLower) ||
       (business.city?.toLowerCase() || '').includes(searchLower) ||
       (zoneName?.toLowerCase() || '').includes(searchLower) ||
       (business.phone_number?.toLowerCase() || '').includes(searchLower) ||
-      (business.email?.toLowerCase() || '').includes(searchLower)
+      (business.email?.toLowerCase() || '').includes(searchLower) ||
+      (business.state?.toLowerCase() || '').includes(searchLower)
     );
   });
 
@@ -78,8 +79,9 @@ export function useBusinessesPage() {
           typeof business.business_type_id === 'object'
             ? (business.business_type_id as any)._id
             : business.business_type_id,
-        state: typeof business.state === 'object' ? (business.state as any)._id : business.state,
-        zone: typeof business.zone === 'object' ? (business.zone as any)._id : business.zone,
+        state:
+          typeof business.state_id === 'object' ? (business.state_id as any)._id : business.state_id || business.state,
+        zone: typeof business.zone_id === 'object' ? (business.zone_id as any)._id : business.zone_id || business.zone,
       };
       setFormData(normalizedBusiness);
       setEditingId(business._id || null);
@@ -122,6 +124,7 @@ export function useBusinessesPage() {
     if (!formData.owner_name) newErrors.owner_name = 'Owner name is required';
     if (!formData.business_type_id) newErrors.business_type_id = 'Business type is required';
     if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.state) newErrors.state = 'State is required';
     if (!formData.zone) newErrors.zone = 'Zone is required';
     if (!formData.address) newErrors.address = 'Address is required';
     if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';

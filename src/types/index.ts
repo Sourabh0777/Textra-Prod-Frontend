@@ -31,8 +31,10 @@ export interface IBusiness {
   phone_number: string;
   address: string;
   city: string;
-  state: string | IState;
-  zone: string | IZone;
+  state: string;
+  zone: string;
+  state_id?: string | IState;
+  zone_id?: string | IZone;
   is_active: boolean;
   created_at?: Date;
   waba_id: string;
