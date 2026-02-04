@@ -79,9 +79,10 @@ export function useBusinessesPage() {
           typeof business.business_type_id === 'object'
             ? (business.business_type_id as any)._id
             : business.business_type_id,
-        state:
+        state_id:
           typeof business.state_id === 'object' ? (business.state_id as any)._id : business.state_id || business.state,
-        zone: typeof business.zone_id === 'object' ? (business.zone_id as any)._id : business.zone_id || business.zone,
+        zone_id:
+          typeof business.zone_id === 'object' ? (business.zone_id as any)._id : business.zone_id || business.zone,
       };
       setFormData(normalizedBusiness);
       setEditingId(business._id || null);
@@ -124,8 +125,8 @@ export function useBusinessesPage() {
     if (!formData.owner_name) newErrors.owner_name = 'Owner name is required';
     if (!formData.business_type_id) newErrors.business_type_id = 'Business type is required';
     if (!formData.city) newErrors.city = 'City is required';
-    if (!formData.state) newErrors.state = 'State is required';
-    if (!formData.zone) newErrors.zone = 'Zone is required';
+    if (!formData.state_id) newErrors.state_id = 'State is required';
+    if (!formData.zone_id) newErrors.zone_id = 'Zone is required';
     if (!formData.address) newErrors.address = 'Address is required';
     if (!formData.phone_number) newErrors.phone_number = 'Phone number is required';
     return newErrors;

@@ -94,8 +94,10 @@ export function BusinessDetailsModal({
           />
           <Select
             label="State *"
-            name="state"
-            value={typeof formData.state === 'object' ? (formData.state as any)?._id : (formData.state as any) || ''}
+            name="state_id"
+            value={
+              typeof formData.state_id === 'object' ? (formData.state_id as any)?._id : (formData.state_id as any) || ''
+            }
             onChange={onInputChange}
             options={
               states?.map((s) => ({
@@ -103,14 +105,15 @@ export function BusinessDetailsModal({
                 label: s.name,
               })) || []
             }
-            error={errors.state}
+            error={errors.state_id}
             fullWidth
-            disabled
           />
           <Select
             label="Zone *"
-            name="zone"
-            value={typeof formData.zone === 'object' ? (formData.zone as any)?._id : (formData.zone as any) || ''}
+            name="zone_id"
+            value={
+              typeof formData.zone_id === 'object' ? (formData.zone_id as any)?._id : (formData.zone_id as any) || ''
+            }
             onChange={onInputChange}
             options={
               zones?.map((z) => ({
@@ -118,7 +121,7 @@ export function BusinessDetailsModal({
                 label: z.name,
               })) || []
             }
-            error={errors.zone}
+            error={errors.zone_id}
             fullWidth
           />
           <Input
