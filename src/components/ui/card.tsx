@@ -20,6 +20,14 @@ export function CardHeader({ children, className = '', ...props }: CardProps) {
   );
 }
 
+export function CardTitle({ children, className = '', ...props }: CardProps) {
+  return (
+    <h3 className={`text-lg font-semibold leading-none tracking-tight ${className}`} {...props}>
+      {children}
+    </h3>
+  );
+}
+
 export function CardBody({ children, className = '', ...props }: CardProps) {
   return (
     <div className={`px-6 py-4 ${className}`} {...props}>
@@ -27,6 +35,8 @@ export function CardBody({ children, className = '', ...props }: CardProps) {
     </div>
   );
 }
+
+export const CardContent = CardBody;
 
 export function CardFooter({ children, className = '', ...props }: CardProps) {
   return (
