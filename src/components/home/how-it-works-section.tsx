@@ -23,7 +23,7 @@ export function HowItWorksSection() {
       description:
         "Our system automatically sends personalized, professional service reminders via WhatsApp at the perfect time. You don't have to lift a finger.",
       icon: <Coffee className="w-6 h-6 text-white" />,
-      color: 'bg-[#15368A]',
+      color: 'bg-primary',
     },
   ];
 

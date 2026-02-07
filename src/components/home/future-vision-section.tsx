@@ -12,7 +12,7 @@ export function FutureVisionSection() {
   ];
 
   return (
-    <section className="py-24 bg-[#15368A] text-white overflow-hidden relative">
+    <section className="py-24 bg-primary text-white overflow-hidden relative">
       {/* Decorative patterns */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-48 -mt-48" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -ml-48 -mb-48" />
@@ -68,7 +68,7 @@ export function FutureVisionSection() {
                   <option>Other</option>
                 </select>
               </div>
-              <Button className="w-full bg-[#15368A] hover:bg-[#15368A]/90 text-white rounded-xl py-6 font-bold shadow-lg shadow-blue-900/10 transition-all hover:scale-[1.02]">
+              <Button className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl py-6 font-bold shadow-lg shadow-blue-900/10 transition-all hover:scale-[1.02]">
                 Join the Waitlist
               </Button>
             </form>

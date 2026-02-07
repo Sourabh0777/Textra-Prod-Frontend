@@ -13,7 +13,7 @@ export function MarketingFooter() {
           <div className="col-span-1 md:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-2">
               <Image src="/logo/logo.png" alt="Textra Logo" width={32} height={32} className="rounded-lg" />
-              <span className="text-xl font-bold text-[#15368A]">Textra</span>
+              <span className="text-xl font-bold text-primary">Textra</span>
             </Link>
             <p className="text-neutral-500 max-w-sm leading-relaxed">
               Automated WhatsApp reminders for businesses. Reduce no-shows and boost repeat business with ease.
@@ -24,12 +24,12 @@ export function MarketingFooter() {
             <h4 className="font-bold text-neutral-900 mb-4">Company</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-neutral-500 hover:text-[#15368A] transition-colors">
+                <Link href="/about" className="text-neutral-500 hover:text-primary transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-neutral-500 hover:text-[#15368A] transition-colors">
+                <Link href="/contact" className="text-neutral-500 hover:text-primary transition-colors">
                   Contact Us
                 </Link>
               </li>
@@ -40,12 +40,12 @@ export function MarketingFooter() {
             <h4 className="font-bold text-neutral-900 mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-neutral-500 hover:text-[#15368A] transition-colors">
+                <Link href="/privacy" className="text-neutral-500 hover:text-primary transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-neutral-500 hover:text-[#15368A] transition-colors">
+                <Link href="/terms" className="text-neutral-500 hover:text-primary transition-colors">
                   Terms of Service
                 </Link>
               </li>

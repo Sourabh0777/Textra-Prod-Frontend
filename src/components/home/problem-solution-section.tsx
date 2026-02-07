@@ -48,7 +48,7 @@ export function ProblemSolutionSection() {
                   {point.icon}
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-neutral-900 group-hover:text-[#15368A] transition-colors">
+                  <h3 className="text-xl font-bold text-neutral-900 group-hover:text-primary transition-colors">
                     {point.problem}
                   </h3>
                   <div className="flex items-start gap-2 pt-2">

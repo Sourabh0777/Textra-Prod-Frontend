@@ -26,13 +26,13 @@ export function MarketingNavbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-neutral-600">
-            <Link href="/about" className="hover:text-[#15368A] transition-colors">
+            <Link href="/about" className="hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="#features" className="hover:text-[#15368A] transition-colors">
+            <Link href="#features" className="hover:text-primary transition-colors">
               Features
             </Link>
-            <Link href="#how-it-works" className="hover:text-[#15368A] transition-colors">
+            <Link href="#how-it-works" className="hover:text-primary transition-colors">
               How it Works
             </Link>
           </div>
@@ -40,17 +40,17 @@ export function MarketingNavbar() {
           <div className="flex items-center gap-4">
             {isSignedIn ? (
               <Link href="/dashboard">
-                <Button className="bg-[#15368A] hover:bg-[#15368A]/90 text-white rounded-xl px-6">Dashboard</Button>
+                <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-6">Dashboard</Button>
               </Link>
             ) : (
               <>
                 <Link href="/sign-in">
-                  <Button variant="ghost" className="text-neutral-600 hover:text-[#15368A] font-medium px-4">
+                  <Button variant="ghost" className="text-neutral-600 hover:text-primary font-medium px-4">
                     Sign In
                   </Button>
                 </Link>
                 <Link href="/sign-up">
-                  <Button className="bg-[#15368A] hover:bg-[#15368A]/90 text-white rounded-xl px-6 shadow-md transition-all hover:scale-105">
+                  <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-6 shadow-md transition-all hover:scale-105">
                     Get Started
                   </Button>
                 </Link>

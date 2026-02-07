@@ -99,7 +99,7 @@ export function ContactForm() {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-[#15368A] hover:bg-[#15368A]/90 text-white py-6"
+          className="w-full bg-primary hover:bg-primary-dark text-white py-6"
         >
           {isSubmitting ? 'Sending...' : 'Send Message'}
         </Button>
