@@ -1,4 +1,10 @@
+import { constructMetadata } from '@/lib/seo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export const metadata = constructMetadata({
+  title: 'Terms and Conditions',
+  description: 'Review our terms and conditions for using BikeService CRM.',
+});
 
 export default function TermsPage() {
   return (
@@ -12,15 +18,15 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-neutral-800 mb-3">1. Acceptance of Terms</h2>
             <p className="text-neutral-600 leading-relaxed">
-              By accessing or using BikeService CRM, you agree to be bound by these Terms and Conditions. If you do not
-              agree to all of these terms, do not use this service.
+              By accessing or using Textra, you agree to be bound by these Terms and Conditions. If you do not agree to
+              all of these terms, do not use this service.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-neutral-800 mb-3">2. Description of Service</h2>
             <p className="text-neutral-600 leading-relaxed">
-              BikeService CRM provides a platform for bike service business owners to manage their customers, service
+              Textra provides a management platform for bike service business owners to oversee their customers, service
               bookings, and business analytics. We reserve the right to modify or discontinue the service at any time.
             </p>
           </section>

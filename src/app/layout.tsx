@@ -16,10 +16,9 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: 'Bike Service CRM',
-  description: 'Manage your bike service business with ease',
-};
+import { constructMetadata } from '@/lib/seo';
+
+export const metadata = constructMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

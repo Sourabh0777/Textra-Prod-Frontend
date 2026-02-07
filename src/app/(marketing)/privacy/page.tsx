@@ -1,4 +1,10 @@
+import { constructMetadata } from '@/lib/seo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export const metadata = constructMetadata({
+  title: 'Privacy Policy',
+  description: 'Read our privacy policy to understand how we collect, use, and protect your information.',
+});
 
 export default function PrivacyPage() {
   return (
@@ -45,7 +51,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold text-neutral-800 mb-3">5. Contact Us</h2>
             <p className="text-neutral-600 leading-relaxed">
-              If you have any questions about this Privacy Policy, please contact us at support@bikeservicecrm.com.
+              If you have any questions about this Privacy Policy, please contact us at support@textra.in.
             </p>
           </section>
         </CardContent>

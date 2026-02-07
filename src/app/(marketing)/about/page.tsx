@@ -1,11 +1,17 @@
+import { constructMetadata } from '@/lib/seo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export const metadata = constructMetadata({
+  title: 'About Us',
+  description: 'Learn more about Textra and our mission to modernize the bike service industry.',
+});
 
 export default function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-20">
       <Card className="border-none shadow-sm">
         <CardHeader className="pb-4">
-          <CardTitle className="text-3xl font-bold text-neutral-900 text-center">About BikeService CRM</CardTitle>
+          <CardTitle className="text-3xl font-bold text-neutral-900 text-center">About Textra</CardTitle>
         </CardHeader>
         <CardContent className="prose prose-neutral max-w-none text-center">
           <p className="text-xl text-neutral-600 leading-relaxed mb-8">
@@ -16,8 +22,8 @@ export default function AboutPage() {
             <div className="p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
               <h3 className="text-lg font-bold text-[#15368A] mb-2">Our Mission</h3>
               <p className="text-neutral-600">
-                To provide the best-in-class CRM experience specifically tailored for the two-wheeler service industry,
-                helping small and medium-sized businesses thrive in a digital world.
+                To provide a best-in-class management suite specifically tailored for the two-wheeler service industry,
+                helping business owners master their operations in a digital-first world.
               </p>
             </div>
             <div className="p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
