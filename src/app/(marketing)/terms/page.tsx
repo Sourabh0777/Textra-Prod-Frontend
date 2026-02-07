@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const metadata = constructMetadata({
   title: 'Terms and Conditions',
-  description: 'Review our terms and conditions for using BikeService CRM.',
+  description: 'Review our terms and conditions for using Textra.',
 });
 
 export default function TermsPage() {
@@ -43,8 +43,8 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-neutral-800 mb-3">4. Limitation of Liability</h2>
             <p className="text-neutral-600 leading-relaxed">
-              BikeService CRM shall not be liable for any direct, indirect, incidental, special, consequential, or
-              exemplary damages resulting from your use of the service.
+              Textra shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary
+              damages resulting from your use of the service.
             </p>
           </section>
 

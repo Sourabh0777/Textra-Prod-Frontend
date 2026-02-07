@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function MarketingFooter() {
   const currentYear = new Date().getFullYear();
@@ -11,14 +12,11 @@ export function MarketingFooter() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#15368A] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">B</span>
-              </div>
-              <span className="text-xl font-bold text-[#15368A]">BikeService CRM</span>
+              <Image src="/logo/logo.png" alt="Textra Logo" width={32} height={32} className="rounded-lg" />
+              <span className="text-xl font-bold text-[#15368A]">Textra</span>
             </Link>
             <p className="text-neutral-500 max-w-sm leading-relaxed">
-              Automated WhatsApp reminders for motorbike repair shops. Reduce no-shows and boost repeat business with
-              ease.
+              Automated WhatsApp reminders for businesses. Reduce no-shows and boost repeat business with ease.
             </p>
           </div>
 
@@ -56,10 +54,10 @@ export function MarketingFooter() {
         </div>
 
         <div className="pt-8 border-t border-neutral-100 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-          <p className="text-neutral-400 text-sm">&copy; {currentYear} BikeService CRM. All rights reserved.</p>
+          <p className="text-neutral-400 text-sm">&copy; {currentYear} Textra. All rights reserved.</p>
           <p className="text-neutral-400 text-[10px] max-w-md leading-tight italic">
-            Disclaimer: BikeService CRM is an independent service provider and is not an official partner of, or
-            endorsed by, WhatsApp or Meta.
+            Disclaimer: Textra is an independent service provider and is not an official partner of, or endorsed by,
+            WhatsApp or Meta.
           </p>
         </div>
       </div>

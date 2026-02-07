@@ -25,9 +25,8 @@ export function FutureVisionSection() {
               <span className="text-blue-300">Businesses Soon.</span>
             </h2>
             <p className="text-lg text-blue-100/80 leading-relaxed max-w-xl">
-              We&apos;re starting with a focus on motorbike repair shops to perfect our service. In the near future,
-              we&apos;ll be expanding our powerful reminder platform to support a wide range of appointment-based
-              businesses.
+              We&apos;re focused on providing the best automated reminder platform for a wide range of appointment-based
+              businesses. Textra helps you save time and grow faster.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

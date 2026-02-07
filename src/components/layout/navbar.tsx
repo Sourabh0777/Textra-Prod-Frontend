@@ -4,6 +4,8 @@ import { Bell, Search, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -17,17 +19,25 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
   return (
     <header className="sticky top-0 z-30 w-full bg-white/70 backdrop-blur-xl border-b border-neutral-200">
       <div className="flex h-16 items-center justify-between px-4 md:px-8">
-        {/* Mobile Menu Button */}
-        {isMobile && (
-          <button
-            onClick={onMenuClick}
-            className="p-2 mr-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300 lg:hidden"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        )}
+        {/* Mobile Menu Button and Logo */}
+        <div className="flex items-center gap-2">
+          {isMobile && (
+            <button
+              onClick={onMenuClick}
+              className="p-2 mr-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300 lg:hidden"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          )}
+          {isMobile && (
+            <Link href="/" className="flex lg:hidden items-center gap-2">
+              <Image src="/logo/logo.png" alt="Textra" width={28} height={28} className="rounded-lg" />
+              <span className="text-xl font-bold text-[#15368A]">Textra</span>
+            </Link>
+          )}
+        </div>
 
         {/* Left side - Search or Breadcrumbs */}
         <div className="flex items-center gap-4 flex-1 max-w-xl">

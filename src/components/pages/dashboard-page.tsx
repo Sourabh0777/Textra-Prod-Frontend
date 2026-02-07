@@ -14,7 +14,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <>
-        <Header title="Dashboard" subtitle="Welcome to your Bike Service CRM" />
+        <Header title="Dashboard" subtitle="Welcome to your Textra - Whatsapp remminder Solution" />
         <div className="p-4 md:p-8 flex justify-center items-center min-h-[400px]">
           <Loader />
         </div>
@@ -24,7 +24,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <Header title="Dashboard" subtitle="Welcome to your Bike Service CRM" />
+      <Header title="Dashboard" subtitle="Welcome to your Textra - Whatsapp remminder Solution" />
 
       <div className="p-4 md:p-8">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">

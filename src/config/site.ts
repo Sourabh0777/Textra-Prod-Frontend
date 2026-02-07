@@ -1,7 +1,6 @@
 export const siteConfig = {
   name: 'Textra',
-  description:
-    'The definitive operating system for bike service businesses. Streamline workflow, enhance customer trust, and scale your service center with precision.',
+  description: 'Whatsapp remminder Solution',
   url: process.env.NEXT_PUBLIC_APP_URL || 'https://textra.in',
   ogImage: 'https://textra.in/og.jpg',
   mainNav: [

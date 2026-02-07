@@ -29,11 +29,11 @@ export function ProblemSolutionSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 mb-20">
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 leading-tight">
-            Built for Motorbike Repair Shops, <span className="text-blue-600">Expanding Soon.</span>
+            Built for Businesses, <span className="text-blue-600">Expanding Features Soon.</span>
           </h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
             Tired of missed appointments and the endless back-and-forth of reminder calls? We get it. That&apos;s why we
-            built a solution that works as hard as you do.
+            built a solution that works for you.
           </p>
         </div>
 

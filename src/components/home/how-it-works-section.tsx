@@ -33,7 +33,7 @@ export function HowItWorksSection() {
         <div className="text-center space-y-4 mb-20">
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 leading-tight">Get Set Up in Minutes</h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-            We&apos;ve streamlined the process so you can focus on what matters most—running your shop.
+            We&apos;ve streamlined the process so you can focus on what matters most—running your business.
           </p>
         </div>
 

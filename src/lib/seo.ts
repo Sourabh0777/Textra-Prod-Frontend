@@ -41,7 +41,7 @@ export function constructMetadata({
       title: fullTitle,
       description,
       images: [image],
-      creator: '@bikeservicecrm',
+      creator: '@textra',
     },
     icons,
     metadataBase: new URL(siteConfig.url),

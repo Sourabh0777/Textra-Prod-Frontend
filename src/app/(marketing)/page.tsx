@@ -5,9 +5,9 @@ import { HowItWorksSection } from '@/components/home/how-it-works-section';
 import { FutureVisionSection } from '@/components/home/future-vision-section';
 
 export const metadata = constructMetadata({
-  title: 'Precision Management for Bike Service Centers',
+  title: 'Textra | Whatsapp remminder Solution',
   description:
-    'Elevate your service center with Textra. The all-in-one platform for effortless job management, customer relations, and business growth.',
+    'Whatsapp remminder Solution for businesses. Streamline workflow, enhance customer trust, and scale with precision.',
 });
 
 export default function HomePage() {

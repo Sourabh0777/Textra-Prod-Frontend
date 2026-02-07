@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@clerk/nextjs';
 
@@ -13,10 +14,14 @@ export function MarketingNavbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-[#15368A] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">B</span>
-              </div>
-              <span className="text-xl font-bold text-[#15368A] hidden sm:block">BikeService CRM</span>
+              <Image
+                src="/logo/logo.png"
+                alt="Textra Logo"
+                width={200}
+                height={40}
+                className="rounded-lg object-contain"
+              />
+              {/* <span className="text-xl font-bold text-[#15368A] hidden sm:block">Textra</span> */}
             </Link>
           </div>
 

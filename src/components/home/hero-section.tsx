@@ -21,7 +21,7 @@ export function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
               </span>
-              Built for Motorbike Repair Shops
+              Whatsapp remminder Solution
             </div>
 
             <h1 className="text-2xl md:text-4xl font-extrabold text-[#15368A] tracking-tight leading-[1.1]">
@@ -30,8 +30,8 @@ export function HeroSection() {
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              The effortless way for motorbike repair shops to keep customers informed and their schedules full. Spend
-              less time on the phone and more time on repairs.
+              The effortless way for businesses to keep customers informed and their schedules full. Spend less time on
+              the phone and more time on growth.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
@@ -86,8 +86,8 @@ export function HeroSection() {
                     <span className="font-semibold text-xs">WhatsApp Business</span>
                   </div>
                   <div className="bg-white text-neutral-800 rounded-xl p-3 shadow-sm text-xs leading-relaxed">
-                    <p className="font-bold text-[#075E54] mb-1">Service Reminder</p>
-                    Hi John! Your Yamaha R1 is due for its 10,000 km service tomorrow at 10 AM. Would you like to
+                    <p className="font-bold text-[#075E54] mb-1">Appointment Reminder</p>
+                    Hi John! This is a reminder for your upcoming appointment tomorrow at 10 AM. Would you like to
                     confirm?
                   </div>
                   <div className="flex justify-end gap-2 text-[10px]">
