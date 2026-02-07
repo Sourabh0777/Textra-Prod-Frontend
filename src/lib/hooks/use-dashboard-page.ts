@@ -44,11 +44,11 @@ export function useDashboardPage() {
 
   const modules = [
     { label: 'Manage Businesses', href: '/businesses', icon: '🏢' },
-    { label: 'Manage Customers', href: '/customers', icon: '👥' },
-    { label: 'Manage Vehicles', href: '/vehicles', icon: '🏍️' },
-    { label: 'Manage Services', href: '/services', icon: '🔧' },
-    { label: 'Manage Reminders', href: '/reminders', icon: '🔔' },
-    { label: 'View Logs', href: '/whatsapp-logs', icon: '📱' },
+    { label: 'Manage Customers', href: '/bike-service/customers', icon: '👥' },
+    { label: 'Manage Vehicles', href: '/bike-service/vehicles', icon: '🏍️' },
+    { label: 'Manage Services', href: '/bike-service/services', icon: '🔧' },
+    { label: 'Manage Reminders', href: '/bike-service/reminders', icon: '🔔' },
+    { label: 'View Logs', href: '/bike-service/whatsapp-logs', icon: '📱' },
   ];
 
   return {
