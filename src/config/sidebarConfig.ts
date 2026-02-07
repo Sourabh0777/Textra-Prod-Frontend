@@ -2,7 +2,7 @@ import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, S
 export type SidebarKey = keyof typeof SIDEBAR_CONFIG;
 
 export const SIDEBAR_CONFIG = {
-  configurations: { label: 'Configurations', href: '/bike-service/configurations', icon: Settings },
+  configurations: { label: 'Configurations', href: '/configurations', icon: Settings },
   dashboard: { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   'business-types': { label: 'Business Types', href: '/business-types', icon: Building2 },
   businesses: { label: 'Businesses', href: '/businesses', icon: Building2 },
