@@ -17,23 +17,11 @@ export function MarketingNavbar() {
               <Image
                 src="/logo/logo.png"
                 alt="Textra Logo"
-                width={200}
-                height={40}
+                width={150}
+                height={10}
                 className="rounded-lg object-contain"
               />
               {/* <span className="text-xl font-bold text-[#15368A] hidden sm:block">Textra</span> */}
-            </Link>
-          </div>
-
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-neutral-600">
-            <Link href="/about" className="hover:text-primary transition-colors">
-              About
-            </Link>
-            <Link href="#features" className="hover:text-primary transition-colors">
-              Features
-            </Link>
-            <Link href="#how-it-works" className="hover:text-primary transition-colors">
-              How it Works
             </Link>
           </div>
 
