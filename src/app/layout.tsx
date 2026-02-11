@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 import { constructMetadata } from '@/lib/seo';
+import FacebookSDK from '@/components/layout/facebook-sdk';
 
 export const metadata = constructMetadata();
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <ReduxProvider>
         <html lang="en">
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <FacebookSDK />
             {children}
             <Toaster richColors position="top-right" />
           </body>
