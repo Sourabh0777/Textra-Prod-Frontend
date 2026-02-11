@@ -8,7 +8,6 @@ export function useFetchUserData() {
   const { user: clerkUser, isLoaded } = useUser();
   const dispatch = useAppDispatch();
 
-  // Use RTK Query hook
   // skip the query if clerk is not loaded or user not signed in
   const { data: apiUser, isLoading, isError } = useFetchLoginUserQuery(undefined, { skip: !isLoaded || !clerkUser });
 
