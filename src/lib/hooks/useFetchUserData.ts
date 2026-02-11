@@ -11,7 +11,6 @@ export function useFetchUserData() {
   // Use RTK Query hook
   // skip the query if clerk is not loaded or user not signed in
   const { data: apiUser, isLoading, isError } = useFetchLoginUserQuery(undefined, { skip: !isLoaded || !clerkUser });
-  console.log('🚀 ~ useFetchUserData ~ apiUser:', apiUser);
 
   // Sync to Redux slice (optional, but good for backward compat if other parts use the slice)
   useEffect(() => {
