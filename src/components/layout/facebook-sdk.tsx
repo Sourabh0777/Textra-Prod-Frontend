@@ -11,6 +11,30 @@ declare global {
 }
 
 export default function FacebookSDK() {
+  const statusChangeCallback = (response: any) => {
+    console.log('FB login status response:', response);
+    // status => connected , not_authorized , unknown
+    console.log('Successfully logged in with Facebook', response.status);
+
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      // authResponse is included if the status is connected and is made up of the following:
+      // accessToken - contains an access token for the person using the app.
+      // expiresIn - indicates the UNIX time when the token expires and needs to be renewed.
+      // signedRequest - a signed parameter that contains information about the person using the app.
+      // userID - the ID of the person using the app.
+
+      console.log('Successfully logged in with Facebook', response.authResponse);
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      console.log('Logged into Facebook, but not authorized for this app');
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      console.log('Not logged into Facebook');
+    }
+  };
+
   useEffect(() => {
     window.fbAsyncInit = function () {
       if (window.FB) {
@@ -22,6 +46,10 @@ export default function FacebookSDK() {
         });
 
         window.FB.AppEvents.logPageView();
+
+        window.FB.getLoginStatus(function (response: any) {
+          statusChangeCallback(response);
+        });
       }
     };
   }, []);
