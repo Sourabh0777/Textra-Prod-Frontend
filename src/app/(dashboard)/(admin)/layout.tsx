@@ -17,7 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (!isLoading && !user) {
       // If user data is missing after loading, redirect to dashboard as well
       // This assumes useFetchUserData handles Clerk authentication state
-      router.push('/dashboard');
+      router.push('/');
     }
   }, [user, isLoading, router]);
 
