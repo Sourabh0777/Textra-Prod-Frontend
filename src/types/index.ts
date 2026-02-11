@@ -1,3 +1,8 @@
+export enum UserRole {
+  ADMIN = 'admin',
+  TWO_WHEELER_SERVICE = 'two_wheeler_service',
+}
+
 export interface IState {
   _id?: string;
   name: string;

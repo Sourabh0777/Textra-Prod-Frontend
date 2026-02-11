@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { UserRole } from '@/types';
 
 export interface User {
   id: string;
   clerkId: string;
   email: string;
   name: string;
+  role: UserRole;
   [key: string]: any;
 }
 
