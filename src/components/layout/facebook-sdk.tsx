@@ -47,6 +47,14 @@ export default function FacebookSDK() {
 
   useEffect(() => {
     window.fbAsyncInit = function () {
+      // Check if protocol is HTTPS
+      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        console.warn(
+          'Facebook SDK requires HTTPS to function correctly. ' +
+            'Please ensure your application is served over HTTPS.',
+        );
+      }
+
       if (window.FB) {
         window.FB.init({
           appId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
