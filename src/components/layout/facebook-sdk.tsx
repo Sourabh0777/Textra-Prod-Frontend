@@ -1,105 +1,135 @@
 'use client';
 
-import Script from 'next/script';
 import { useEffect } from 'react';
 import { env } from '@/env';
+
+export interface FacebookAuthResponse {
+  accessToken: string;
+  expiresIn: number;
+  signedRequest: string;
+  userID: string;
+  grantedScopes?: string;
+  code?: string;
+}
 
 declare global {
   interface Window {
     fbAsyncInit: () => void;
     FB: any;
-    checkLoginState: () => void;
   }
 }
 
-export default function FacebookSDK() {
-  const statusChangeCallback = (response: any) => {
-    console.log('statusChangeCallback');
-    console.log(response);
-    // The response object is returned with a status field that lets the
-    // app know the current login status of the person.
-    // Full docs on the response object can be found in the documentation
-    // for FB.getLoginStatus().
-    if (response.status === 'connected') {
-      // Logged into your app and Facebook.
-      testAPI();
-    } else {
-      // The person is not logged into your app or we are unable to tell.
-      const statusElement = document.getElementById('status');
-      if (statusElement) {
-        statusElement.innerHTML = 'Please log into this app.';
-      }
-    }
-  };
+// Facebook SDK initialization configuration
+const FB_CONFIG = {
+  appId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+  configId: env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID,
+  version: env.NEXT_PUBLIC_FACEBOOK_API_VERSION,
+};
 
-  const testAPI = () => {
-    console.log('Welcome!  Fetching your information.... ');
-    if (window.FB) {
-      window.FB.api('/me', function (response: any) {
-        console.log('Successful login for: ' + response.name);
-        const statusElement = document.getElementById('status');
-        if (statusElement) {
-          statusElement.innerHTML = 'Thanks for logging in, ' + response.name + '!';
-        }
+console.log('Facebook SDK Config Loaded:', {
+  appId: FB_CONFIG.appId,
+  configId: FB_CONFIG.configId,
+  version: FB_CONFIG.version,
+  isAppIdPresent: !!FB_CONFIG.appId,
+  isConfigIdPresent: !!FB_CONFIG.configId,
+  currentOrigin: typeof window !== 'undefined' ? window.location.origin : 'N/A',
+});
+
+/**
+ * Initialize Facebook SDK
+ */
+const initFacebook = (): Promise<void> => {
+  return new Promise((resolve) => {
+    window.fbAsyncInit = () => {
+      console.log('fbAsyncInit triggered - window.FB:', !!window.FB);
+      window.FB.init({
+        appId: FB_CONFIG.appId,
+        cookie: true,
+        xfbml: true,
+        version: FB_CONFIG.version,
       });
+      console.log('window.FB.init() called');
+      resolve();
+    };
+
+    (function (d, s, id) {
+      const fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      const js = d.createElement(s) as HTMLScriptElement;
+      js.id = id;
+      js.src = 'https://connect.facebook.net/en_US/sdk.js';
+      fjs.parentNode?.insertBefore(js, fjs);
+    })(document, 'script', 'facebook-jssdk');
+  });
+};
+
+/**
+ * Triggers the Facebook login process.
+ * Supports both standard auth response and the 'code' response type used in Login for Business.
+ */
+export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
+  return new Promise((resolve, reject) => {
+    if (!window.FB) {
+      console.error('Facebook SDK not initialized: window.FB is missing');
+      reject(new Error('Facebook SDK not initialized'));
+      return;
     }
-  };
 
+    console.log('Checking Facebook login status...');
+    window.FB.getLoginStatus((statusResponse: any) => {
+      console.log('Current Facebook login status:', statusResponse);
+    });
+
+    console.log('configId:', FB_CONFIG.configId);
+    console.log('window.FB.login is a function:', typeof window.FB.login === 'function');
+
+    const loginOptions: any = {
+      auth_type: 'rerequest',
+      response_type: 'code',
+      config_id: FB_CONFIG.configId,
+      override_default_response_type: true,
+    };
+
+    console.log('Calling window.FB.login with options:', loginOptions);
+
+    try {
+      window.FB.login((response: any) => {
+        console.log('Facebook login callback received. Status:', response.status);
+        console.log('Facebook login full response:', response);
+
+        // When response_type: 'code' is used, the code might be directly in the response
+        // or inside authResponse depending on the SDK version and configuration.
+        const authResponse = response.authResponse || (response.code ? response : null);
+
+        if (authResponse && (authResponse.accessToken || authResponse.code)) {
+          resolve(authResponse as FacebookAuthResponse);
+        } else {
+          const errorMsg =
+            response.status === 'unknown'
+              ? 'Facebook login failed: Status unknown. Ensure you are a tester for this app and localhost is whitelisted.'
+              : 'Facebook login failed or was cancelled';
+          console.error('Facebook Login Error details:', {
+            status: response.status,
+            errorMsg,
+            response,
+          });
+          reject(new Error(errorMsg));
+        }
+      }, loginOptions);
+    } catch (error) {
+      console.error('Synchronous error during window.FB.login call:', error);
+      reject(error);
+    }
+  });
+};
+
+export default function FacebookSDK() {
   useEffect(() => {
-    window.fbAsyncInit = function () {
-      // Check if protocol is HTTPS
-      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-        console.warn(
-          'Facebook SDK requires HTTPS to function correctly. ' +
-            'Please ensure your application is served over HTTPS.',
-        );
-      }
-
-      if (window.FB) {
-        window.FB.init({
-          appId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-          cookie: true, // enable cookies to allow the server to access
-          // the session
-          xfbml: true, // parse social plugins on this page
-          version: env.NEXT_PUBLIC_FACEBOOK_API_VERSION, // Specify the Graph API version to use
-        });
-
-        // Now that we've initialized the JavaScript SDK, we call
-        // FB.getLoginStatus().  This function gets the state of the
-        // person visiting this page and can return one of three states to
-        // the callback you provide.
-        window.FB.getLoginStatus(function (response: any) {
-          statusChangeCallback(response);
-        });
-      }
-    };
-
-    window.checkLoginState = function () {
-      if (window.FB) {
-        window.FB.getLoginStatus(function (response: any) {
-          statusChangeCallback(response);
-        });
-      }
-    };
+    console.log('FacebookSDK component mounted');
+    initFacebook().then(() => {
+      console.log('Facebook SDK initialized');
+    });
   }, []);
 
-  return (
-    <>
-      <Script id="facebook-jssdk" src="https://connect.facebook.net/en_US/sdk.js" strategy="afterInteractive" />
-      {env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID && (
-        <div className="fixed bottom-4 right-4 z-[9999] bg-white p-4 rounded-lg shadow-xl border border-gray-200">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: `<fb:login-button 
-              scope="public_profile,email" 
-              config_id="${env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID}"
-              onlogin="checkLoginState();">
-            </fb:login-button>`,
-            }}
-          />
-          <div id="status" className="mt-2 text-sm text-gray-600"></div>
-        </div>
-      )}
-    </>
-  );
+  return null;
 }
