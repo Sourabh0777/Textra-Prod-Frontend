@@ -8,6 +8,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { UserRole } from '@/types';
 import { SidebarKey } from '@/config/sidebarConfig';
 import { env } from '@/env';
+import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
 
 import { SidebarHeader } from './sidebar/sidebar-header';
 import { SidebarNavigation } from './sidebar/sidebar-navigation';
@@ -23,17 +24,33 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { user } = useAppSelector((state) => state.user);
+  const [facebookOAuth] = useFacebookOAuthMutation();
 
   const isAdmin = user?.role === UserRole.ADMIN;
 
   const onLogin = async () => {
     setIsLoggingIn(true);
     try {
-      await handleFacebookLogin();
-      toast.success('Successfully connected to Facebook!');
-    } catch (error) {
+      const response = await handleFacebookLogin();
+      if (response && response.code) {
+        console.log('🚀 ~ onLogin ~ response:', response);
+
+        const result = await facebookOAuth({
+          code: response.code,
+          userID: response.userID || '',
+        }).unwrap();
+
+        if (result.success) {
+          toast.success('Successfully connected to Facebook!');
+        } else {
+          toast.error(result.message || 'Facebook connection failed.');
+        }
+      } else {
+        toast.error('Facebook connection failed. Please try again.');
+      }
+    } catch (error: any) {
       console.error('Login failed:', error);
-      toast.error('Facebook connection failed. Please try again.');
+      toast.error(error?.data?.message || 'Facebook connection failed. Please try again.');
     } finally {
       setIsLoggingIn(false);
     }
@@ -52,7 +69,6 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
         });
 
         const data = await res.json();
-        console.log('🚀 ~ fetchSideBar ~ data:', data);
         if (data.success && data.data?.menus) {
           setMenus(data.data.menus);
         }
