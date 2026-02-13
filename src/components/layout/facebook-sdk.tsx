@@ -70,18 +70,13 @@ const initFacebook = (): Promise<void> => {
 export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
   return new Promise((resolve, reject) => {
     if (!window.FB) {
-      console.error('Facebook SDK not initialized: window.FB is missing');
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
 
-    console.log('Checking Facebook login status...');
     window.FB.getLoginStatus((statusResponse: any) => {
       console.log('Current Facebook login status:', statusResponse);
     });
-
-    console.log('configId:', FB_CONFIG.configId);
-    console.log('window.FB.login is a function:', typeof window.FB.login === 'function');
 
     const loginOptions: any = {
       auth_type: 'rerequest',
@@ -90,13 +85,8 @@ export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
       override_default_response_type: true,
     };
 
-    console.log('Calling window.FB.login with options:', loginOptions);
-
     try {
       window.FB.login((response: any) => {
-        console.log('Facebook login callback received. Status:', response.status);
-        console.log('Facebook login full response:', response);
-
         // When response_type: 'code' is used, the code might be directly in the response
         // or inside authResponse depending on the SDK version and configuration.
         const authResponse = response.authResponse || (response.code ? response : null);
@@ -125,10 +115,7 @@ export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
 
 export default function FacebookSDK() {
   useEffect(() => {
-    console.log('FacebookSDK component mounted');
-    initFacebook().then(() => {
-      console.log('Facebook SDK initialized');
-    });
+    initFacebook().then(() => {});
   }, []);
 
   return null;
