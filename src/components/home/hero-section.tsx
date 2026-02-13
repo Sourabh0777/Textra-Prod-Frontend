@@ -1,28 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, ArrowRight } from 'lucide-react';
-import { toast } from 'sonner';
-import { handleFacebookLogin } from '../layout/facebook-sdk';
 
 export function HeroSection() {
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  const onLogin = async () => {
-    setIsLoggingIn(true);
-    try {
-      const response = await handleFacebookLogin();
-      toast.success('Successfully connected to Facebook!');
-    } catch (error) {
-      console.error('Login failed:', error);
-      toast.error('Facebook connection failed. Please try again.');
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
   return (
     <section className="relative pt-5 pb-16 md:pt-5 md:pb-24 overflow-hidden">
       {/* Background decoration */}
@@ -63,12 +45,11 @@ export function HeroSection() {
                 </Button>
               </Link>
               <Button
-                onClick={onLogin}
                 variant="ghost"
                 size="lg"
-                className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all disabled:opacity-70"
+                className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all"
               >
-                {isLoggingIn ? 'Connecting...' : 'See How It Works'}
+                See How It Works
               </Button>
             </div>
 
