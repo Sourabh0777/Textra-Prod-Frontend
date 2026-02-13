@@ -1,25 +1,25 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useAuth } from '@clerk/nextjs';
 import { handleFacebookLogin } from './facebook-sdk';
 import { useAppSelector } from '@/lib/hooks';
 import { UserRole } from '@/types';
+import { SidebarKey } from '@/config/sidebarConfig';
+import { env } from '@/env';
+
+import { SidebarHeader } from './sidebar/sidebar-header';
+import { SidebarNavigation } from './sidebar/sidebar-navigation';
+import { SidebarStatus } from './sidebar/sidebar-status';
 
 interface SidebarProps {
   onClose?: () => void;
   isOpen?: boolean;
 }
-import { useAuth } from '@clerk/nextjs';
-import { SIDEBAR_CONFIG, SidebarKey } from '@/config/sidebarConfig';
-import { env } from '@/env';
 
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
-  const { getToken, userId } = useAuth();
+  const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { user } = useAppSelector((state) => state.user);
@@ -29,7 +29,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const onLogin = async () => {
     setIsLoggingIn(true);
     try {
-      const response = await handleFacebookLogin();
+      await handleFacebookLogin();
       toast.success('Successfully connected to Facebook!');
     } catch (error) {
       console.error('Login failed:', error);
@@ -39,12 +39,10 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     }
   };
 
-  const pathname = usePathname();
   useEffect(() => {
     const fetchSideBar = async () => {
       try {
-        const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`; // removed space
-
+        const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`;
         const token = await getToken();
 
         const res = await fetch(url, {
@@ -64,86 +62,13 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     };
 
     fetchSideBar();
-  }, []);
+  }, [getToken]);
 
   return (
     <aside className="w-full h-full bg-[#15368A] text-[#FFFFFF] overflow-y-auto flex flex-col border-r border-white/10">
-      {/* Header */}
-      <div className="p-6 bg-[#15368A]/80 backdrop-blur-xl sticky top-0 z-10 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
-            <Image src="/logo/logo.png" alt="Textra" width={28} height={28} />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-tight text-[#FFFFFF]">Textra</h1>
-            <p className="text-[#D9D9D9] text-[8px] uppercase tracking-[0.1em] font-bold">
-              Whatsapp remminder Solution
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
-        {menus &&
-          menus.map((key) => {
-            const item = SIDEBAR_CONFIG[key];
-            if (!item) return null;
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={`
-                relative flex items-center gap-3 p-[12px] rounded-xl transition-all duration-300 group text-white shadow-sm
-              `}
-              >
-                <Icon className={`w-5 h-5 transition-colors duration-300 text-white`} />
-                <span className="font-semibold text-sm tracking-wide  text-white">{item.label}</span>
-                {isActive && (
-                  <ChevronRight className="ml-auto w-4 h-4 text-[#FFFFFF] animate-in fade-in slide-in-from-left-2" />
-                )}
-              </Link>
-            );
-          })}
-      </nav>
-
-      {/* Footer */}
-      <div className="mt-auto p-4 border-t border-white/10 bg-white/5">
-        <div className="bg-white/5 rounded-lg p-3 border border-white/10 mb-3">
-          <div className="flex items-center justify-between text-[10px] text-[#D9D9D9] uppercase tracking-wider font-bold">
-            <span>System Status</span>
-            <div className="flex items-center gap-1.5">
-              {isAdmin ? (
-                <>
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
-                  <span className="text-emerald-400">Online</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(248,113,113,0.4)]" />
-                  <span className="text-red-400">Offline</span>
-                </>
-              )}
-            </div>
-          </div>
-          <p className="mt-1 text-[11px] text-[#D9D9D9]/60 font-medium">v1.2.0 • Pro Edition</p>
-        </div>
-
-        {!isAdmin && (
-          <button
-            onClick={onLogin}
-            disabled={isLoggingIn}
-            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold transition-all duration-300 border border-white/20 disabled:opacity-50"
-          >
-            <div className="w-5 h-5 bg-blue-600 rounded-lg flex items-center justify-center text-[10px]">f</div>
-            {isLoggingIn ? 'Connecting...' : 'Connect to Business'}
-          </button>
-        )}
-      </div>
+      <SidebarHeader />
+      <SidebarNavigation menus={menus} onClose={onClose} />
+      <SidebarStatus isAdmin={isAdmin} isLoggingIn={isLoggingIn} onLogin={onLogin} />
     </aside>
   );
 }
