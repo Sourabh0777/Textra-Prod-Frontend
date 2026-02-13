@@ -26,29 +26,18 @@ const FB_CONFIG = {
   version: env.NEXT_PUBLIC_FACEBOOK_API_VERSION,
 };
 
-console.log('Facebook SDK Config Loaded:', {
-  appId: FB_CONFIG.appId,
-  configId: FB_CONFIG.configId,
-  version: FB_CONFIG.version,
-  isAppIdPresent: !!FB_CONFIG.appId,
-  isConfigIdPresent: !!FB_CONFIG.configId,
-  currentOrigin: typeof window !== 'undefined' ? window.location.origin : 'N/A',
-});
-
 /**
  * Initialize Facebook SDK
  */
 const initFacebook = (): Promise<void> => {
   return new Promise((resolve) => {
     window.fbAsyncInit = () => {
-      console.log('fbAsyncInit triggered - window.FB:', !!window.FB);
       window.FB.init({
         appId: FB_CONFIG.appId,
         cookie: true,
         xfbml: true,
         version: FB_CONFIG.version,
       });
-      console.log('window.FB.init() called');
       resolve();
     };
 
