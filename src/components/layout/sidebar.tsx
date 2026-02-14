@@ -32,22 +32,22 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     setIsLoggingIn(true);
     try {
       const response = await handleFacebookLogin();
-      console.log(response);
+      console.log('response', response.code);
 
-      if (response && response.code) {
-        const result = await facebookOAuth({
-          code: response.code,
-          userID: response.userID || '',
-        }).unwrap();
+      // if (response && response.code) {
+      //   const result = await facebookOAuth({
+      //     code: response.code,
+      //     userID: response.userID || '',
+      //   }).unwrap();
 
-        if (result.success) {
-          toast.success('Successfully connected to Facebook!');
-        } else {
-          toast.error(result.message || 'Facebook connection failed.');
-        }
-      } else {
-        toast.error('Facebook connection failed. Please try again.');
-      }
+      //   if (result.success) {
+      //     toast.success('Successfully connected to Facebook!');
+      //   } else {
+      //     toast.error(result.message || 'Facebook connection failed.');
+      //   }
+      // } else {
+      //   toast.error('Facebook connection failed. Please try again.');
+      // }
     } catch (error: any) {
       console.error('Login failed:', error);
       toast.error(error?.data?.message || 'Facebook connection failed. Please try again.');
