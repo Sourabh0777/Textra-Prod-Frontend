@@ -25,7 +25,6 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { user } = useCurrentUser();
   const [facebookOAuth] = useFacebookOAuthMutation();
-  console.log('user', user);
 
   const isAdmin = user?.role === UserRole.ADMIN;
 
@@ -33,6 +32,8 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     setIsLoggingIn(true);
     try {
       const response = await handleFacebookLogin();
+      console.log(response);
+
       if (response && response.code) {
         const result = await facebookOAuth({
           code: response.code,

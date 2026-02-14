@@ -63,9 +63,7 @@ export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
       return;
     }
 
-    window.FB.getLoginStatus((statusResponse: any) => {
-      console.log('Current Facebook login status:', statusResponse);
-    });
+    window.FB.getLoginStatus((statusResponse: any) => {});
 
     const loginOptions: any = {
       auth_type: 'rerequest',

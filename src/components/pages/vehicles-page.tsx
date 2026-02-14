@@ -59,7 +59,6 @@ export default function VehiclesPage() {
     );
   }
 
-  console.log('🚀 ~ VehiclesPage ~ filteredVehicles:', filteredVehicles);
   return (
     <>
       <Header title="Vehicles" subtitle="Manage all vehicles" />

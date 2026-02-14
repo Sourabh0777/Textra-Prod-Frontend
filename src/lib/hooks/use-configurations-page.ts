@@ -29,7 +29,6 @@ export function useConfigurationsPage() {
   const { data: states = [], isLoading: loadingStates } = useFetchStatesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
-  console.log('🚀 ~ useConfigurationsPage ~ states:', states);
   const { data: zones = [], isLoading: loadingZones } = useFetchZonesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
