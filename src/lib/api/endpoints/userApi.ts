@@ -4,7 +4,7 @@ import { User } from '@/lib/slices/userSlice';
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchLoginUser: builder.query<User, void>({
-      query: () => '/core/customers/current',
+      query: () => '/core/users/current',
       providesTags: ['User'],
     }),
     getUserById: builder.query<User, string>({

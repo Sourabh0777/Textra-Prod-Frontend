@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { code, userID } = body;
+    const { code } = body;
 
     if (!code) {
       return NextResponse.json({ success: false, message: 'Code is required' }, { status: 400 });
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         code,
-        userID,
+        userId,
       }),
     });
 
