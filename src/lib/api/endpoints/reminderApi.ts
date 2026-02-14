@@ -42,7 +42,7 @@ export const reminderApi = baseApi.injectEndpoints({
     }),
     triggerReminderWorker: builder.mutation<any, { reminder_id: string }>({
       query: (body) => ({
-        url: '/bike-service/reminders/trigger-worker',
+        url: '/bike-service/bike-service-reminders/send',
         method: 'POST',
         body,
       }),
