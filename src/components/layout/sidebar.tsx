@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@clerk/nextjs';
 import { handleFacebookLogin } from './facebook-sdk';
-import { useAppSelector } from '@/lib/hooks';
+import { useCurrentUser } from '@/lib/hooks/useFetchUserData';
 import { UserRole } from '@/types';
 import { SidebarKey } from '@/config/sidebarConfig';
 import { env } from '@/env';
@@ -23,8 +23,9 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const { user } = useAppSelector((state) => state.user);
+  const { user } = useCurrentUser();
   const [facebookOAuth] = useFacebookOAuthMutation();
+  console.log('user', user);
 
   const isAdmin = user?.role === UserRole.ADMIN;
 
@@ -33,8 +34,6 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     try {
       const response = await handleFacebookLogin();
       if (response && response.code) {
-        console.log('🚀 ~ onLogin ~ response:', response);
-
         const result = await facebookOAuth({
           code: response.code,
           userID: response.userID || '',
