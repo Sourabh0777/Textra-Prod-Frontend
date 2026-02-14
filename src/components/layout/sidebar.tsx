@@ -31,15 +31,13 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const onLogin = async () => {
     setIsLoggingIn(true);
     try {
-      const response = await handleFacebookLogin();
-      console.log('response', response.code);
-
+      // const response = await handleFacebookLogin();
+      // console.log('response', response.code);
       // if (response && response.code) {
       //   const result = await facebookOAuth({
       //     code: response.code,
       //     userID: response.userID || '',
       //   }).unwrap();
-
       //   if (result.success) {
       //     toast.success('Successfully connected to Facebook!');
       //   } else {
