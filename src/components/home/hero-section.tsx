@@ -52,7 +52,13 @@ export function HeroSection() {
       const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
       const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
 
-      const scopes = ['whatsapp_business_management', 'whatsapp_business_messaging', 'public_profile'].join(',');
+      const scopes = [
+        'whatsapp_business_messaging',
+        'whatsapp_business_management',
+        'whatsapp_business_manage_events',
+        'manage_app_solution',
+        'public_profile',
+      ].join(',');
 
       const dialogUrl = `https://www.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
 
