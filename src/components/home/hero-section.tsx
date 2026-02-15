@@ -53,6 +53,25 @@ export function HeroSection() {
                   try {
                     const response = await handleFacebookLogin();
                     console.log('Facebook Login Success:', response.code);
+
+                    // Send the code to our backend API route
+                    const result = await fetch('/api/oauth', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        code: response.code,
+                      }),
+                    });
+
+                    const data = await result.json();
+                    if (data.success) {
+                      console.log('Backend OAuth Success:', data);
+                      // Redirect to dashboard or show success message
+                    } else {
+                      console.error('Backend OAuth Error:', data.message);
+                    }
                   } catch (error) {
                     console.error('Facebook Login Error:', error);
                   }

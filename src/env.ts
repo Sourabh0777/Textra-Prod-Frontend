@@ -10,6 +10,7 @@ export const env = createEnv({
     // Node Environment
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     CLERK_SECRET_KEY: z.string().min(1),
+    FACEBOOK_APP_SECRET: z.string().min(1),
   },
 
   /**
@@ -30,6 +31,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FACEBOOK_APP_ID: z.string().min(1),
     NEXT_PUBLIC_FACEBOOK_API_VERSION: z.string().min(1),
     NEXT_PUBLIC_FACEBOOK_CONFIG_ID: z.string().min(1),
+    NEXT_PUBLIC_FACEBOOK_REDIRECT_URI: z.string().url(),
   },
 
   /**
@@ -40,6 +42,7 @@ export const env = createEnv({
     // Server
     NODE_ENV: process.env.NODE_ENV,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
 
     // Client
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
@@ -52,6 +55,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FACEBOOK_APP_ID: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
     NEXT_PUBLIC_FACEBOOK_API_VERSION: process.env.NEXT_PUBLIC_FACEBOOK_API_VERSION,
     NEXT_PUBLIC_FACEBOOK_CONFIG_ID: process.env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID,
+    NEXT_PUBLIC_FACEBOOK_REDIRECT_URI: process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI,
   },
 
   /**

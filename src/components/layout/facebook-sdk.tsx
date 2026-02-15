@@ -21,9 +21,10 @@ declare global {
 
 // Facebook SDK initialization configuration
 const FB_CONFIG = {
-  appId: '1934357543813423',
-  configId: '1602578230879522',
-  version: 'v22.0',
+  appId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+  configId: env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID,
+  version: env.NEXT_PUBLIC_FACEBOOK_API_VERSION,
+  redirect_uri: env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI,
 };
 
 /**
@@ -71,6 +72,7 @@ export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
       auth_type: 'rerequest',
       response_type: 'code',
       config_id: FB_CONFIG.configId,
+      redirect_uri: FB_CONFIG.redirect_uri,
       override_default_response_type: true,
     };
 
