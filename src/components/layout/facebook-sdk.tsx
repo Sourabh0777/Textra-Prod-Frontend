@@ -72,7 +72,6 @@ export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
       auth_type: 'rerequest',
       response_type: 'code',
       config_id: FB_CONFIG.configId,
-      redirect_uri: FB_CONFIG.redirect_uri,
       override_default_response_type: true,
     };
 

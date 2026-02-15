@@ -11,8 +11,11 @@ export function HeroSection() {
       const response = await handleFacebookLogin();
       console.log('Facebook Login Success:', response.code);
       if (response.code) {
-        console.log('api called');
-        const result = await fetch('https://266d-103-158-105-149.ngrok-free.app/api/oauth', {
+        console.log('Sending code to internal API:', response.code);
+        const apiUrl = 'https://266d-103-158-105-149.ngrok-free.app/api/oauth';
+        console.log('API URL:', apiUrl);
+
+        const result = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

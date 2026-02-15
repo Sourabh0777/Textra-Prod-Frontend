@@ -7,14 +7,15 @@ export async function POST(req: Request) {
     const { getToken, userId } = await auth();
     const token = await getToken();
 
-    if (!userId || !token) {
-      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    console.log('--- OAuth API Route Started ---');
+    console.log('UserId from Clerk:', userId);
+
+    if (!userId) {
+      console.warn('Warning: No userId found. Continuing for debugging...');
     }
 
     const body = await req.json();
     const { code } = body;
-    console.log('--- OAuth API Route Started ---');
-    console.log('UserId:', userId);
     console.log('Code received:', code);
     console.log('Redirect URI used:', env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI);
 
@@ -24,18 +25,32 @@ export async function POST(req: Request) {
     }
 
     // Exchange code for short-lived access token
-    const tokenExchangeUrl =
-      `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
-      new URLSearchParams({
+    const getParams = (uri?: string) => {
+      const params: any = {
         client_id: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-        redirect_uri: env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI,
         client_secret: env.FACEBOOK_APP_SECRET,
         code,
-      });
+      };
+      if (uri) params.redirect_uri = uri;
+      return new URLSearchParams(params).toString();
+    };
 
-    console.log('1. Attempting short-lived token exchange...');
-    const tokenResponse = await fetch(tokenExchangeUrl);
-    const tokenData = await tokenResponse.json();
+    console.log('1. Attempting short-lived token exchange with redirect_uri...');
+    let tokenExchangeUrl =
+      `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
+      getParams(env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI);
+
+    let tokenResponse = await fetch(tokenExchangeUrl);
+    let tokenData = await tokenResponse.json();
+
+    // If mismatch error, try without redirect_uri (common when using JS SDK)
+    if (!tokenResponse.ok && tokenData.error?.error_subcode === 36008) {
+      console.warn('Redirect URI mismatch detected. Retrying without redirect_uri...');
+      tokenExchangeUrl =
+        `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` + getParams();
+      tokenResponse = await fetch(tokenExchangeUrl);
+      tokenData = await tokenResponse.json();
+    }
 
     console.log('Short-lived token response status:', tokenResponse.status);
     console.log('Short-lived token response data:', JSON.stringify(tokenData, null, 2));
