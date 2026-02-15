@@ -19,6 +19,8 @@ export async function POST(req: Request) {
 
     // Exchange code for short-lived access token
     console.log('1. Attempting short-lived token exchange...');
+    console.log('Using Redirect URI:', `[${env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI}]`);
+
     const tokenExchangeUrl =
       `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
       new URLSearchParams({
