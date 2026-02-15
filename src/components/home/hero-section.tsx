@@ -8,20 +8,23 @@ import { handleFacebookLogin } from '@/components/layout/facebook-sdk';
 export function HeroSection() {
   const onFacebookLogin = async () => {
     try {
-      const response = await handleFacebookLogin();
-      console.log('Facebook Login Success:', response.code);
-      if (response.code) {
-        console.log('Sending code to internal API:', response.code);
-        const apiUrl = 'https://266d-103-158-105-149.ngrok-free.app/api/oauth';
-        console.log('API URL:', apiUrl);
+      const REDIRECT_URI = 'https://266d-103-158-105-149.ngrok-free.app/api/oauth';
+      console.log('--- Starting Facebook Login Flow ---');
+      console.log('HeroSection: REDIRECT_URI being used:', `[${REDIRECT_URI}]`);
 
-        const result = await fetch(apiUrl, {
+      const response = await handleFacebookLogin(REDIRECT_URI);
+      console.log('Facebook Login Success! Code received.');
+
+      if (response.code) {
+        console.log('Calling internal OAuth API...');
+        const result = await fetch('/api/oauth', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             code: response.code,
+            redirect_uri: REDIRECT_URI,
           }),
         });
 

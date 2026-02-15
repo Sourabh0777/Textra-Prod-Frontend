@@ -15,12 +15,18 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { code } = body;
-    console.log('Code received:', code);
-    console.log('Redirect URI used:', env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI);
+    const { code, redirect_uri } = body;
+
+    console.log('--- OAuth API Route Started ---');
+    console.log('UserId:', userId);
+    console.log('Code (first 10):', code ? code.substring(0, 10) + '...' : 'MISSING');
+    console.log('Redirect URI from body:', `[${redirect_uri}]`);
+    console.log('Redirect URI from env:', `[${env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI}]`);
+
+    const finalRedirectUri = redirect_uri || env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
+    console.log('Using Final Redirect URI:', `[${finalRedirectUri}]`);
 
     if (!code) {
-      console.error('Error: Code is missing in request body');
       return NextResponse.json({ success: false, message: 'Code is required' }, { status: 400 });
     }
 
@@ -35,20 +41,19 @@ export async function POST(req: Request) {
       return new URLSearchParams(params).toString();
     };
 
-    console.log('1. Attempting short-lived token exchange with redirect_uri...');
-    let tokenExchangeUrl =
+    console.log('1. Attempting short-lived token exchange...');
+    let tokenResponse = await fetch(
       `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
-      getParams(env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI);
-
-    let tokenResponse = await fetch(tokenExchangeUrl);
+        getParams(finalRedirectUri),
+    );
     let tokenData = await tokenResponse.json();
 
     // If mismatch error, try without redirect_uri (common when using JS SDK)
     if (!tokenResponse.ok && tokenData.error?.error_subcode === 36008) {
       console.warn('Redirect URI mismatch detected. Retrying without redirect_uri...');
-      tokenExchangeUrl =
+      const fallbackUrl =
         `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` + getParams();
-      tokenResponse = await fetch(tokenExchangeUrl);
+      tokenResponse = await fetch(fallbackUrl);
       tokenData = await tokenResponse.json();
     }
 

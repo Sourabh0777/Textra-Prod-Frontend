@@ -59,7 +59,7 @@ const initFacebook = (): Promise<void> => {
  * Triggers the Facebook login process.
  * Supports both standard auth response and the 'code' response type used in Login for Business.
  */
-export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
+export const handleFacebookLogin = (redirectUri?: string): Promise<FacebookAuthResponse> => {
   return new Promise((resolve, reject) => {
     if (!window.FB) {
       reject(new Error('Facebook SDK not initialized'));
@@ -72,8 +72,11 @@ export const handleFacebookLogin = (): Promise<FacebookAuthResponse> => {
       auth_type: 'rerequest',
       response_type: 'code',
       config_id: FB_CONFIG.configId,
+      redirect_uri: redirectUri || FB_CONFIG.redirect_uri,
       override_default_response_type: true,
     };
+
+    console.log('[FB SDK] URI used for login:', `[${loginOptions.redirect_uri}]`);
 
     try {
       window.FB.login((response: any) => {
