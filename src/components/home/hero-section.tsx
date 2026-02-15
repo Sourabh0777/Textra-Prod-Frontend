@@ -6,6 +6,35 @@ import { MessageSquare, ArrowRight, Facebook } from 'lucide-react';
 import { handleFacebookLogin } from '@/components/layout/facebook-sdk';
 
 export function HeroSection() {
+  const onFacebookLogin = async () => {
+    try {
+      const response = await handleFacebookLogin();
+      console.log('Facebook Login Success:', response.code);
+      if (response.code) {
+        console.log('api called');
+        const result = await fetch('https://266d-103-158-105-149.ngrok-free.app/api/oauth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: response.code,
+          }),
+        });
+
+        const data = await result.json();
+        if (data.success) {
+          console.log('Backend OAuth Success:', data);
+          // Redirect to dashboard or show success message
+        } else {
+          console.error('Backend OAuth Error:', data.message);
+        }
+      }
+    } catch (error) {
+      console.error('Facebook Login Error:', error);
+    }
+  };
+
   return (
     <section className="relative pt-5 pb-16 md:pt-5 md:pb-24 overflow-hidden">
       {/* Background decoration */}
@@ -49,33 +78,7 @@ export function HeroSection() {
                 variant="ghost"
                 size="lg"
                 className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all flex items-center gap-2"
-                onClick={async () => {
-                  try {
-                    const response = await handleFacebookLogin();
-                    console.log('Facebook Login Success:', response.code);
-
-                    // Send the code to our backend API route
-                    const result = await fetch('/api/oauth', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                        code: response.code,
-                      }),
-                    });
-
-                    const data = await result.json();
-                    if (data.success) {
-                      console.log('Backend OAuth Success:', data);
-                      // Redirect to dashboard or show success message
-                    } else {
-                      console.error('Backend OAuth Error:', data.message);
-                    }
-                  } catch (error) {
-                    console.error('Facebook Login Error:', error);
-                  }
-                }}
+                onClick={onFacebookLogin}
               >
                 <Facebook className="w-5 h-5 text-[#1877F2]" />
                 Login with Facebook
