@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, ArrowRight } from 'lucide-react';
+import { MessageSquare, ArrowRight, Facebook } from 'lucide-react';
+import { handleFacebookLogin } from '@/components/layout/facebook-sdk';
 
 export function HeroSection() {
   return (
@@ -47,9 +48,18 @@ export function HeroSection() {
               <Button
                 variant="ghost"
                 size="lg"
-                className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all"
+                className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all flex items-center gap-2"
+                onClick={async () => {
+                  try {
+                    const response = await handleFacebookLogin();
+                    console.log('Facebook Login Success:', response.code);
+                  } catch (error) {
+                    console.error('Facebook Login Error:', error);
+                  }
+                }}
               >
-                See How It Works
+                <Facebook className="w-5 h-5 text-[#1877F2]" />
+                Login with Facebook
               </Button>
             </div>
 

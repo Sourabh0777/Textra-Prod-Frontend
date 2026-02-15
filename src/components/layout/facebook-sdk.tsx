@@ -21,9 +21,9 @@ declare global {
 
 // Facebook SDK initialization configuration
 const FB_CONFIG = {
-  appId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-  configId: env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID,
-  version: env.NEXT_PUBLIC_FACEBOOK_API_VERSION,
+  appId: '1934357543813423',
+  configId: '1602578230879522',
+  version: 'v22.0',
 };
 
 /**
@@ -38,6 +38,8 @@ const initFacebook = (): Promise<void> => {
         xfbml: true,
         version: FB_CONFIG.version,
       });
+
+      window.FB.AppEvents.logPageView();
       resolve();
     };
 

@@ -10,7 +10,6 @@ export const env = createEnv({
     // Node Environment
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     CLERK_SECRET_KEY: z.string().min(1),
-    FACEBOOK_APP_SECRET: z.string().min(1).optional(),
   },
 
   /**
@@ -41,7 +40,6 @@ export const env = createEnv({
     // Server
     NODE_ENV: process.env.NODE_ENV,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
-    FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
 
     // Client
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
