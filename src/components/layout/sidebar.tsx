@@ -23,6 +23,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const { user } = useCurrentUser();
+  console.log('🚀 ~ Sidebar ~ user:', user);
   const [facebookOAuth] = useFacebookOAuthMutation();
 
   const isAdmin = user?.role === UserRole.ADMIN;
@@ -66,7 +67,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     <aside className="w-full h-full bg-[#15368A] text-[#FFFFFF] overflow-y-auto flex flex-col border-r border-white/10">
       <SidebarHeader />
       <SidebarNavigation menus={menus} onClose={onClose} />
-      <SidebarStatus isAdmin={isAdmin} isLoggingIn={isLoggingIn} onLogin={onLogin} />
+      <SidebarStatus isLoggingIn={isLoggingIn} onLogin={onLogin} />
     </aside>
   );
 }

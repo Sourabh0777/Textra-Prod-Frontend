@@ -73,7 +73,35 @@ export async function POST(req: Request) {
     console.log('--- OAuth API Route Success ---');
     console.log('Final Long-lived Token:', longLivedToken);
 
-    return NextResponse.json({ success: true, longLivedToken });
+    // Call backend API with the new live token
+    try {
+      console.log('3. Attempting backend callback...');
+      const backendCallbackUrl = `${env.NEXT_PUBLIC_API_URL}/core/auth/facebook-callback`;
+      const backendResponse = await fetch(backendCallbackUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ accessToken: longLivedToken }),
+      });
+
+      const backendData = await backendResponse.json();
+      console.log('Backend callback response status:', backendResponse.status);
+      console.log('Backend callback response data:', JSON.stringify(backendData, null, 2));
+
+      if (!backendResponse.ok) {
+        return NextResponse.json(
+          { success: false, message: backendData.message || 'Backend callback failed' },
+          { status: backendResponse.status },
+        );
+      }
+
+      return NextResponse.json(backendData);
+    } catch (backendError) {
+      console.error('Backend Callback Error:', backendError);
+      return NextResponse.json({ success: false, message: 'Failed to communicate with backend' }, { status: 500 });
+    }
   } catch (error) {
     console.error('OAuth API Route Error:', error);
     return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
