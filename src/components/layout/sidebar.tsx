@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '@clerk/nextjs';
-import { handleFacebookLogin } from './facebook-sdk';
 import { useCurrentUser } from '@/lib/hooks/useFetchUserData';
 import { UserRole } from '@/types';
 import { SidebarKey } from '@/config/sidebarConfig';
@@ -31,21 +30,6 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const onLogin = async () => {
     setIsLoggingIn(true);
     try {
-      // const response = await handleFacebookLogin();
-      // console.log('response', response.code);
-      // if (response && response.code) {
-      //   const result = await facebookOAuth({
-      //     code: response.code,
-      //     userID: response.userID || '',
-      //   }).unwrap();
-      //   if (result.success) {
-      //     toast.success('Successfully connected to Facebook!');
-      //   } else {
-      //     toast.error(result.message || 'Facebook connection failed.');
-      //   }
-      // } else {
-      //   toast.error('Facebook connection failed. Please try again.');
-      // }
     } catch (error: any) {
       console.error('Login failed:', error);
       toast.error(error?.data?.message || 'Facebook connection failed. Please try again.');
