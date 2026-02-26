@@ -22,6 +22,8 @@ interface SidebarProps {
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
+  const { user } = useCurrentUser();
+
   const { onFacebookLogin, isLoggingIn } = useFacebookAuth();
 
   const onLogin = async () => {
@@ -29,7 +31,12 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   };
 
   useEffect(() => {
+    const isAdmin = user?.role === UserRole.ADMIN;
+    const isBusinessActive = user?.business_id?.is_active === true;
+
     const fetchSideBar = async () => {
+      if (!isAdmin && !isBusinessActive) return;
+
       try {
         const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`;
         const token = await getToken();
@@ -50,7 +57,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     };
 
     fetchSideBar();
-  }, [getToken]);
+  }, [getToken, user]);
 
   return (
     <aside className="w-full h-full bg-[#15368A] text-[#FFFFFF] overflow-y-auto flex flex-col border-r border-white/10">
