@@ -1,0 +1,78 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { env } from '@/env';
+import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
+import { toast } from 'sonner';
+
+export function useFacebookAuth() {
+  const searchParams = useSearchParams();
+  const codeFromUrl = searchParams.get('code');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [facebookOAuth] = useFacebookOAuthMutation();
+
+  const handleReturnWithCode = async (code: string) => {
+    setIsLoggingIn(true);
+    try {
+      console.log('--- Detected OAuth Code in URL ---');
+      console.log('Code:', code.substring(0, 10) + '...');
+
+      console.log('Calling internal OAuth API...');
+      const result = await facebookOAuth({ code, userID: '' }).unwrap();
+
+      if (result.success) {
+        console.log('Backend OAuth Success:', result);
+        toast.success('Successfully connected to Facebook Business');
+        // Optional: Clean up URL by removing the code param
+        window.history.replaceState({}, '', window.location.pathname);
+      } else {
+        console.error('Backend OAuth Error:', result.message);
+        toast.error(result.message || 'Facebook connection failed');
+      }
+    } catch (error: any) {
+      console.error('Error in OAuth return handler:', error);
+      toast.error(error?.data?.message || 'Error connecting to Facebook');
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  useEffect(() => {
+    if (codeFromUrl) {
+      handleReturnWithCode(codeFromUrl);
+    }
+  }, [codeFromUrl]);
+
+  const onFacebookLogin = async () => {
+    try {
+      const YOUR_APP_ID = env.NEXT_PUBLIC_FACEBOOK_APP_ID;
+      const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
+      const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
+
+      const scopes = [
+        'whatsapp_business_messaging',
+        'whatsapp_business_management',
+        'whatsapp_business_manage_events',
+        'manage_app_solution',
+        'public_profile',
+      ].join(',');
+
+      const dialogUrl = `https://www.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
+
+      console.log('Redirecting to Manual Facebook Login Dialog...');
+      console.log('URL:', dialogUrl);
+
+      window.location.href = dialogUrl;
+    } catch (error) {
+      console.error('Facebook Login Error:', error);
+      toast.error('Failed to initiate Facebook login');
+    }
+  };
+
+  return {
+    onFacebookLogin,
+    isLoggingIn,
+    handleReturnWithCode,
+  };
+}

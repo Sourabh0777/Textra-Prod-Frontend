@@ -3,73 +3,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, ArrowRight, Facebook } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
-import { env } from '@/env';
+import { useFacebookAuth } from '@/lib/hooks/useFacebookAuth';
 
 export function HeroSection() {
-  const searchParams = useSearchParams();
-  const codeFromUrl = searchParams.get('code');
-
-  useEffect(() => {
-    const handleReturnWithCode = async (code: string) => {
-      try {
-        console.log('--- Detected OAuth Code in URL ---');
-        console.log('Code:', code.substring(0, 10) + '...');
-
-        console.log('Calling internal OAuth API...');
-        const result = await fetch('/api/oauth', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            code: code,
-          }),
-        });
-
-        const data = await result.json();
-        if (data.success) {
-          console.log('Backend OAuth Success:', data);
-          // Optional: Clean up URL by removing the code param
-          window.history.replaceState({}, '', '/');
-        } else {
-          console.error('Backend OAuth Error:', data.message);
-        }
-      } catch (error) {
-        console.error('Error in OAuth return handler:', error);
-      }
-    };
-
-    if (codeFromUrl) {
-      handleReturnWithCode(codeFromUrl);
-    }
-  }, [codeFromUrl]);
-
-  const onFacebookLogin = async () => {
-    try {
-      const YOUR_APP_ID = env.NEXT_PUBLIC_FACEBOOK_APP_ID;
-      const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
-      const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
-
-      const scopes = [
-        'whatsapp_business_messaging',
-        'whatsapp_business_management',
-        'whatsapp_business_manage_events',
-        'manage_app_solution',
-        'public_profile',
-      ].join(',');
-
-      const dialogUrl = `https://www.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
-
-      console.log('Redirecting to Manual Facebook Login Dialog...');
-      console.log('URL:', dialogUrl);
-
-      window.location.href = dialogUrl;
-    } catch (error) {
-      console.error('Facebook Login Error:', error);
-    }
-  };
+  const { onFacebookLogin } = useFacebookAuth();
 
   return (
     <section className="relative pt-5 pb-16 md:pt-5 md:pb-24 overflow-hidden">

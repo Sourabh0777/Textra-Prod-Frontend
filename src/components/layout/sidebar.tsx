@@ -8,6 +8,7 @@ import { UserRole } from '@/types';
 import { SidebarKey } from '@/config/sidebarConfig';
 import { env } from '@/env';
 import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
+import { useFacebookAuth } from '@/lib/hooks/useFacebookAuth';
 
 import { SidebarHeader } from './sidebar/sidebar-header';
 import { SidebarNavigation } from './sidebar/sidebar-navigation';
@@ -21,22 +22,10 @@ interface SidebarProps {
 export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const { user } = useCurrentUser();
-  console.log('🚀 ~ Sidebar ~ user:', user);
-  const [facebookOAuth] = useFacebookOAuthMutation();
-
-  const isAdmin = user?.role === UserRole.ADMIN;
+  const { onFacebookLogin, isLoggingIn } = useFacebookAuth();
 
   const onLogin = async () => {
-    setIsLoggingIn(true);
-    try {
-    } catch (error: any) {
-      console.error('Login failed:', error);
-      toast.error(error?.data?.message || 'Facebook connection failed. Please try again.');
-    } finally {
-      setIsLoggingIn(false);
-    }
+    await onFacebookLogin();
   };
 
   useEffect(() => {
