@@ -1,19 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { env } from '@/env';
 import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
 import { toast } from 'sonner';
 
 export function useFacebookAuth() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const codeFromUrl = searchParams.get('code');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [facebookOAuth] = useFacebookOAuthMutation();
 
   const handleReturnWithCode = async (code: string) => {
     setIsLoggingIn(true);
+    setIsCompleted(false);
     try {
       console.log('--- Detected OAuth Code in URL ---');
       console.log('Code:', code.substring(0, 10) + '...');
@@ -24,8 +27,12 @@ export function useFacebookAuth() {
       if (result.success) {
         console.log('Backend OAuth Success:', result);
         toast.success('Successfully connected to Facebook Business');
+        setIsCompleted(true);
         // Optional: Clean up URL by removing the code param
         window.history.replaceState({}, '', window.location.pathname);
+
+        // Redirect to dashboard
+        router.push('/dashboard');
       } else {
         console.error('Backend OAuth Error:', result.message);
         toast.error(result.message || 'Facebook connection failed');
@@ -73,6 +80,7 @@ export function useFacebookAuth() {
   return {
     onFacebookLogin,
     isLoggingIn,
+    isCompleted,
     handleReturnWithCode,
   };
 }
