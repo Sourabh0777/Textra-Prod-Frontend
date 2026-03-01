@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { IVehicle } from '@/types';
+import { IVehicle, ICustomer } from '@/types';
 
 interface VehicleTableProps {
   vehicles: IVehicle[];
@@ -43,8 +43,18 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
               </TableCell>
               <TableCell className="!px-3 md:px-4 py-3">
                 <div className="flex flex-col">
-                  <span className="text-sm text-neutral-800 font-medium">{vehicle?.customer_id?.name || '-'}</span>
-                  <span className="text-[11px] text-neutral-500">{vehicle?.customer_id?.phone_number || ''}</span>
+                  {vehicle.customer_id && typeof vehicle.customer_id === 'object' ? (
+                    <>
+                      <span className="text-sm text-neutral-800 font-medium">
+                        {(vehicle.customer_id as ICustomer).name}
+                      </span>
+                      <span className="text-[11px] text-neutral-500">
+                        {(vehicle.customer_id as ICustomer).phone_number}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-sm text-neutral-400">-</span>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="hidden xl:table-cell !px-3 md:px-4 py-3 text-center">
