@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { IVehicle, ICustomer } from '@/types';
+import { IVehicle } from '@/types';
 
 interface VehicleTableProps {
   vehicles: IVehicle[];
@@ -20,9 +20,6 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
             <TableHeaderCell className="!px-3 md:px-4 py-3">Owner</TableHeaderCell>
             <TableHeaderCell className="hidden xl:table-cell !px-3 md:px-4 py-3 text-center">
               Year / Travel
-            </TableHeaderCell>
-            <TableHeaderCell className="hidden md:table-cell !px-3 md:px-4 py-3 text-center">
-              Next Service Due
             </TableHeaderCell>
             <TableHeaderCell className="!px-3 md:px-4 py-3 text-center">Reminder</TableHeaderCell>
             <TableHeaderCell className="!px-3 md:px-4 py-3 text-right">Actions</TableHeaderCell>
@@ -43,18 +40,8 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
               </TableCell>
               <TableCell className="!px-3 md:px-4 py-3">
                 <div className="flex flex-col">
-                  {vehicle.customer_id && typeof vehicle.customer_id === 'object' ? (
-                    <>
-                      <span className="text-sm text-neutral-800 font-medium">
-                        {(vehicle.customer_id as ICustomer).name}
-                      </span>
-                      <span className="text-[11px] text-neutral-500">
-                        {(vehicle.customer_id as ICustomer).phone_number}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-sm text-neutral-400">-</span>
-                  )}
+                  <span className="text-sm text-neutral-800 font-medium">{vehicle?.customer_id?.name || '-'}</span>
+                  <span className="text-[11px] text-neutral-500">{vehicle?.customer_id?.phone_number || ''}</span>
                 </div>
               </TableCell>
               <TableCell className="hidden xl:table-cell !px-3 md:px-4 py-3 text-center">
@@ -62,15 +49,6 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
                   <span className="text-sm text-neutral-700">{vehicle.year}</span>
                   <span className="text-xs text-neutral-500">{vehicle.daily_travel} KM/day</span>
                 </div>
-              </TableCell>
-              <TableCell className="hidden md:table-cell !px-3 md:px-4 py-3 text-center">
-                {vehicle.next_service_due_km ? (
-                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                    {vehicle.next_service_due_km} KM
-                  </span>
-                ) : (
-                  <span className="text-xs text-neutral-400">-</span>
-                )}
               </TableCell>
               <TableCell className="!px-3 md:px-4 py-3 text-center">
                 {vehicle.active_reminder ? (
@@ -122,7 +100,7 @@ export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) 
           ))}
           {vehicles.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-neutral-500">
+              <TableCell colSpan={5} className="text-center py-12 text-neutral-500">
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-lg font-medium text-neutral-400">No Vehicles Found</span>
                 </div>

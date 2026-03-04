@@ -60,14 +60,13 @@ export interface ICustomer {
 
 export interface IVehicle {
   _id?: string;
-  customer_id: string | ICustomer;
+  customer_id: ICustomer;
   vehicle_type: string;
   brand: string;
   vehicle_model: string;
   registration_number: string;
   year: number;
   daily_travel: number;
-  next_service_due_km?: number;
   service_date?: Date;
   reminders?: IReminder[];
   active_reminder?: IReminder;
@@ -76,19 +75,15 @@ export interface IVehicle {
 
 export enum ReminderStatus {
   PENDING = 'pending',
-  BEFORE_7_DAYS = 'before_7_days',
-  BEFORE_2_DAYS = 'before_2_days',
-  ON_DUE_DATE = 'on_due_date',
-  AFTER_3_DAYS = 'after_3_days',
-  AFTER_10_DAYS = 'after_10_days',
-  AFTER_30_DAYS = 'after_30_days',
-  LOST_SERVICE_CYCLE = 'lost_service_cycle',
+  SENT_1 = 'sent_1',
+  SENT_2 = 'sent_2',
+  CUSTOMER_NOT_RESPONDING = 'customer_not_responding',
   COMPLETED = 'completed',
 }
 
 export interface IService {
   _id?: string;
-  vehicle_id: string | IVehicle;
+  vehicle_id: IVehicle;
   last_service_date: Date;
   next_service_date: Date;
   service_interval_days: number;
@@ -99,9 +94,9 @@ export interface IService {
 
 export interface IReminder {
   _id?: string;
-  service_id: string | IService;
-  customer_id?: string | ICustomer;
-  vehicle_id?: string | IVehicle;
+  service_id: IService;
+  customer_id?: ICustomer;
+  vehicle_id?: IVehicle;
   business_id?: string;
   scheduled_for: Date;
   due_date: Date;

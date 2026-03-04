@@ -103,105 +103,31 @@ export function VehicleModal({
           <p className="mt-[-12px] text-[10px] text-neutral-500">
             Format: State Code + District + Series + Number (e.g., MH 12 AB 1234)
           </p>
-          <div className="space-y-2">
-            <Input
-              label="Model Year"
-              name="year"
-              type="number"
-              placeholder="e.g. 2023"
-              value={formData.year || ''}
-              onChange={onInputChange}
-              error={errors.year}
-              fullWidth
-            />
-            <div className="flex gap-2">
-              {[2018, 2020, 2025].map((year) => (
-                <button
-                  key={year}
-                  type="button"
-                  onClick={() => {
-                    onFormDataChange({
-                      ...formData,
-                      year: year,
-                    });
-                  }}
-                  className="px-3 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-blue-100 hover:text-blue-700 transition-colors border border-transparent hover:border-blue-200"
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Input
-              label="Daily Travel (KM)"
-              name="daily_travel"
-              type="number"
-              placeholder="e.g. 30"
-              value={formData.daily_travel || ''}
-              onChange={(e) => {
-                onFormDataChange({
-                  ...formData,
-                  daily_travel: Number(e.target.value),
-                });
-              }}
-              error={errors.daily_travel}
-              fullWidth
-            />
-            <div className="flex gap-2 flex-wrap">
-              {[10, 20, 30, 40, 50].map((km) => (
-                <button
-                  key={km}
-                  type="button"
-                  onClick={() => {
-                    onFormDataChange({
-                      ...formData,
-                      daily_travel: km,
-                    });
-                  }}
-                  className="px-3 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-blue-100 hover:text-blue-700 transition-colors border border-transparent hover:border-blue-200"
-                >
-                  {km} KM
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Input
-              label="Next Service Due (KM)"
-              name="next_service_due_km"
-              type="number"
-              placeholder="e.g. 2000"
-              value={formData.next_service_due_km || ''}
-              onChange={(e) => {
-                onFormDataChange({
-                  ...formData,
-                  next_service_due_km: Number(e.target.value),
-                });
-              }}
-              error={errors.next_service_due_km}
-              fullWidth
-            />
-            <div className="flex gap-2">
-              {[500, 1000, 2000].map((km) => (
-                <button
-                  key={km}
-                  type="button"
-                  onClick={() => {
-                    onFormDataChange({
-                      ...formData,
-                      next_service_due_km: km,
-                    });
-                  }}
-                  className="px-3 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-blue-100 hover:text-blue-700 transition-colors border border-transparent hover:border-blue-200"
-                >
-                  +{km} KM
-                </button>
-              ))}
-            </div>
-          </div>
-
+          <Input
+            label="Model Year"
+            name="year"
+            type="number"
+            placeholder="e.g. 2023"
+            value={formData.year || ''}
+            onChange={onInputChange}
+            error={errors.year}
+            fullWidth
+          />
+          <Input
+            label="Daily Travel (KM)"
+            name="daily_travel"
+            type="number"
+            placeholder="e.g. 30"
+            value={formData.daily_travel || ''}
+            onChange={(e) => {
+              onFormDataChange({
+                ...formData,
+                daily_travel: Number(e.target.value),
+              });
+            }}
+            error={errors.daily_travel}
+            fullWidth
+          />
           <div className="pt-2 border-t border-neutral-100">
             <Input
               label="Service Date"

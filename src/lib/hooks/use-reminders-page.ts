@@ -176,17 +176,11 @@ export function useRemindersPage() {
     const searchLower = searchQuery.toLowerCase();
     const customer = reminder.customer_id;
     const vehicle = reminder.vehicle_id;
-
-    const customerName = customer && typeof customer !== 'string' ? customer.name : '';
-    const customerPhone = customer && typeof customer !== 'string' ? customer.phone_number : '';
-    const vehicleReg = vehicle && typeof vehicle !== 'string' ? vehicle.registration_number : '';
-    const vehicleBrand = vehicle && typeof vehicle !== 'string' ? vehicle.brand : '';
-
     return (
-      customerName.toLowerCase().includes(searchLower) ||
-      customerPhone.toLowerCase().includes(searchLower) ||
-      vehicleReg.toLowerCase().includes(searchLower) ||
-      vehicleBrand.toLowerCase().includes(searchLower)
+      (customer?.name?.toLowerCase() || '').includes(searchLower) ||
+      (customer?.phone_number?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle?.registration_number?.toLowerCase() || '').includes(searchLower) ||
+      (vehicle?.brand?.toLowerCase() || '').includes(searchLower)
     );
   });
 
