@@ -38,6 +38,15 @@ export const customerApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Customer'],
     }),
+    fetchCustomerDetails: builder.query<any, string>({
+      query: (customerId) => `/bike-service/customer-details/${customerId}`,
+      providesTags: (result, error, customerId) => [
+        { type: 'Customer', id: customerId },
+        { type: 'Vehicle' },
+        { type: 'Service' },
+        { type: 'Reminder' },
+      ],
+    }),
   }),
 });
 
@@ -47,4 +56,5 @@ export const {
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
+  useFetchCustomerDetailsQuery,
 } = customerApi;

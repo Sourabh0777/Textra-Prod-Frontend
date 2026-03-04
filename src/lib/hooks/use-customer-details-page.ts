@@ -3,8 +3,8 @@
 
 import { useParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { useFetchCustomerDetailsQuery } from '@/lib/api/endpoints/customerApi';
 import { ICustomer, IVehicle, IService, IReminder } from '@/types';
+import { useFetchCustomerDetailsQuery } from '../api/endpoints/customerApi';
 
 export interface ICustomerDetailsData {
   customer: ICustomer;
