@@ -164,11 +164,17 @@ export function useRemindersPage() {
     try {
       await toastPromise(triggerWorker({ reminder_id: reminder._id }).unwrap(), {
         loading: 'Preparing to resend...',
-        success: (res) => res?.message || 'Reminder notification queued for resending',
-        error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to resend reminder',
+        success: (res) => {
+          console.log('Resend success response:', res);
+          return res?.message || 'Reminder notification queued for resending';
+        },
+        error: (err) => {
+          console.error('Resend error response:', err);
+          return err?.data?.error?.reason || err?.data?.message || 'Failed to resend reminder';
+        },
       });
     } catch (err) {
-      console.error('Resend error', err);
+      console.error('Resend catch error:', err);
     }
   };
 
@@ -176,11 +182,17 @@ export function useRemindersPage() {
     const searchLower = searchQuery.toLowerCase();
     const customer = reminder.customer_id;
     const vehicle = reminder.vehicle_id;
+
+    const customerName = customer && typeof customer !== 'string' ? customer.name : '';
+    const customerPhone = customer && typeof customer !== 'string' ? customer.phone_number : '';
+    const vehicleReg = vehicle && typeof vehicle !== 'string' ? vehicle.registration_number : '';
+    const vehicleBrand = vehicle && typeof vehicle !== 'string' ? vehicle.brand : '';
+
     return (
-      (customer?.name?.toLowerCase() || '').includes(searchLower) ||
-      (customer?.phone_number?.toLowerCase() || '').includes(searchLower) ||
-      (vehicle?.registration_number?.toLowerCase() || '').includes(searchLower) ||
-      (vehicle?.brand?.toLowerCase() || '').includes(searchLower)
+      customerName.toLowerCase().includes(searchLower) ||
+      customerPhone.toLowerCase().includes(searchLower) ||
+      vehicleReg.toLowerCase().includes(searchLower) ||
+      vehicleBrand.toLowerCase().includes(searchLower)
     );
   });
 

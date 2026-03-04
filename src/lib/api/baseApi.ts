@@ -48,6 +48,8 @@ export const baseApi = createApi({
     'Service',
     'Reminder',
     'WhatsAppLog',
+    'WhatsAppTemplate',
+    'WhatsAppTemplateConfig',
     'State',
     'Zone',
   ],

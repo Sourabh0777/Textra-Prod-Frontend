@@ -1,4 +1,14 @@
-import { LayoutDashboard, Building2, Users, Car, Wrench, Clock, MessageSquare, Settings } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Car,
+  Wrench,
+  Clock,
+  MessageSquare,
+  Settings,
+  MessageSquareText,
+} from 'lucide-react';
 export type SidebarKey = keyof typeof SIDEBAR_CONFIG;
 
 export const SIDEBAR_CONFIG = {
@@ -12,4 +22,5 @@ export const SIDEBAR_CONFIG = {
   services: { label: 'Services', href: '/bike-service/services', icon: Wrench },
   reminders: { label: 'Reminders', href: '/bike-service/reminders', icon: Clock },
   'whatsapp-logs': { label: 'WhatsApp Logs', href: '/bike-service/whatsapp-logs', icon: MessageSquare },
+  templates: { label: 'Templates', href: '/bike-service/templates', icon: MessageSquareText },
 } as const;

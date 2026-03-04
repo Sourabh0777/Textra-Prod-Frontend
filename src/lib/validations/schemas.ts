@@ -31,5 +31,6 @@ export const vehicleSchema = z.object({
     .min(1900)
     .max(new Date().getFullYear() + 1),
   daily_travel: z.number({ invalid_type_error: 'Daily travel is required' }).min(0),
+  next_service_due_km: z.number().min(0).optional().or(z.literal(0)),
   service_date: z.any().optional(),
 });

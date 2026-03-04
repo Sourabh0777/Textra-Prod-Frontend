@@ -47,9 +47,12 @@ export function useVehiclesPage() {
   const filteredVehicles = vehicles.filter((vehicle: IVehicle) => {
     const searchLower = searchQuery.toLowerCase();
     const customer = vehicle?.customer_id;
+    const customerName = typeof customer !== 'string' ? customer?.name || '' : '';
+    const customerPhone = typeof customer !== 'string' ? customer?.phone_number || '' : '';
+
     return (
-      (customer?.name?.toLowerCase() || '').includes(searchLower) ||
-      (customer?.phone_number?.toLowerCase() || '').includes(searchLower) ||
+      customerName.toLowerCase().includes(searchLower) ||
+      customerPhone.toLowerCase().includes(searchLower) ||
       (vehicle.brand?.toLowerCase() || '').includes(searchLower) ||
       (vehicle.vehicle_model?.toLowerCase() || '').includes(searchLower) ||
       (vehicle.registration_number?.toLowerCase() || '').includes(searchLower)

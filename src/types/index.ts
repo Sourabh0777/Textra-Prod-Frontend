@@ -60,13 +60,14 @@ export interface ICustomer {
 
 export interface IVehicle {
   _id?: string;
-  customer_id: ICustomer;
+  customer_id: string | ICustomer;
   vehicle_type: string;
   brand: string;
   vehicle_model: string;
   registration_number: string;
   year: number;
   daily_travel: number;
+  next_service_due_km?: number;
   service_date?: Date;
   reminders?: IReminder[];
   active_reminder?: IReminder;
@@ -75,15 +76,19 @@ export interface IVehicle {
 
 export enum ReminderStatus {
   PENDING = 'pending',
-  SENT_1 = 'sent_1',
-  SENT_2 = 'sent_2',
-  CUSTOMER_NOT_RESPONDING = 'customer_not_responding',
+  BEFORE_7_DAYS = 'before_7_days',
+  BEFORE_2_DAYS = 'before_2_days',
+  ON_DUE_DATE = 'on_due_date',
+  AFTER_3_DAYS = 'after_3_days',
+  AFTER_10_DAYS = 'after_10_days',
+  AFTER_30_DAYS = 'after_30_days',
+  LOST_SERVICE_CYCLE = 'lost_service_cycle',
   COMPLETED = 'completed',
 }
 
 export interface IService {
   _id?: string;
-  vehicle_id: IVehicle;
+  vehicle_id: string | IVehicle;
   last_service_date: Date;
   next_service_date: Date;
   service_interval_days: number;
@@ -94,9 +99,9 @@ export interface IService {
 
 export interface IReminder {
   _id?: string;
-  service_id: IService;
-  customer_id?: ICustomer;
-  vehicle_id?: IVehicle;
+  service_id: string | IService;
+  customer_id?: string | ICustomer;
+  vehicle_id?: string | IVehicle;
   business_id?: string;
   scheduled_for: Date;
   due_date: Date;
@@ -120,6 +125,24 @@ export interface IWhatsAppLog {
   message_status: string;
   error_message?: string;
   sent_at?: Date;
+}
+
+export type TemplateType = 'SERVICE_REMINDER' | 'SERVICE_COMPLETED' | 'FEEDBACK_REQUEST' | 'CUSTOM_MESSAGE';
+
+export interface IBusinessTemplateConfig {
+  _id?: string;
+  business_id: string;
+  template_type: TemplateType;
+  template_name: string; // Meta template name
+  parameter_format: 'POSITIONAL' | 'NAMED';
+  template_language: string; // en, en_US
+  is_active: boolean;
+  status: 'APPROVED' | 'REJECTED' | 'PAUSED';
+  template_category: string; // UTILITY, MARKETING
+  template_sub_category?: string;
+  meta_template_id: string; // Meta template ID
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface ApiResponse<T> {

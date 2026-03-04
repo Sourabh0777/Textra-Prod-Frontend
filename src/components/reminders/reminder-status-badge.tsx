@@ -8,10 +8,14 @@ interface ReminderStatusBadgeProps {
 export function ReminderStatusBadge({ status }: ReminderStatusBadgeProps) {
   const statusConfig: Record<string, { label: string; variant: 'success' | 'warning' | 'danger' | 'info' }> = {
     [ReminderStatus.PENDING]: { label: 'Pending', variant: 'warning' },
-    [ReminderStatus.SENT_1]: { label: '1st Alert', variant: 'info' },
-    [ReminderStatus.SENT_2]: { label: '2nd Alert', variant: 'info' },
-    [ReminderStatus.CUSTOMER_NOT_RESPONDING]: { label: 'No Response', variant: 'danger' },
-    [ReminderStatus.COMPLETED]: { label: 'Done', variant: 'success' },
+    [ReminderStatus.BEFORE_7_DAYS]: { label: '7 Days Before', variant: 'info' },
+    [ReminderStatus.BEFORE_2_DAYS]: { label: '2 Days Before', variant: 'info' },
+    [ReminderStatus.ON_DUE_DATE]: { label: 'On Due Date', variant: 'warning' },
+    [ReminderStatus.AFTER_3_DAYS]: { label: '3 Days After', variant: 'info' },
+    [ReminderStatus.AFTER_10_DAYS]: { label: '10 Days After', variant: 'warning' },
+    [ReminderStatus.AFTER_30_DAYS]: { label: '30 Days After', variant: 'danger' },
+    [ReminderStatus.LOST_SERVICE_CYCLE]: { label: 'Lost Service Cycle', variant: 'danger' },
+    [ReminderStatus.COMPLETED]: { label: 'Completed', variant: 'success' },
   };
 
   const config = statusConfig[status as string] || {
