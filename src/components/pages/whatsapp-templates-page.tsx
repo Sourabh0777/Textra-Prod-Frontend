@@ -24,6 +24,7 @@ export default function WhatsAppTemplatesPage() {
     handleSaveConfig,
     isSaving,
   } = useWhatsAppTemplatesPage();
+  console.log('🚀 ~ WhatsAppTemplatesPage ~ templates:', templates);
 
   const templateOptions = templates.map((t: any) => ({
     value: t.name,
@@ -82,6 +83,8 @@ export default function WhatsAppTemplatesPage() {
               };
 
               const variables = extractVariables(bodyText);
+              const isServiceReminder = item.type === 'SERVICE_REMINDER';
+              const hasWrongVariableCount = isServiceReminder && selectedTemplateName && variables.length !== 5;
 
               return (
                 <Card
@@ -146,6 +149,17 @@ export default function WhatsAppTemplatesPage() {
                               ) : (
                                 <p className="text-xs text-neutral-400 italic">No variables found in this template</p>
                               )}
+
+                              {hasWrongVariableCount && (
+                                <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-lg">
+                                  <p className="text-xs text-red-600 font-medium">
+                                    ⚠️ Service Reminders require exactly 5 variables (Current: {variables.length}).
+                                    Please choose a template that includes placeholders for: Name, Brand, Model, Reg.
+                                    Number, and Date.
+                                  </p>
+                                </div>
+                              )}
+
                               <p className="mt-3 text-[11px] text-neutral-500 leading-normal">
                                 Ensure your automation logic provides values for all variables listed above to avoid
                                 message delivery failures.

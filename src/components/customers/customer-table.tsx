@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import Link from 'next/link';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +30,12 @@ export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProp
             <TableRow key={customer._id}>
               <TableCell className="px-2 md:px-4 py-3">
                 <div className="flex flex-col">
-                  <span className="font-semibold text-neutral-900 text-sm sm:text-base">{customer.name}</span>
+                  <Link
+                    href={`/bike-service/customers/${customer._id}`}
+                    className="font-semibold text-blue-600 hover:text-blue-800 transition-colors text-sm sm:text-base"
+                  >
+                    {customer.name}
+                  </Link>
                   <span className="text-xs text-neutral-500 sm:hidden">{customer.phone_number}</span>
                 </div>
               </TableCell>

@@ -55,6 +55,14 @@ export function useWhatsAppTemplatesPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  const extractVariables = (text: string) => {
+    const regex = /{{(\d+)}}/g;
+    const matches = [...text.matchAll(regex)];
+    return Array.from(new Set(matches.map((m) => m[0]))).sort((a, b) => {
+      return parseInt(a.replace(/\D/g, '')) - parseInt(b.replace(/\D/g, ''));
+    });
+  };
+
   const filteredTemplates = templates.filter((template: any) => {
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -77,6 +85,18 @@ export function useWhatsAppTemplatesPage() {
 
     const template = templates.find((t: any) => t.name === templateName);
     if (!template) return;
+
+    // Validation for SERVICE_REMINDER: must have exactly 5 variables
+    if (type === 'SERVICE_REMINDER') {
+      const bodyText = template.components?.find((c: any) => c.type === 'BODY')?.text || '';
+      const variables = extractVariables(bodyText);
+      if (variables.length !== 5) {
+        alert(
+          `Validation Failed: The template "${templateName}" has ${variables.length} variables. Please select a template with exactly 5 variables for Service Reminders (e.g., name, bike brand, model, number, and date).`,
+        );
+        return;
+      }
+    }
 
     const payload = {
       template_type: type,
