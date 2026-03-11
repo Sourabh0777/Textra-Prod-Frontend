@@ -141,7 +141,6 @@ export function BusinessProfileForm({
             onChange={onInputChange}
             error={errors.waba_id}
             fullWidth
-            disabled
           />
 
           <Input
@@ -151,7 +150,6 @@ export function BusinessProfileForm({
             onChange={onInputChange}
             error={errors.phone_number_id}
             fullWidth
-            disabled
           />
 
           <Input
@@ -161,7 +159,6 @@ export function BusinessProfileForm({
             onChange={onInputChange}
             error={errors.phone_number_display}
             fullWidth
-            disabled
           />
         </div>
         <div className="flex justify-end pt-4">
