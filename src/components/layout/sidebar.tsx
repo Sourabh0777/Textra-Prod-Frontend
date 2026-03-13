@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 import { useAuth } from '@clerk/nextjs';
 import { useCurrentUser } from '@/lib/hooks/useFetchUserData';
 import { UserRole } from '@/types';
 import { SidebarKey } from '@/config/sidebarConfig';
 import { env } from '@/env';
-import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
 import { useFacebookAuth } from '@/lib/hooks/useFacebookAuth';
 
 import { SidebarHeader } from './sidebar/sidebar-header';
@@ -23,6 +21,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const { user } = useCurrentUser();
+  console.log('🚀 ~ Sidebar ~ user:', user);
 
   const { onFacebookLogin, isLoggingIn } = useFacebookAuth();
 
@@ -32,10 +31,18 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
 
   useEffect(() => {
     const isAdmin = user?.role === UserRole.ADMIN;
-    const isBusinessActive = user?.business_id?.is_active === true;
+    const business = user?.business_id;
+    const isBusinessActive = business?.is_active === true;
+    const isWabaSetup = !!business?.waba_id && !!business?.phone_number_id;
 
     const fetchSideBar = async () => {
       if (!isAdmin && !isBusinessActive) return;
+
+      // If not admin and business setup is incomplete, show only "Business"
+      if (!isAdmin && isBusinessActive && !isWabaSetup) {
+        setMenus(['business']);
+        return;
+      }
 
       try {
         const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`;

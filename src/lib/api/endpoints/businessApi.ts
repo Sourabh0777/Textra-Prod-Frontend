@@ -85,7 +85,7 @@ export const businessApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Business', id }, 'Business'],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Business', id }, 'Business', 'User'],
     }),
   }),
 });

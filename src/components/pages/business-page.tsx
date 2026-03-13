@@ -10,8 +10,20 @@ import { useBusinessProfile } from '@/lib/hooks/use-business-profile';
 import { BusinessProfileForm } from '@/components/business/business-profile-form';
 
 const BusinessPage = () => {
-  const { formData, businessTypes, states, zones, loading, saving, error, errors, handleChange, handleSave } =
-    useBusinessProfile();
+  const {
+    formData,
+    businessTypes,
+    states,
+    zones,
+    loading,
+    saving,
+    wabaSaving,
+    error,
+    errors,
+    handleChange,
+    handleSave,
+    handleWabaSave,
+  } = useBusinessProfile();
 
   /** Loading state */
   if (loading) {
@@ -53,8 +65,10 @@ const BusinessPage = () => {
           states={states}
           zones={zones}
           saving={saving}
+          wabaSaving={wabaSaving}
           onInputChange={handleChange}
           onSave={handleSave}
+          onWabaSave={handleWabaSave}
         />
       </div>
     </>

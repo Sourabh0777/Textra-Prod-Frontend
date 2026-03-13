@@ -13,8 +13,10 @@ interface BusinessProfileFormProps {
   states?: IState[];
   zones?: IZone[];
   saving: boolean;
+  wabaSaving?: boolean;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onSave: () => void;
+  onWabaSave?: () => void;
 }
 
 export function BusinessProfileForm({
@@ -24,8 +26,10 @@ export function BusinessProfileForm({
   states,
   zones,
   saving,
+  wabaSaving,
   onInputChange,
   onSave,
+  onWabaSave,
 }: BusinessProfileFormProps) {
   return (
     <Card>
@@ -130,7 +134,11 @@ export function BusinessProfileForm({
           error={errors.address}
           fullWidth
         />
-
+        <div className="flex justify-end pt-4">
+          <Button loading={saving} onClick={onSave}>
+            Save Changes
+          </Button>
+        </div>
         <div className="pt-4 border-t">
           <h3 className="font-semibold mb-3">WhatsApp Configuration</h3>
 
@@ -160,11 +168,11 @@ export function BusinessProfileForm({
             error={errors.phone_number_display}
             fullWidth
           />
-        </div>
-        <div className="flex justify-end pt-4">
-          <Button loading={saving} onClick={onSave}>
-            Save Changes
-          </Button>
+          <div className="flex justify-end pt-4">
+            <Button loading={wabaSaving} onClick={onWabaSave}>
+              Save WhatsApp Config
+            </Button>
+          </div>
         </div>
       </CardBody>
     </Card>

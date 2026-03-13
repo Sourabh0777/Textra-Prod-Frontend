@@ -5,6 +5,7 @@ import {
   useGetBusinessDetailsQuery,
   useUpdateBusinessDetailsMutation,
   useFetchBusinessTypesQuery,
+  useUpdateBusinessWabaMutation,
 } from '@/lib/api/endpoints/businessApi';
 import { useFetchStatesQuery, useFetchZonesQuery } from '@/lib/api/endpoints/configApi';
 import type { IBusiness } from '@/types';
@@ -37,8 +38,9 @@ export function useBusinessProfile() {
     skip: !isLoaded || !clerkUser,
   });
 
-  /** Update mutation */
+  /** Update mutations */
   const [updateBusinessDetails, { isLoading: saving }] = useUpdateBusinessDetailsMutation();
+  const [updateBusinessWaba, { isLoading: wabaSaving }] = useUpdateBusinessWabaMutation();
 
   /** Populate form on load */
   useEffect(() => {
@@ -95,6 +97,38 @@ export function useBusinessProfile() {
     }
   };
 
+  /** Save WhatsApp details */
+  const handleWabaSave = async () => {
+    try {
+      const businessId = (businessResponse as any)?.data?._id || businessResponse?._id;
+      if (!businessId) {
+        throw new Error('Business ID not found');
+      }
+
+      setErrors({});
+      await toastPromise(
+        updateBusinessWaba({
+          id: businessId,
+          data: {
+            waba_id: formData.waba_id,
+            phone_number_id: formData.phone_number_id,
+            phone_number_display: formData.phone_number_display,
+          },
+        }).unwrap(),
+        {
+          loading: 'Updating WhatsApp credentials...',
+          success: 'WhatsApp credentials updated successfully',
+          error: (err: any) =>
+            err?.data?.error?.reason || err?.data?.message || 'Failed to update WhatsApp credentials',
+        },
+      );
+    } catch (err: any) {
+      if (err?.data?.errors) {
+        setErrors(err.data.errors);
+      }
+    }
+  };
+
   return {
     formData,
     businessTypes,
@@ -102,9 +136,11 @@ export function useBusinessProfile() {
     zones,
     loading,
     saving,
+    wabaSaving,
     error,
     errors,
     handleChange,
     handleSave,
+    handleWabaSave,
   };
 }
