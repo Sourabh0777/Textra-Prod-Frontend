@@ -1,10 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { env } from '@/env';
 import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
 import { toast } from 'sonner';
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    FB: any;
+    fbAsyncInit: () => void;
+  }
+}
 
 export function useFacebookAuth() {
   const searchParams = useSearchParams();
@@ -14,7 +22,7 @@ export function useFacebookAuth() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [facebookOAuth] = useFacebookOAuthMutation();
 
-  const handleReturnWithCode = async (code: string) => {
+  const handleReturnWithCode = useCallback(async (code: string) => {
     setIsLoggingIn(true);
     setIsCompleted(false);
     try {
@@ -37,19 +45,45 @@ export function useFacebookAuth() {
         console.error('Backend OAuth Error:', result.message);
         toast.error(result.message || 'Facebook connection failed');
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error in OAuth return handler:', error);
       toast.error(error?.data?.message || 'Error connecting to Facebook');
     } finally {
       setIsLoggingIn(false);
     }
-  };
+  }, [facebookOAuth, router]);
 
   useEffect(() => {
     if (codeFromUrl) {
       handleReturnWithCode(codeFromUrl);
     }
-  }, [codeFromUrl]);
+  }, [codeFromUrl, handleReturnWithCode]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !window.FB) {
+      window.fbAsyncInit = function() {
+        window.FB.init({
+          appId: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+          autoLogAppEvents: true,
+          xfbml: true,
+          version: env.NEXT_PUBLIC_FACEBOOK_API_VERSION
+        });
+      };
+
+      // Load the JavaScript SDK asynchronously
+      (function (d, s, id) {
+        const js = d.createElement(s) as HTMLScriptElement;
+        const fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        if (fjs && fjs.parentNode) {
+          fjs.parentNode.insertBefore(js, fjs);
+        }
+      }(document, 'script', 'facebook-jssdk'));
+    }
+  }, []);
 
   const onFacebookLogin = async () => {
     try {
