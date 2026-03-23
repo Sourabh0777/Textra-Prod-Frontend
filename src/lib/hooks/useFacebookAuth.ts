@@ -61,7 +61,6 @@ export function useFacebookAuth() {
         'whatsapp_business_messaging',
         'whatsapp_business_management',
         'whatsapp_business_manage_events',
-        'manage_app_solution',
         'public_profile',
       ].join(',');
 
