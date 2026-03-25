@@ -3,11 +3,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, ArrowRight, Facebook } from 'lucide-react';
-import { useFacebookAuth } from '@/lib/hooks/useFacebookAuth';
 
 export function HeroSection() {
-  const { onFacebookLogin } = useFacebookAuth();
-
   return (
     <section className="relative pt-5 pb-16 md:pt-5 md:pb-24 overflow-hidden">
       {/* Background decoration */}
@@ -55,7 +52,6 @@ export function HeroSection() {
                 variant="ghost"
                 size="lg"
                 className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all flex items-center gap-2"
-                onClick={onFacebookLogin}
               >
                 <Facebook className="w-5 h-5 text-[#1877F2]" />
                 Login with Facebook

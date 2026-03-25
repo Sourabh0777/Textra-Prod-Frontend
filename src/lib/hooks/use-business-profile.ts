@@ -110,9 +110,7 @@ export function useBusinessProfile() {
         updateBusinessWaba({
           id: businessId,
           data: {
-            waba_id: formData.waba_id,
-            phone_number_id: formData.phone_number_id,
-            phone_number_display: formData.phone_number_display,
+            business_id: formData.business_id,
           },
         }).unwrap(),
         {

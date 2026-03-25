@@ -6,8 +6,6 @@ import { useCurrentUser } from '@/lib/hooks/useFetchUserData';
 import { UserRole } from '@/types';
 import { SidebarKey } from '@/config/sidebarConfig';
 import { env } from '@/env';
-import { useFacebookAuth } from '@/lib/hooks/useFacebookAuth';
-
 import { SidebarHeader } from './sidebar/sidebar-header';
 import { SidebarNavigation } from './sidebar/sidebar-navigation';
 import { SidebarStatus } from './sidebar/sidebar-status';
@@ -21,13 +19,8 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const { user } = useCurrentUser();
-  console.log('🚀 ~ Sidebar ~ user:', user);
 
-  const { onFacebookLogin, isLoggingIn } = useFacebookAuth();
-
-  const onLogin = async () => {
-    await onFacebookLogin();
-  };
+  const onLogin = async () => {};
 
   useEffect(() => {
     const isAdmin = user?.role === UserRole.ADMIN;
@@ -36,13 +29,13 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     const isWabaSetup = !!business?.waba_id && !!business?.phone_number_id;
 
     const fetchSideBar = async () => {
-      if (!isAdmin && !isBusinessActive) return;
-
-      // If not admin and business setup is incomplete, show only "Business"
-      if (!isAdmin && isBusinessActive && !isWabaSetup) {
+      if (!isAdmin && !isBusinessActive && !isWabaSetup) {
         setMenus(['business']);
         return;
       }
+      if (!isAdmin && !isBusinessActive) return;
+
+      // If not admin and business setup is incomplete, show only "Business"
 
       try {
         const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`;
@@ -70,7 +63,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     <aside className="w-full h-full bg-[#15368A] text-[#FFFFFF] overflow-y-auto flex flex-col border-r border-white/10">
       <SidebarHeader />
       <SidebarNavigation menus={menus} onClose={onClose} />
-      <SidebarStatus isLoggingIn={isLoggingIn} onLogin={onLogin} />
+      <SidebarStatus isLoggingIn={false} onLogin={onLogin} />
     </aside>
   );
 }

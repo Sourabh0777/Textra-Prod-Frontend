@@ -42,6 +42,7 @@ export interface IBusiness {
   zone_id?: string | IZone;
   is_active: boolean;
   created_at?: Date;
+  business_id?: string;
   waba_id: string;
   phone_number_id: string;
   phone_number_display?: string;

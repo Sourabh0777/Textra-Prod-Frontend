@@ -10,7 +10,16 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 export function Select({ label, error, fullWidth = false, options, className = '', ...props }: SelectProps) {
   return (
     <div className={fullWidth ? 'w-full' : ''}>
-      {label && <label className="block text-sm font-semibold text-neutral-700 mb-1.5">{label}</label>}
+      {label && (
+        <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+          {label}
+          {props.required && (
+            <span className="text-red-500 ml-1" title="Required">
+              *
+            </span>
+          )}
+        </label>
+      )}
       <select
         className={`
           w-full px-3 py-2 border border-neutral-300 rounded
