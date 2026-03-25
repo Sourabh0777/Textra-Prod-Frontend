@@ -42,10 +42,10 @@ export function BusinessProfileForm({
   const isActive = user?.business_id?.is_active === true;
 
   // Poll for user updates every 20 seconds while not active
-  useFetchLoginUserQuery(undefined, {
-    skip: isActive,
-    pollingInterval: 1000,
-  });
+  // useFetchLoginUserQuery(undefined, {
+  //   skip: isActive,
+  //   pollingInterval: 10000,
+  // });
 
   return (
     <Card>
