@@ -3,7 +3,7 @@ import React from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
-import { Combobox } from '@/components/ui/combobox';
+import SearchableDropdown from '@/components/ui/searchable-dropdown';
 import { VEHICLE_TYPES, INDIAN_TWO_WHEELER_BRANDS } from '@/config/vehicle-config';
 import type { IVehicle, ICustomer } from '@/types';
 
@@ -48,19 +48,20 @@ export function VehicleModal({
       <div className="p-4">
         <form onSubmit={onSubmit} className="space-y-4">
           {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-          <Combobox
-            label="Customer"
+          <SearchableDropdown
+            fieldLabel="Customer"
             placeholder="Select a customer"
             searchPlaceholder="Search by name, phone or email..."
-            value={
+            selectedVal={
               typeof formData.customer_id === 'object' ? (formData.customer_id as any)?._id : formData.customer_id || ''
             }
-            onChange={(val) => onCustomerChange(val as string)}
+            handleChange={(val) => onCustomerChange(val as string)}
             options={customers.map((customer: ICustomer) => ({
-              value: customer._id || '',
-              label: `${customer.name} | ${customer.phone_number} ${customer.email ? `| ${customer.email}` : ''}`,
-              searchTerms: `${customer.name} ${customer.phone_number} ${customer.email || ''}`.toLowerCase(),
+              id: customer._id || '',
+              name: `${customer.name} | ${customer.phone_number} ${customer.email ? `| ${customer.email}` : ''}`,
             }))}
+            label="name"
+            id="id"
             error={errors.customer_id}
             fullWidth
           />
@@ -73,12 +74,14 @@ export function VehicleModal({
             error={errors.vehicle_type}
             fullWidth
           />
-          <Combobox
-            label="Brand"
+          <SearchableDropdown
+            fieldLabel="Brand"
             placeholder="Select or search brand"
-            value={formData.brand || ''}
-            onChange={(val) => onBrandChange(val as string)}
+            selectedVal={formData.brand || ''}
+            handleChange={(val) => onBrandChange(val as string)}
             options={INDIAN_TWO_WHEELER_BRANDS}
+            label="label"
+            id="value"
             error={errors.brand}
             fullWidth
           />

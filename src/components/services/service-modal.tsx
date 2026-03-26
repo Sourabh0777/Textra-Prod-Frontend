@@ -2,7 +2,7 @@
 import React from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
-import { Combobox } from '@/components/ui/combobox';
+import SearchableDropdown from '@/components/ui/searchable-dropdown';
 import type { IService, IVehicle } from '@/types';
 
 interface ServiceModalProps {
@@ -43,14 +43,14 @@ export function ServiceModal({
       <div className="p-4">
         <form onSubmit={onSubmit} className="space-y-4">
           {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
-          <Combobox
-            label="Vehicle"
+          <SearchableDropdown
+            fieldLabel="Vehicle"
             placeholder="Select a vehicle"
             searchPlaceholder="Search by customer name, phone, email or registration number..."
-            value={
+            selectedVal={
               typeof formData.vehicle_id === 'object' ? (formData.vehicle_id as any)?._id : formData.vehicle_id || ''
             }
-            onChange={(val) => onVehicleChange(val as string)}
+            handleChange={(val) => onVehicleChange(val as string)}
             options={vehicles.map((vehicle: IVehicle) => {
               const customer = vehicle.customer_id as any;
               const label = `${vehicle.brand} ${vehicle.vehicle_model} (${vehicle.registration_number}) - ${customer?.name || 'No Owner'}`;
@@ -62,6 +62,9 @@ export function ServiceModal({
                 searchTerms,
               };
             })}
+            label="label"
+            id="value"
+            searchKey="searchTerms"
             error={errors.vehicle_id}
             fullWidth
           />
