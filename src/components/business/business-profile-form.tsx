@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import type { IBusiness, IBusinessType, IState, IZone } from '@/types';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
 import { useCurrentUser } from '@/lib/hooks/useFetchUserData';
 import { useFetchLoginUserQuery } from '@/lib/api/endpoints/userApi';
@@ -41,11 +42,23 @@ export function BusinessProfileForm({
 
   const isActive = user?.business_id?.is_active === true;
 
-  // Poll for user updates every 20 seconds while not active
-  // useFetchLoginUserQuery(undefined, {
-  //   skip: isActive,
-  //   pollingInterval: 10000,
-  // });
+  const isProfileIncomplete =
+    !formData.phone_number || !formData.city || !formData.state || !formData.zone || !formData.address;
+
+  const handleWabaSaveClick = () => {
+    if (isProfileIncomplete) {
+      toast.error('Cannot save unless Phone Number, City, State, Zone, and Address are filled');
+      return;
+    }
+    onWabaSave?.();
+  };
+
+  const handleFacebookConnectClick = (e: React.MouseEvent) => {
+    if (isProfileIncomplete) {
+      e.preventDefault();
+      toast.error('Please complete your business profile before connecting to Facebook');
+    }
+  };
 
   return (
     <Card>
@@ -176,6 +189,21 @@ export function BusinessProfileForm({
           <div className="flex-1 mt-10 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 lg:border-l lg:pl-10">
             <h3 className="font-semibold text-xl mb-4 text-gray-800">WhatsApp Configuration</h3>
 
+            {isProfileIncomplete && (
+              <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm flex items-start gap-3 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                <span className="bg-amber-100 p-1.5 rounded-lg text-amber-600 mt-0.5">
+                  <AlertTriangle className="w-4 h-4" />
+                </span>
+                <div>
+                  <p className="font-semibold mb-1 text-amber-900">Profile Incomplete</p>
+                  <p className="text-amber-700">
+                    First these details are required to complete the profile:{' '}
+                    <span className="font-medium">Phone Number, City, State, Zone, Address</span>
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Zero Integration Info Card */}
             {!isActive && (
               <div className="mb-8 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm">
@@ -207,9 +235,9 @@ export function BusinessProfileForm({
 
                 <div className="text-blue-800 space-y-4 mb-6 text-sm">
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-md text-yellow-800 font-medium">
-                    ⚠️ <span className="font-semibold">Important Step:</span> Please enter <code>865339026407551</code>{' '}
-                    in the <strong>Business Profile ID</strong> field below and click{' '}
-                    <strong>Save WhatsApp Config</strong> first. We cannot connect your account without this.
+                    ⚠️ <span className="font-semibold">Important Step:</span> Please enter the{' '}
+                    <strong>Business Profile ID</strong> field below and click <strong>Save WhatsApp Config</strong>{' '}
+                    first. We cannot connect your account without this.
                   </div>
                   <p>
                     Once saved, click the button below to seamlessly set up your account. This requires zero integration
@@ -221,6 +249,7 @@ export function BusinessProfileForm({
                   href="https://business.facebook.com/messaging/whatsapp/onboard/?app_id=2076414226456262&config_id=1446461537160697"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={handleFacebookConnectClick}
                 >
                   <Button
                     type="button"
@@ -276,7 +305,7 @@ export function BusinessProfileForm({
               />
 
               <div className="flex justify-end pt-4">
-                <Button type="button" loading={wabaSaving} onClick={onWabaSave}>
+                <Button type="button" loading={wabaSaving} onClick={handleWabaSaveClick}>
                   Save WhatsApp Config
                 </Button>
               </div>
