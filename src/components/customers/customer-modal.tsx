@@ -4,6 +4,7 @@ import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { ICustomer, IBusiness } from '@/types';
+import { Info } from 'lucide-react';
 
 interface CustomerModalProps {
   isOpen: boolean;
@@ -39,6 +40,18 @@ export function CustomerModal({
     >
       <div className="p-4">
         <form onSubmit={onSubmit} className="space-y-4">
+          {!isEditMode && (
+            <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-md p-3 flex items-start space-x-3 text-sm">
+              <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="font-medium">Customer Consent</p>
+                <p className="mt-1 text-blue-700">
+                  By adding this customer, you confirm that they have given consent to receive WhatsApp notifications
+                  and messages related to bike service.
+                </p>
+              </div>
+            </div>
+          )}
           {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
           <Select
             label="Business"
@@ -89,6 +102,7 @@ export function CustomerModal({
               { value: 'false', label: 'Inactive' },
             ]}
             fullWidth
+            disabled
           />
         </form>
       </div>
