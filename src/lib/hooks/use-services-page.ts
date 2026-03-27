@@ -54,7 +54,7 @@ export function useServicesPage() {
     );
   });
 
-  const loading = loadingServices || loadingVehicles;
+  const loading = !isLoaded || loadingServices || loadingVehicles;
   const isSubmitting = isCreating || isUpdating;
 
   const handleOpenModal = (service?: IService) => {

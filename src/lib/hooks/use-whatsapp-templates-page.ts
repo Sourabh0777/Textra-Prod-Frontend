@@ -121,7 +121,7 @@ export function useWhatsAppTemplatesPage() {
 
   return {
     templates,
-    loading: templatesLoading || configLoading,
+    loading: !isLoaded || templatesLoading || configLoading,
     fetchError: templatesError || configError,
     searchQuery,
     setSearchQuery,

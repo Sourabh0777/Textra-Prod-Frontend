@@ -57,7 +57,7 @@ export function useCustomersPage() {
 
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
 
-  const loading = loadingCustomers || loadingBusinesses;
+  const loading = !isLoaded || loadingCustomers || loadingBusinesses;
   const isSubmitting = isCreating || isUpdating;
 
   const handleOpenModal = (customer?: ICustomer) => {

@@ -49,7 +49,7 @@ export function useRemindersPage() {
   const reminders = Array.isArray(remindersResponse) ? remindersResponse : (remindersResponse as any)?.data || [];
   const services = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse as any)?.data || [];
 
-  const loading = loadingReminders || loadingServices;
+  const loading = !isLoaded || loadingReminders || loadingServices;
   const isSubmitting = isCreating || isUpdating;
 
   const handleOpenModal = (reminder?: IReminder) => {

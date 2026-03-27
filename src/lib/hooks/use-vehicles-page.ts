@@ -59,7 +59,7 @@ export function useVehiclesPage() {
     );
   });
 
-  const loading = loadingVehicles || loadingCustomers;
+  const loading = !isLoaded || loadingVehicles || loadingCustomers;
   const isSubmitting = isCreating || isUpdating;
 
   const handleOpenModal = (vehicle?: IVehicle) => {

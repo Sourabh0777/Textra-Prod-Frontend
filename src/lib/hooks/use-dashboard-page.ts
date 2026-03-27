@@ -21,7 +21,7 @@ export function useDashboardPage() {
     skip: !isLoaded || !clerkUser,
   });
 
-  const loading = loadingBusinesses || loadingCustomers || loadingVehicles || loadingReminders;
+  const loading = !isLoaded || loadingBusinesses || loadingCustomers || loadingVehicles || loadingReminders;
 
   const getCount = (data: any) => {
     if (Array.isArray(data)) return data.length;

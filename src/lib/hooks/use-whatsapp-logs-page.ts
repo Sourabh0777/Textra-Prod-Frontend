@@ -42,7 +42,7 @@ export function useWhatsAppLogsPage() {
 
   return {
     logs,
-    loading,
+    loading: !isLoaded || loading,
     fetchError,
     statusVariant,
     formatDate,

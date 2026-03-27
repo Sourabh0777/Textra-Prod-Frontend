@@ -8,7 +8,6 @@ export function useFetchUserData() {
   const { user: clerkUser, isLoaded } = useUser();
   const dispatch = useAppDispatch();
 
-  // skip the query if clerk is not loaded or user not signed in
   const { data: apiUser, isLoading, isError } = useFetchLoginUserQuery(undefined, { skip: !isLoaded || !clerkUser });
 
   // Sync to Redux slice (optional, but good for backward compat if other parts use the slice)
@@ -18,7 +17,9 @@ export function useFetchUserData() {
     }
   }, [apiUser, dispatch]);
 
-  return { user: apiUser || null, isLoading };
+  const isActuallyLoading = !isLoaded || (clerkUser && isLoading);
+
+  return { user: apiUser || null, isLoading: isActuallyLoading };
 }
 
 export function useCurrentUser() {
