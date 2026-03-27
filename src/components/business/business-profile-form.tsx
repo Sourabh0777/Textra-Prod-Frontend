@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import type { IBusiness, IBusinessType, IState, IZone } from '@/types';
-import { ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Loader2, AlertTriangle, MessageSquare, ShieldCheck, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useUser } from '@clerk/nextjs';
@@ -264,6 +264,60 @@ export function BusinessProfileForm({
                 </Link>
               </div>
             )}
+
+            {/* Message Usage & Limits */}
+            <div className="mb-8 bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100 shadow-sm animate-in fade-in slide-in-from-right-4 duration-500">
+              <h4 className="font-semibold text-lg text-emerald-900 mb-4 flex items-center gap-2">
+                <span className="bg-emerald-100 text-emerald-700 p-1.5 rounded-lg">
+                  <MessageSquare className="w-5 h-5" />
+                </span>
+                Message Usage & Limits
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-white/60 rounded-xl border border-emerald-100/50 flex items-center gap-3">
+                  <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-emerald-600 uppercase font-bold tracking-wider">Monthly Limit</p>
+                    <p className="text-xl font-black text-emerald-900">
+                      {(user?.business_id as any)?.monthly_message_limit?.toLocaleString() || '0'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-white/60 rounded-xl border border-emerald-100/50 flex items-center gap-3">
+                  <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-emerald-600 uppercase font-bold tracking-wider">Messages Sent</p>
+                    <p className="text-xl font-black text-emerald-900">
+                      {(user?.business_id as any)?.current_month_message_count?.toLocaleString() || '0'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-white/60 rounded-xl border border-emerald-100/50 flex items-center gap-3 md:col-span-2">
+                  <div className="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-emerald-600 uppercase font-bold tracking-wider">Last Reset Date</p>
+                    <p className="text-lg font-bold text-emerald-900">
+                      {(user?.business_id as any)?.last_limit_reset_date
+                        ? new Date((user?.business_id as any).last_limit_reset_date).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })
+                        : 'Not scheduled yet'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div className="space-y-6">
               <Input

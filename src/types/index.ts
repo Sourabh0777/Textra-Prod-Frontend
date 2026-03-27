@@ -47,6 +47,9 @@ export interface IBusiness {
   phone_number_id: string;
   phone_number_display?: string;
   access_token?: string;
+  monthly_message_limit?: number;
+  current_month_message_count?: number;
+  last_limit_reset_date?: string | Date;
 }
 
 export interface ICustomer {
