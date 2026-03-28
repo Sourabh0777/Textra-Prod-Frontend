@@ -103,7 +103,7 @@ export function ReminderTable({
                     <TableCell>
                       <div className="flex flex-col">
                         <Link
-                          href={`/bike-service/customers/${customer?._id}`}
+                          href={`/vehicle-service/customers/${customer?._id}`}
                           className="font-bold text-blue-600 hover:text-blue-800 transition-colors"
                         >
                           {customer?.name || 'Unknown'}
@@ -210,7 +210,7 @@ export function ReminderTable({
                     </div>
                     <div className="flex flex-col">
                       <Link
-                        href={`/bike-service/customers/${customer?._id}`}
+                        href={`/vehicle-service/customers/${customer?._id}`}
                         className="font-bold text-blue-600 hover:text-blue-800 transition-colors text-sm"
                       >
                         {customer?.name || 'Unknown'}

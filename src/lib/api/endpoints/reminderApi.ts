@@ -3,23 +3,24 @@ import { baseApi } from '../baseApi';
 export const reminderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchReminders: builder.query<any, string | void>({
-      query: (serviceId) => (serviceId ? `/bike-service/reminders?service_id=${serviceId}` : '/bike-service/reminders'),
+      query: (serviceId) =>
+        serviceId ? `/vehicle-service/reminders?service_id=${serviceId}` : '/vehicle-service/reminders',
       providesTags: ['Reminder'],
     }),
     fetchReminder: builder.query<any, string>({
-      query: (id) => `/bike-service/reminders/${id}`,
+      query: (id) => `/vehicle-service/reminders/${id}`,
       providesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder'],
     }),
     markVisited: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/bike-service/reminders/${id}/mark-visited`,
+        url: `/vehicle-service/reminders/${id}/mark-visited`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder', { type: 'Service' as any }],
     }),
     createReminder: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/bike-service/reminders',
+        url: '/vehicle-service/reminders',
         method: 'POST',
         body,
       }),
@@ -27,7 +28,7 @@ export const reminderApi = baseApi.injectEndpoints({
     }),
     updateReminder: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/bike-service/reminders/${id}`,
+        url: `/vehicle-service/reminders/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -35,14 +36,14 @@ export const reminderApi = baseApi.injectEndpoints({
     }),
     deleteReminder: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/bike-service/reminders/${id}`,
+        url: `/vehicle-service/reminders/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Reminder'],
     }),
     triggerReminderWorker: builder.mutation<any, { reminder_id: string }>({
       query: (body) => ({
-        url: '/bike-service/bike-service-reminders/send',
+        url: '/vehicle-service/vehicle-service-reminders/send',
         method: 'POST',
         body,
       }),

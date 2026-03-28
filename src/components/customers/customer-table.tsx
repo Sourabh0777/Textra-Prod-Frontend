@@ -31,7 +31,7 @@ export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProp
               <TableCell className="px-2 md:px-4 py-3">
                 <div className="flex flex-col">
                   <Link
-                    href={`/bike-service/customers/${customer._id}`}
+                    href={`/vehicle-service/customers/${customer._id}`}
                     className="font-semibold text-blue-600 hover:text-blue-800 transition-colors text-sm sm:text-base"
                   >
                     {customer.name}
