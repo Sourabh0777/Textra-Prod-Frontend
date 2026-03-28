@@ -12,10 +12,12 @@ import { useConfigurationsPage } from '@/lib/hooks/use-configurations-page';
 import { Plus } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
 
-type TabType = 'states' | 'zones';
-
 export function ConfigurationsPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('states');
+  const [hasHydrated, setHasHydrated] = useState(false);
+  React.useEffect(() => {
+    setHasHydrated(true);
+  }, []);
+
   const {
     states,
     loadingStates,
@@ -35,63 +37,59 @@ export function ConfigurationsPage() {
     handleOpenZoneModal,
     handleZoneSubmit,
     handleDeleteZone,
+    expandedStates,
+    toggleStateExpansion,
+    zonesByState,
   } = useConfigurationsPage();
+
+  if (!hasHydrated) {
+    return (
+      <>
+        <Header title="Project Configurations" subtitle="Manage states and zones for business categorization" />
+        <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+          <Card>
+            <CardBody>
+              <div className="flex justify-center py-12">
+                <Loader />
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <Header title="Project Configurations" subtitle="Manage states and zones for business categorization" />
 
       <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
-        {/* Tabs */}
-        <div className="flex border-b border-neutral-200">
-          <button
-            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
-              activeTab === 'states'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700'
-            }`}
-            onClick={() => setActiveTab('states')}
-          >
-            States
-          </button>
-          <button
-            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${
-              activeTab === 'zones'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-neutral-500 hover:text-neutral-700'
-            }`}
-            onClick={() => setActiveTab('zones')}
-          >
-            Zones
-          </button>
-        </div>
-
         <Card>
           <CardBody>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">
-                {activeTab === 'states' ? 'Manage States' : 'Manage Zones'}
-              </h2>
-              <Button onClick={() => (activeTab === 'states' ? handleOpenStateModal() : handleOpenZoneModal())}>
+              <h2 className="text-xl font-semibold text-neutral-900">Manage States & Zones</h2>
+              <Button onClick={() => handleOpenStateModal()}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add {activeTab === 'states' ? 'State' : 'Zone'}
+                Add State
               </Button>
             </div>
 
-            {activeTab === 'states' ? (
-              loadingStates ? (
-                <div className="flex justify-center py-12">
-                  <Loader />
-                </div>
-              ) : (
-                <StateTable states={states} onEdit={handleOpenStateModal} onDelete={handleDeleteState} />
-              )
-            ) : loadingZones ? (
+            {loadingStates ? (
               <div className="flex justify-center py-12">
                 <Loader />
               </div>
             ) : (
-              <ZoneTable zones={zones} onEdit={handleOpenZoneModal} onDelete={handleDeleteZone} />
+              <StateTable
+                states={states}
+                onEdit={handleOpenStateModal}
+                onDelete={handleDeleteState}
+                expandedStates={expandedStates}
+                onToggleExpand={toggleStateExpansion}
+                zonesByState={zonesByState}
+                onAddZone={handleOpenZoneModal}
+                onEditZone={handleOpenZoneModal}
+                onDeleteZone={handleDeleteZone}
+              />
             )}
           </CardBody>
         </Card>

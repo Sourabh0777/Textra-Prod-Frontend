@@ -26,12 +26,61 @@ export function useConfigurationsPage() {
   const [editingZone, setEditingZone] = useState<IZone | null>(null);
   const [zoneFormData, setZoneFormData] = useState<Partial<IZone>>({ name: '', is_active: true });
 
+  // State for row expansion
+  const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
+
+  const toggleStateExpansion = (stateId: string) => {
+    const id = String(stateId);
+    setExpandedStates((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const { data: states = [], isLoading: loadingStates } = useFetchStatesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
+  console.log('🚀 ~ useConfigurationsPage ~ states:', states);
   const { data: zones = [], isLoading: loadingZones } = useFetchZonesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
+  console.log('🚀 ~ useConfigurationsPage ~ zones:', zones);
+
+  // Group zones by state ID
+  const zonesByState = states.reduce(
+    (acc, state) => {
+      const sId = String(state._id || (state as any).id || '');
+      if (sId && sId !== 'undefined' && sId !== 'null') {
+        acc[sId] = [...((state as any).cities || [])];
+      }
+      return acc;
+    },
+    {} as Record<string, IZone[]>,
+  );
+
+  // Merge separate zones into the grouping
+  zones.forEach((zone) => {
+    const sRef = zone.state_id || (zone as any).state || (zone as any).stateId;
+    let stateId = '';
+    if (sRef) {
+      if (typeof sRef === 'object') {
+        stateId = String(sRef._id || (sRef as any).id || '');
+      } else {
+        stateId = String(sRef);
+      }
+    }
+
+    if (stateId && stateId !== 'undefined' && stateId !== 'null' && stateId !== '[object Object]') {
+      if (!zonesByState[stateId]) zonesByState[stateId] = [];
+      // Avoid duplicates by checking name if ID is different but conceptually same
+      const exists = zonesByState[stateId].some((z) => String(z._id) === String(zone._id) || z.name === zone.name);
+      if (!exists) {
+        zonesByState[stateId].push(zone);
+      }
+    }
+  });
+
+  console.log('🚀 ~ useConfigurationsPage ~ zonesByState:', zonesByState);
 
   const [createState] = useCreateStateMutation();
   const [updateState] = useUpdateStateMutation();
@@ -93,9 +142,10 @@ export function useConfigurationsPage() {
   const handleOpenZoneModal = (zone?: IZone) => {
     if (zone) {
       setEditingZone(zone);
+      const sId = zone.state_id;
       setZoneFormData({
         ...zone,
-        state_id: typeof zone.state_id === 'object' ? zone.state_id._id : zone.state_id,
+        state_id: sId && typeof sId === 'object' ? sId._id : sId,
       });
     } else {
       setEditingZone(null);
@@ -159,5 +209,8 @@ export function useConfigurationsPage() {
     handleOpenZoneModal,
     handleZoneSubmit,
     handleDeleteZone,
+    expandedStates,
+    toggleStateExpansion,
+    zonesByState,
   };
 }
