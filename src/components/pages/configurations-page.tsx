@@ -5,7 +5,6 @@ import { Header } from '@/components/layout/header';
 import { Card, CardBody } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StateTable } from '@/components/config/StateTable';
-import { ZoneTable } from '@/components/config/ZoneTable';
 import { StateModal } from '@/components/config/StateModal';
 import { ZoneModal } from '@/components/config/ZoneModal';
 import { useConfigurationsPage } from '@/lib/hooks/use-configurations-page';

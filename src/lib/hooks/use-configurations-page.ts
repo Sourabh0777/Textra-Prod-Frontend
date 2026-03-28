@@ -40,11 +40,9 @@ export function useConfigurationsPage() {
   const { data: states = [], isLoading: loadingStates } = useFetchStatesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
-  console.log('🚀 ~ useConfigurationsPage ~ states:', states);
   const { data: zones = [], isLoading: loadingZones } = useFetchZonesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
-  console.log('🚀 ~ useConfigurationsPage ~ zones:', zones);
 
   // Group zones by state ID
   const zonesByState = states.reduce(
@@ -79,8 +77,6 @@ export function useConfigurationsPage() {
       }
     }
   });
-
-  console.log('🚀 ~ useConfigurationsPage ~ zonesByState:', zonesByState);
 
   const [createState] = useCreateStateMutation();
   const [updateState] = useUpdateStateMutation();

@@ -102,7 +102,6 @@ export function StateTable({
                               </TableHead>
                               <TableBody>
                                 {zones.map((zone) => {
-                                  console.log(zone);
                                   const zoneId = String(zone._id);
                                   return (
                                     <TableRow key={zoneId} className="hover:bg-neutral-50 transition-colors">
