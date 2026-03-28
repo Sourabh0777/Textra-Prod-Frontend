@@ -43,40 +43,29 @@ export function useConfigurationsPage() {
   const { data: zones = [], isLoading: loadingZones } = useFetchZonesQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
+  console.log('🚀 ~ useConfigurationsPage ~ zones:', zones);
 
-  // Group zones by state ID
-  const zonesByState = states.reduce(
-    (acc, state) => {
-      const sId = String(state._id || (state as any).id || '');
-      if (sId && sId !== 'undefined' && sId !== 'null') {
-        acc[sId] = [...((state as any).cities || [])];
+  // Simple and robust group-by for zones by state_id
+  const zonesByState = zones.reduce(
+    (acc, zone) => {
+      const sRef = zone.state_id || (zone as any).state || (zone as any).stateId;
+      let sId = '';
+      if (sRef) {
+        if (typeof sRef === 'object') {
+          sId = String(sRef._id || (sRef as any).id || '');
+        } else {
+          sId = String(sRef);
+        }
+      }
+
+      if (sId && sId !== 'null' && sId !== 'undefined' && sId !== '[object Object]') {
+        if (!acc[sId]) acc[sId] = [];
+        acc[sId].push(zone);
       }
       return acc;
     },
     {} as Record<string, IZone[]>,
   );
-
-  // Merge separate zones into the grouping
-  zones.forEach((zone) => {
-    const sRef = zone.state_id || (zone as any).state || (zone as any).stateId;
-    let stateId = '';
-    if (sRef) {
-      if (typeof sRef === 'object') {
-        stateId = String(sRef._id || (sRef as any).id || '');
-      } else {
-        stateId = String(sRef);
-      }
-    }
-
-    if (stateId && stateId !== 'undefined' && stateId !== 'null' && stateId !== '[object Object]') {
-      if (!zonesByState[stateId]) zonesByState[stateId] = [];
-      // Avoid duplicates by checking name if ID is different but conceptually same
-      const exists = zonesByState[stateId].some((z) => String(z._id) === String(zone._id) || z.name === zone.name);
-      if (!exists) {
-        zonesByState[stateId].push(zone);
-      }
-    }
-  });
 
   const [createState] = useCreateStateMutation();
   const [updateState] = useUpdateStateMutation();
