@@ -45,6 +45,9 @@ export const carBrandsApi = baseApi.injectEndpoints({
       query: ({ brandId, modelName, newName }) => ({
         url: `core/cars/brands/${brandId}/models/${encodeURIComponent(modelName)}`,
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: { newName },
       }),
       invalidatesTags: ['CarBrand'],
