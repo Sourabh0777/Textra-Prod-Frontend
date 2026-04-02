@@ -7,7 +7,11 @@ import { Button } from '@/components/ui/button';
 import { StateTable } from '@/components/config/StateTable';
 import { StateModal } from '@/components/config/StateModal';
 import { ZoneModal } from '@/components/config/ZoneModal';
+import { CarBrandTable } from '@/components/config/CarBrandTable';
+import { CarBrandModal } from '@/components/config/CarBrandModal';
+import { CarModelModal } from '@/components/config/CarModelModal';
 import { useConfigurationsPage } from '@/lib/hooks/use-configurations-page';
+import { useCarBrandsConfig } from '@/lib/hooks/use-car-brands-config';
 import { Plus } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
 
@@ -40,6 +44,30 @@ export function ConfigurationsPage() {
     toggleStateExpansion,
     zonesByState,
   } = useConfigurationsPage();
+
+  const {
+    brands,
+    loadingBrands,
+    editingBrand,
+    editingModel,
+    isBrandModalOpen,
+    setIsBrandModalOpen,
+    brandFormData,
+    setBrandFormData,
+    handleOpenBrandModal,
+    handleBrandSubmit,
+    handleDeleteBrand,
+    isModelModalOpen,
+    setIsModelModalOpen,
+    modelFormData,
+    setModelFormData,
+    handleOpenModelModal,
+    handleModelSubmit,
+    handleDeleteModel,
+    activeBrandIdForModel,
+    expandedBrands,
+    toggleBrandExpansion,
+  } = useCarBrandsConfig();
 
   if (!hasHydrated) {
     return (
@@ -92,6 +120,36 @@ export function ConfigurationsPage() {
             )}
           </CardBody>
         </Card>
+
+        {/* Car Brands & Models Card */}
+        <Card>
+          <CardBody>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-neutral-900">Manage Car Brands & Models</h2>
+              <Button onClick={() => handleOpenBrandModal()}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Brand
+              </Button>
+            </div>
+
+            {loadingBrands ? (
+              <div className="flex justify-center py-12">
+                <Loader />
+              </div>
+            ) : (
+              <CarBrandTable
+                brands={brands}
+                onEdit={handleOpenBrandModal}
+                onDelete={handleDeleteBrand}
+                expandedBrands={expandedBrands}
+                onToggleExpand={toggleBrandExpansion}
+                onAddModel={handleOpenModelModal}
+                onEditModel={handleOpenModelModal}
+                onDeleteModel={handleDeleteModel}
+              />
+            )}
+          </CardBody>
+        </Card>
       </div>
 
       <StateModal
@@ -111,6 +169,24 @@ export function ConfigurationsPage() {
         setFormData={setZoneFormData}
         states={states}
         isEdit={!!zoneFormData._id}
+      />
+
+      <CarBrandModal
+        isOpen={isBrandModalOpen}
+        onClose={() => setIsBrandModalOpen(false)}
+        onSubmit={handleBrandSubmit}
+        formData={brandFormData}
+        setFormData={setBrandFormData}
+        isEdit={!!editingBrand}
+      />
+
+      <CarModelModal
+        isOpen={isModelModalOpen}
+        onClose={() => setIsModelModalOpen(false)}
+        onSubmit={handleModelSubmit}
+        formData={modelFormData}
+        setFormData={setModelFormData}
+        isEdit={!!editingModel}
       />
     </>
   );

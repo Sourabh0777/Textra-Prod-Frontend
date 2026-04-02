@@ -161,3 +161,30 @@ export interface ApiResponse<T> {
     [key: string]: any;
   };
 }
+
+export enum FuelType {
+  PETROL = 'Petrol',
+  DIESEL = 'Diesel',
+  CNG = 'CNG',
+  EV = 'EV',
+  HYBRID = 'Hybrid',
+}
+
+export interface ICarVariant {
+  name: string;
+  fuel_types: FuelType[];
+}
+
+export interface ICarModel {
+  name: string;
+  variants: ICarVariant[];
+}
+
+export interface ICarBrand {
+  _id?: string;
+  name: string;
+  models: ICarModel[];
+  is_active: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+}
