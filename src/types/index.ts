@@ -127,6 +127,8 @@ export interface IWhatsAppLog {
   template_name: string;
   message_id: string;
   message_status: string;
+  source: 'cron' | 'manual';
+  status_history?: { status: string; timestamp: Date }[];
   error_message?: string;
   sent_at?: Date;
 }

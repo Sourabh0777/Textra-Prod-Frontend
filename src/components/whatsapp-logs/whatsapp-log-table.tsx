@@ -19,6 +19,7 @@ export function WhatsAppLogTable({ logs, statusVariant, onFormatDate }: WhatsApp
             <TableHeaderCell>Phone Number</TableHeaderCell>
             <TableHeaderCell className="hidden md:table-cell">Template</TableHeaderCell>
             <TableHeaderCell className="hidden lg:table-cell">Message ID</TableHeaderCell>
+            <TableHeaderCell>Source</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
             <TableHeaderCell className="hidden md:table-cell">Sent At</TableHeaderCell>
           </TableRow>
@@ -26,7 +27,7 @@ export function WhatsAppLogTable({ logs, statusVariant, onFormatDate }: WhatsApp
         <TableBody>
           {logs.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-neutral-500 py-8">
+              <TableCell colSpan={6} className="text-center text-neutral-500 py-8">
                 No WhatsApp logs found
               </TableCell>
             </TableRow>
@@ -36,6 +37,11 @@ export function WhatsAppLogTable({ logs, statusVariant, onFormatDate }: WhatsApp
                 <TableCell className="font-semibold">{log.phone_number}</TableCell>
                 <TableCell className="hidden md:table-cell text-sm">{log.template_name}</TableCell>
                 <TableCell className="hidden lg:table-cell font-mono text-xs">{log.message_id}</TableCell>
+                <TableCell>
+                  <Badge variant={log.source === 'manual' ? 'warning' : 'info'} className="capitalize">
+                    {log.source || 'cron'}
+                  </Badge>
+                </TableCell>
                 <TableCell>
                   <Badge variant={statusVariant[log.message_status] || 'info'}>{log.message_status}</Badge>
                 </TableCell>

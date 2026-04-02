@@ -3,11 +3,11 @@ import { baseApi } from '../baseApi';
 export const whatsappApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     fetchWhatsAppLogs: builder.query<any, void>({
-      query: () => '/vehicle-service/whatsapp-logs',
+      query: () => 'core/whatsapp-logs',
       providesTags: ['WhatsAppLog'],
     }),
     fetchWhatsAppLog: builder.query<any, string>({
-      query: (id) => `/vehicle-service/whatsapp-logs/${id}`,
+      query: (id) => `core/whatsapp-logs/${id}`,
       providesTags: (result, error, id) => [{ type: 'WhatsAppLog', id }],
     }),
     fetchWhatsAppTemplates: builder.query<any, void>({

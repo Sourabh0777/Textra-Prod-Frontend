@@ -37,7 +37,17 @@ export function useWhatsAppLogsPage() {
 
   const formatDate = (date: any) => {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString();
+    // Use en-GB format to get DD/MM/YYYY, and also include time
+    return new Date(date)
+      .toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
+      .replace(',', '');
   };
 
   return {
