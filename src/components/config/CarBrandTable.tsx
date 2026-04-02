@@ -63,6 +63,9 @@ export function CarBrandTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
+                      <Button variant="secondary" size="sm" onClick={() => onToggleExpand(brandId)}>
+                        Manage Models
+                      </Button>
                       <Button variant="ghost" size="sm" onClick={() => onEdit(brand)}>
                         <Pencil className="h-4 w-4" />
                       </Button>

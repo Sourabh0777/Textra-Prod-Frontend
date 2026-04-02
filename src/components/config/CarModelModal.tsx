@@ -70,27 +70,30 @@ export function CarModelModal({ isOpen, onClose, onSubmit, formData, setFormData
           placeholder="e.g. Swift"
           required
           fullWidth
-          disabled={isEdit} // Often don't change model name once created if it's the identifier, but it might not be. Let's allow edit if not strictly the ID. Wait, updateModel uses `:modelName` as ID. It might be unsafe to edit. Let's just disable.
         />
 
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h4 className="text-sm font-semibold text-neutral-800">Variants</h4>
-            <Button type="button" variant="ghost" size="sm" onClick={handleAddVariant}>
-              <Plus className="h-4 w-4 mr-1" />
-              Add Variant
-            </Button>
+            {!isEdit && (
+              <Button type="button" variant="ghost" size="sm" onClick={handleAddVariant}>
+                <Plus className="h-4 w-4 mr-1" />
+                Add Variant
+              </Button>
+            )}
           </div>
 
           {(formData.variants || []).map((variant, index) => (
             <div key={index} className="p-4 rounded-md border border-neutral-200 bg-neutral-50 relative">
-              <button
-                type="button"
-                onClick={() => handleRemoveVariant(index)}
-                className="absolute top-2 right-2 text-neutral-400 hover:text-red-500"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+              {!isEdit && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveVariant(index)}
+                  className="absolute top-2 right-2 text-neutral-400 hover:text-red-500"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
 
               <div className="space-y-4 pr-6">
                 <Input
@@ -100,6 +103,7 @@ export function CarModelModal({ isOpen, onClose, onSubmit, formData, setFormData
                   placeholder="e.g. LXI"
                   required
                   fullWidth
+                  disabled={isEdit}
                 />
 
                 <div>
@@ -112,11 +116,12 @@ export function CarModelModal({ isOpen, onClose, onSubmit, formData, setFormData
                           key={ft}
                           type="button"
                           onClick={() => handleFuelTypeToggle(index, ft as FuelType)}
+                          disabled={isEdit}
                           className={`px-2.5 py-1 rounded-full text-[10px] font-medium border transition-colors ${
                             isSelected
                               ? 'bg-blue-100 border-blue-500 text-blue-700'
-                              : 'bg-white border-neutral-300 text-neutral-600 hover:bg-neutral-100'
-                          }`}
+                              : 'bg-white border-neutral-300 text-neutral-600'
+                          } ${isEdit ? 'opacity-70 cursor-not-allowed' : 'hover:bg-neutral-100'}`}
                         >
                           {ft}
                         </button>
