@@ -41,11 +41,11 @@ export const carBrandsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['CarBrand'],
     }),
-    updateModel: builder.mutation<ICarModel, { brandId: string; modelName: string; data: Partial<ICarModel> }>({
-      query: ({ brandId, modelName, data }) => ({
+    updateModel: builder.mutation<ICarModel, { brandId: string; modelName: string; newName: string }>({
+      query: ({ brandId, modelName, newName }) => ({
         url: `core/cars/brands/${brandId}/models/${encodeURIComponent(modelName)}`,
         method: 'PUT',
-        body: data,
+        body: { newName },
       }),
       invalidatesTags: ['CarBrand'],
     }),

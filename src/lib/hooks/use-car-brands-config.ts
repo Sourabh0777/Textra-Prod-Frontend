@@ -114,7 +114,11 @@ export function useCarBrandsConfig() {
     try {
       if (editingModel?.name) {
         await toastPromise(
-          updateModel({ brandId: activeBrandIdForModel, modelName: editingModel.name, data: modelFormData }).unwrap(),
+          updateModel({
+            brandId: activeBrandIdForModel,
+            modelName: editingModel.name,
+            newName: modelFormData.name || '',
+          }).unwrap(),
           {
             loading: 'Updating model...',
             success: 'Model updated successfully',
