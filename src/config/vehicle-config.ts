@@ -23,3 +23,12 @@ export const INDIAN_TWO_WHEELER_BRANDS = [
   { value: 'Ampere', label: 'Ampere' },
   { value: 'Other', label: 'Other' },
 ];
+
+export const CAR_VEHICLE_TYPES = [
+  { value: 'Hatchback', label: 'Hatchback' },
+  { value: 'Sedan', label: 'Sedan' },
+  { value: 'SUV', label: 'SUV' },
+  { value: 'MUV', label: 'MUV' },
+  { value: 'Luxury', label: 'Luxury' },
+  { value: 'Other', label: 'Other' },
+];
