@@ -20,6 +20,8 @@ export const vehicleSchema = z.object({
   vehicle_type: z.string().min(1, 'Vehicle type is required'),
   brand: z.string().min(1, 'Brand is required'),
   vehicle_model: z.string().min(1, 'Model is required'),
+  variant: z.string().optional(),
+  fuel_type: z.string().optional(),
   registration_number: z
     .string()
     .min(1, 'Registration number is required')

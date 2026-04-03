@@ -68,6 +68,8 @@ export interface IVehicle {
   vehicle_type: string;
   brand: string;
   vehicle_model: string;
+  variant?: string;
+  fuel_type?: string;
   registration_number: string;
   year: number;
   daily_travel: number;

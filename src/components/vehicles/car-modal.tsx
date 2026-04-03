@@ -61,11 +61,43 @@ export function CarModal({
     }));
   }, [brands, formData.brand]);
 
-  // Handle brand change specifically to clear model when brand changes
+  // When a model is selected, find its variants
+  const variantOptions = useMemo(() => {
+    if (!formData.brand || !formData.vehicle_model) return [];
+    const selectedBrand = brands.find((b) => b.name === formData.brand);
+    const selectedModel = selectedBrand?.models?.find((m) => m.name === formData.vehicle_model);
+    if (!selectedModel || !selectedModel.variants) return [];
+    return selectedModel.variants.map((v) => ({
+      value: v.name,
+      label: v.name,
+    }));
+  }, [brands, formData.brand, formData.vehicle_model]);
+
+  // When a variant is selected, find its fuel types
+  const fuelTypeOptions = useMemo(() => {
+    if (!formData.brand || !formData.vehicle_model || !formData.variant) return [];
+    const selectedBrand = brands.find((b) => b.name === formData.brand);
+    const selectedModel = selectedBrand?.models?.find((m) => m.name === formData.vehicle_model);
+    const selectedVariant = selectedModel?.variants?.find((v) => v.name === formData.variant);
+    if (!selectedVariant || !selectedVariant.fuel_types) return [];
+    return selectedVariant.fuel_types.map((ft) => ({
+      value: ft,
+      label: ft,
+    }));
+  }, [brands, formData.brand, formData.vehicle_model, formData.variant]);
+
+  // Handle cascading clears
   const handleBrandSelection = (val: string) => {
     onBrandChange(val);
-    // Also clear the model
-    onFormDataChange({ ...formData, brand: val, vehicle_model: '' });
+    onFormDataChange({ ...formData, brand: val, vehicle_model: '', variant: '', fuel_type: '' });
+  };
+
+  const handleModelSelection = (val: string) => {
+    onFormDataChange({ ...formData, vehicle_model: val, variant: '', fuel_type: '' });
+  };
+
+  const handleVariantSelection = (val: string) => {
+    onFormDataChange({ ...formData, variant: val, fuel_type: '' });
   };
 
   return (
@@ -129,11 +161,33 @@ export function CarModal({
             fieldLabel="Model"
             placeholder={formData.brand ? 'Select or search model' : 'Please select a brand first'}
             selectedVal={formData.vehicle_model || ''}
-            handleChange={(val) => onFormDataChange({ ...formData, vehicle_model: val as string })}
+            handleChange={(val) => handleModelSelection(val as string)}
             options={modelOptions}
             label="label"
             id="value"
             error={errors.vehicle_model}
+            fullWidth
+          />
+
+          <SearchableDropdown
+            fieldLabel="Variant"
+            placeholder={formData.vehicle_model ? 'Select or search variant' : 'Please select a model first'}
+            selectedVal={formData.variant || ''}
+            handleChange={(val) => handleVariantSelection(val as string)}
+            options={variantOptions}
+            label="label"
+            id="value"
+            error={errors.variant}
+            fullWidth
+          />
+
+          <Select
+            label="Fuel Type"
+            name="fuel_type"
+            value={formData.fuel_type || ''}
+            onChange={onInputChange}
+            options={fuelTypeOptions}
+            error={errors.fuel_type}
             fullWidth
           />
 
