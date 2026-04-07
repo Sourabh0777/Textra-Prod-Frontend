@@ -23,11 +23,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const onLogin = async () => {};
 
   useEffect(() => {
-    const isAdmin = user?.role === UserRole.ADMIN;
     const business = user?.business_id;
-    const isBusinessActive = business?.is_active === true;
-    const isWabaSetup = !!business?.waba_id && !!business?.phone_number_id;
-
     const fetchSideBar = async () => {
       try {
         const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`;
