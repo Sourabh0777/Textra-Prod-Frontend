@@ -54,6 +54,11 @@ export function BusinessProfileForm({
   };
 
   const handleFacebookConnectClick = (e: React.MouseEvent) => {
+    if (!user?.business_id) {
+      e.preventDefault();
+      toast.error('Please save your WhatsApp config first to connect to Facebook.');
+      return;
+    }
     if (isProfileIncomplete) {
       e.preventDefault();
       toast.error('Please complete your business profile before connecting to Facebook');
@@ -204,67 +209,6 @@ export function BusinessProfileForm({
               </div>
             )}
 
-            {/* Zero Integration Info Card */}
-            {!isActive && (
-              <div className="mb-8 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm">
-                <h4 className="font-semibold text-lg text-blue-900 mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-blue-100 text-blue-700 p-1.5 rounded-lg">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </span>
-                    Connect WhatsApp Business
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
-                    <Loader2 className="animate-spin h-4 w-4" />
-                    Waiting...
-                  </div>
-                </h4>
-
-                <div className="text-blue-800 space-y-4 mb-6 text-sm">
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-md text-yellow-800 font-medium">
-                    ⚠️ <span className="font-semibold">Important Step:</span> Please enter the{' '}
-                    <strong>Business Profile ID</strong> field below and click <strong>Save WhatsApp Config</strong>{' '}
-                    first. We cannot connect your account without this.
-                  </div>
-                  <p>
-                    Once saved, click the button below to seamlessly set up your account. This requires zero integration
-                    and links directly to us.
-                  </p>
-                </div>
-
-                <Link
-                  href="https://business.facebook.com/messaging/whatsapp/onboard/?app_id=2076414226456262&config_id=1446461537160697"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleFacebookConnectClick}
-                >
-                  <Button
-                    type="button"
-                    size="lg"
-                    className="bg-[#1877F2] hover:bg-[#166FE5] text-white px-8 py-6 text-base font-semibold rounded-xl shadow-md transition-all hover:scale-105 active:scale-95 group flex items-center gap-2"
-                  >
-                    <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                    Connect with Facebook
-                  </Button>
-                </Link>
-              </div>
-            )}
-
             <div className="space-y-6">
               <Input
                 label="Business Profile ID"
@@ -310,6 +254,70 @@ export function BusinessProfileForm({
                 </Button>
               </div>
             </div>
+            {/* Zero Integration Info Card */}
+            {!isActive && (
+              <div className="mb-8 mt-2 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm">
+                <h4 className="font-semibold text-lg text-blue-900 mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-blue-100 text-blue-700 p-1.5 rounded-lg">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </span>
+                    Connect WhatsApp Business
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
+                    <Loader2 className="animate-spin h-4 w-4" />
+                    Waiting...
+                  </div>
+                </h4>
+
+                <div className="text-blue-800 space-y-4 mb-6 text-sm">
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-md text-yellow-800 font-medium">
+                    ⚠️ <span className="font-semibold">Important Step:</span> Please enter the{' '}
+                    <strong>Business Profile ID</strong> field below and click <strong>Save WhatsApp Config</strong>{' '}
+                    first. We cannot connect your account without this.
+                  </div>
+                  <p>
+                    Once saved, click the button below to seamlessly set up your account. This requires zero integration
+                    and links directly to us.
+                  </p>
+                </div>
+
+                <Link
+                  href="https://business.facebook.com/messaging/whatsapp/onboard/?app_id=2076414226456262&config_id=1446461537160697"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleFacebookConnectClick}
+                  className={!user?.business_id ? 'cursor-not-allowed opacity-60' : ''}
+                >
+                  <Button
+                    type="button"
+                    size="lg"
+                    disabled={!user?.business_id}
+                    className={`bg-[#1877F2] text-white px-8 py-6 text-base font-semibold rounded-xl shadow-md transition-all group flex items-center gap-2 ${
+                      !user?.business_id ? '' : 'hover:bg-[#166FE5] hover:scale-105 active:scale-95'
+                    }`}
+                  >
+                    <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    Connect with Facebook
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </CardBody>
