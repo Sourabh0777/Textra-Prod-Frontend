@@ -10,9 +10,16 @@ interface BusinessTableProps {
   onEditDetails: (business: IBusiness) => void;
   onEditWhatsApp: (business: IBusiness) => void;
   onDelete: (id: string) => void;
+  onGenerateQR: (id: string) => void;
 }
 
-export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDelete }: BusinessTableProps) {
+export function BusinessTable({
+  businesses,
+  onEditDetails,
+  onEditWhatsApp,
+  onDelete,
+  onGenerateQR,
+}: BusinessTableProps) {
   return (
     <div className="overflow-x-auto">
       <Table>
@@ -76,7 +83,6 @@ export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDel
                     variant="ghost"
                     size="sm"
                     className="text-[10px] sm:text-xs bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
-                    onClick={() => console.log('Business ID:', business._id, 'Business Name:', business.business_name)}
                   >
                     QR Created
                   </Button>
@@ -85,7 +91,7 @@ export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDel
                     variant="secondary"
                     size="sm"
                     className="text-[10px] sm:text-xs"
-                    onClick={() => console.log('Business ID:', business._id, 'Business Name:', business.business_name)}
+                    onClick={() => onGenerateQR(business._id || '')}
                   >
                     Generate QR
                   </Button>

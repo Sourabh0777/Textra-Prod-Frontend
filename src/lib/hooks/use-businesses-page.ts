@@ -8,6 +8,7 @@ import {
   useDeleteBusinessMutation,
   useFetchBusinessTypesQuery,
   useUpdateBusinessWabaMutation,
+  useGenerateQRMutation,
 } from '@/lib/api/endpoints/businessApi';
 import { useFetchStatesQuery, useFetchZonesQuery } from '@/lib/api/endpoints/configApi';
 import type { IBusiness } from '@/types';
@@ -47,6 +48,7 @@ export function useBusinessesPage() {
   const [updateBusiness, { isLoading: isUpdating }] = useUpdateBusinessMutation();
   const [updateBusinessWaba, { isLoading: isUpdatingWaba }] = useUpdateBusinessWabaMutation();
   const [deleteBusiness] = useDeleteBusinessMutation();
+  const [generateQR, { isLoading: isGeneratingQR }] = useGenerateQRMutation();
 
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
   const filteredBusinesses = businesses.filter((business: IBusiness) => {
@@ -68,7 +70,7 @@ export function useBusinessesPage() {
     : (businessTypesResponse as any)?.data || [];
 
   const loading = loadingBusinesses || loadingTypes;
-  const isSubmitting = isCreating || isUpdating || isUpdatingWaba;
+  const isSubmitting = isCreating || isUpdating || isUpdatingWaba || isGeneratingQR;
 
   const handleOpenDetailsModal = (business?: IBusiness) => {
     if (business) {
@@ -196,6 +198,18 @@ export function useBusinessesPage() {
     }
   };
 
+  const handleGenerateQR = async (businessId: string) => {
+    try {
+      await toastPromise(generateQR({ business_id: businessId }).unwrap(), {
+        loading: 'Generating QR code...',
+        success: 'QR code generated successfully',
+        error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to generate QR code',
+      });
+    } catch (err) {
+      console.error('QR Generation error', err);
+    }
+  };
+
   return {
     businesses,
     filteredBusinesses,
@@ -221,5 +235,6 @@ export function useBusinessesPage() {
     handleChange,
     handleSubmit,
     handleDelete,
+    handleGenerateQR,
   };
 }
