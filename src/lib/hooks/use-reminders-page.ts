@@ -160,19 +160,7 @@ export function useRemindersPage() {
 
   const handleResend = async (reminder: IReminder) => {
     if (!reminder._id) return;
-
     try {
-      await toastPromise(triggerWorker({ reminder_id: reminder._id }).unwrap(), {
-        loading: 'Preparing to resend...',
-        success: (res) => {
-          console.log('Resend success response:', res);
-          return res?.message || 'Reminder notification queued for resending';
-        },
-        error: (err) => {
-          console.error('Resend error response:', err?.data?.message);
-          return err?.data?.message || err?.data?.error?.reason || 'Failed to resend reminder';
-        },
-      });
     } catch (err) {
       console.error('Resend catch error:', err);
     }
