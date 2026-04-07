@@ -210,6 +210,17 @@ export function BusinessProfileForm({
             )}
 
             <div className="space-y-6">
+              <div className="text-blue-800 space-y-4 mb-6 text-sm">
+                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-md text-yellow-800 font-medium">
+                  ⚠️ <span className="font-semibold">Important Step:</span> Please enter the{' '}
+                  <strong>Business Profile ID</strong> field below and click <strong>Save WhatsApp Config</strong>{' '}
+                  first. We cannot connect your account without this.
+                </div>
+                <p>
+                  Once saved, click the button below to seamlessly set up your account. This requires zero integration
+                  and links directly to us.
+                </p>
+              </div>
               <Input
                 label="Business Profile ID"
                 name="business_id"
@@ -255,7 +266,7 @@ export function BusinessProfileForm({
               </div>
             </div>
             {/* Zero Integration Info Card */}
-            {!isActive && (
+            {!isActive && user?.business_id.business_id && (
               <div className="mb-8 mt-2 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm">
                 <h4 className="font-semibold text-lg text-blue-900 mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -277,23 +288,7 @@ export function BusinessProfileForm({
                     </span>
                     Connect WhatsApp Business
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
-                    <Loader2 className="animate-spin h-4 w-4" />
-                    Waiting...
-                  </div>
                 </h4>
-
-                <div className="text-blue-800 space-y-4 mb-6 text-sm">
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-md text-yellow-800 font-medium">
-                    ⚠️ <span className="font-semibold">Important Step:</span> Please enter the{' '}
-                    <strong>Business Profile ID</strong> field below and click <strong>Save WhatsApp Config</strong>{' '}
-                    first. We cannot connect your account without this.
-                  </div>
-                  <p>
-                    Once saved, click the button below to seamlessly set up your account. This requires zero integration
-                    and links directly to us.
-                  </p>
-                </div>
 
                 <Link
                   href="https://business.facebook.com/messaging/whatsapp/onboard/?app_id=2076414226456262&config_id=1446461537160697"
