@@ -29,14 +29,6 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
     const isWabaSetup = !!business?.waba_id && !!business?.phone_number_id;
 
     const fetchSideBar = async () => {
-      if (!isAdmin && !isBusinessActive && !isWabaSetup) {
-        setMenus(['business']);
-        return;
-      }
-      if (!isAdmin && !isBusinessActive) return;
-
-      // If not admin and business setup is incomplete, show only "Business"
-
       try {
         const url = `${env.NEXT_PUBLIC_API_URL}/core/business-types/side-bar`;
         const token = await getToken();
