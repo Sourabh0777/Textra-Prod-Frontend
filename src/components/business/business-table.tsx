@@ -72,29 +72,18 @@ export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDel
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3 text-center sm:text-left">
                 {business.qr_code_id && typeof business.qr_code_id === 'object' ? (
-                  <div className="flex items-center gap-3 group relative">
-                    {(business.qr_code_id as any).qr_image_url && (
-                      <div className="w-10 h-10 border border-neutral-200 rounded p-1 bg-white shadow-sm overflow-hidden flex-shrink-0">
-                        <img
-                          src={(business.qr_code_id as any).qr_image_url}
-                          alt="QR Code"
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                    )}
-                    <div className="flex flex-col min-w-0">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex flex-col al items-left gap-2">
+                      <Badge variant="success" className="text-[9px] sm:text-[10px] py-0 px-1.5 h-4">
+                        Linked
+                      </Badge>
                       <span className="text-[10px] sm:text-xs font-mono font-bold text-neutral-700 truncate">
                         {(business.qr_code_id as any).code}
                       </span>
-                      {(business.qr_code_id as any).prefilled_message && (
-                        <span
-                          className="text-[9px] sm:text-[10px] text-neutral-500 line-clamp-1 italic"
-                          title={(business.qr_code_id as any).prefilled_message}
-                        >
-                          "{(business.qr_code_id as any).prefilled_message}"
-                        </span>
-                      )}
                     </div>
+                    <span className="text-[9px] text-neutral-400 font-mono">
+                      QR ID: {(business.qr_code_id as any).qr_id}
+                    </span>
                   </div>
                 ) : (
                   <span className="text-[10px] sm:text-xs text-neutral-400 italic">No QR Assigned</span>
