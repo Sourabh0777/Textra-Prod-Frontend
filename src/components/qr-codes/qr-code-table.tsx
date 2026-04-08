@@ -48,9 +48,11 @@ export function QRCodeTable({ qrCodes, onEdit, onDelete, onConnect }: QRCodeTabl
                 <TableCell className="px-4 py-3 text-sm">{getBusinessDisplay(qr)}</TableCell>
                 <TableCell className="px-4 py-3 text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => onConnect(qr)}>
-                      Connect
-                    </Button>
+                    {!qr.business_id && (
+                      <Button variant="ghost" size="sm" onClick={() => onConnect(qr)}>
+                        Connect
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" onClick={() => onEdit(qr)}>
                       Edit
                     </Button>
