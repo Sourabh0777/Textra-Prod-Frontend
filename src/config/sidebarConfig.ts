@@ -26,5 +26,5 @@ export const SIDEBAR_CONFIG = {
   'whatsapp-logs': { label: 'WhatsApp Logs', href: '/vehicle-service/whatsapp-logs', icon: MessageSquare },
   templates: { label: 'Templates', href: '/vehicle-service/templates', icon: MessageSquareText },
   cars: { label: 'Cars', href: '/vehicle-service/cars', icon: Car },
-  'qr-codes': { label: 'QR Code', href: '/vehicle-service/qr', icon: QrCode },
+  'qr-codes': { label: 'QR Code', href: '/qr-codes', icon: QrCode },
 } as const;
