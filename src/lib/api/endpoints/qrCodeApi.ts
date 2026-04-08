@@ -34,6 +34,18 @@ export const qrCodeApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['QRCode'],
     }),
+    fetchBusinessesWithoutQR: builder.query<any[], void>({
+      query: () => '/core/qrcodes/without-qr',
+      providesTags: ['Business'],
+    }),
+    assignQRCode: builder.mutation<IQRCode, { business_id: string; qr_code_id: string }>({
+      query: (body) => ({
+        url: '/core/qrcodes/assign',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['QRCode', 'Business'],
+    }),
   }),
 });
 
@@ -43,4 +55,6 @@ export const {
   useCreateQRCodeMutation,
   useUpdateQRCodeMutation,
   useDeleteQRCodeMutation,
+  useFetchBusinessesWithoutQRQuery,
+  useAssignQRCodeMutation,
 } = qrCodeApi;

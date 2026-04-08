@@ -9,6 +9,7 @@ import { Loader } from '@/components/ui/loader';
 import { useQRCodesPage } from '@/lib/hooks/use-qr-codes-page';
 import { QRCodeTable } from '@/components/qr-codes/qr-code-table';
 import { QRCodeModal } from '@/components/qr-codes/qr-code-modal';
+import { AssignQRCodeModal } from '@/components/qr-codes/assign-qr-modal';
 
 export default function QRCodesPage() {
   const {
@@ -27,6 +28,12 @@ export default function QRCodesPage() {
     handleChange,
     handleSubmit,
     handleDelete,
+    isAssignModalOpen,
+    setIsAssignModalOpen,
+    assigningQR,
+    isAssigning,
+    handleAssign,
+    handleOpenAssignModal,
   } = useQRCodesPage();
 
   if (loading) {
@@ -80,7 +87,12 @@ export default function QRCodesPage() {
 
         <Card>
           <CardBody className="!p-0">
-            <QRCodeTable qrCodes={filteredQRCodes} onEdit={handleOpenModal} onDelete={handleDelete} />
+            <QRCodeTable
+              qrCodes={filteredQRCodes}
+              onEdit={handleOpenModal}
+              onDelete={handleDelete}
+              onConnect={handleOpenAssignModal}
+            />
           </CardBody>
         </Card>
       </div>
@@ -94,6 +106,14 @@ export default function QRCodesPage() {
         submitting={isSubmitting}
         onInputChange={handleChange}
         onSubmit={handleSubmit}
+      />
+
+      <AssignQRCodeModal
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        qrCode={assigningQR}
+        onAssign={handleAssign}
+        isAssigning={isAssigning}
       />
     </>
   );

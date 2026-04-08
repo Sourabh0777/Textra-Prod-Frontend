@@ -65,6 +65,7 @@ export interface IQRCode {
   prefilled_message?: string;
   deep_link_url?: string;
   qr_image_url?: string;
+  business_id?: string | IBusiness;
   created_at?: string | Date;
 }
 

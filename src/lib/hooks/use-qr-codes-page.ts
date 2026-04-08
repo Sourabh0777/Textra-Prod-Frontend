@@ -6,6 +6,8 @@ import {
   useCreateQRCodeMutation,
   useUpdateQRCodeMutation,
   useDeleteQRCodeMutation,
+  useFetchBusinessesWithoutQRQuery,
+  useAssignQRCodeMutation,
 } from '@/lib/api/endpoints/qrCodeApi';
 import type { IQRCode } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
@@ -18,6 +20,8 @@ export function useQRCodesPage() {
   const [formData, setFormData] = useState<Partial<IQRCode>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [assigningQR, setAssigningQR] = useState<IQRCode | null>(null);
 
   /** RTK Query hooks */
   const {
@@ -31,6 +35,7 @@ export function useQRCodesPage() {
   const [createQRCode, { isLoading: isCreating }] = useCreateQRCodeMutation();
   const [updateQRCode, { isLoading: isUpdating }] = useUpdateQRCodeMutation();
   const [deleteQRCode] = useDeleteQRCodeMutation();
+  const [assignQRCode, { isLoading: isAssigning }] = useAssignQRCodeMutation();
 
   const filteredQRCodes = (qrCodes || []).filter((qr: IQRCode) => {
     const searchLower = searchQuery.toLowerCase();
@@ -42,6 +47,32 @@ export function useQRCodesPage() {
   });
 
   const isSubmitting = isCreating || isUpdating;
+
+  const handleAssign = async (businessId: string) => {
+    if (!assigningQR?._id) return;
+    try {
+      await toastPromise(
+        assignQRCode({
+          business_id: businessId,
+          qr_code_id: assigningQR._id,
+        }).unwrap(),
+        {
+          loading: 'Assigning QR Code...',
+          success: 'QR Code assigned successfully',
+          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to assign QR Code',
+        },
+      );
+      setIsAssignModalOpen(false);
+      setAssigningQR(null);
+    } catch (err) {
+      console.error('Assign error', err);
+    }
+  };
+
+  const handleOpenAssignModal = (qr: IQRCode) => {
+    setAssigningQR(qr);
+    setIsAssignModalOpen(true);
+  };
 
   const handleInstantCreate = async () => {
     try {
@@ -159,5 +190,11 @@ export function useQRCodesPage() {
     handleChange,
     handleSubmit,
     handleDelete,
+    isAssignModalOpen,
+    setIsAssignModalOpen,
+    assigningQR,
+    isAssigning,
+    handleAssign,
+    handleOpenAssignModal,
   };
 }
