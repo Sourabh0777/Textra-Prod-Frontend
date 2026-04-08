@@ -53,6 +53,7 @@ export const baseApi = createApi({
     'WhatsAppTemplateConfig',
     'State',
     'Zone',
+    'QRCode',
   ],
   endpoints: () => ({}),
 });

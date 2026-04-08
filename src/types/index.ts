@@ -58,6 +58,16 @@ export interface IBusiness {
   };
 }
 
+export interface IQRCode {
+  _id?: string;
+  qr_id: number;
+  code: string;
+  prefilled_message?: string;
+  deep_link_url?: string;
+  qr_image_url?: string;
+  created_at?: string | Date;
+}
+
 export interface ICustomer {
   _id?: string;
   business_id: string;
