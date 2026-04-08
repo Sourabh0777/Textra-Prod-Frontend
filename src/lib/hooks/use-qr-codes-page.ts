@@ -43,18 +43,31 @@ export function useQRCodesPage() {
 
   const isSubmitting = isCreating || isUpdating;
 
+  const handleInstantCreate = async () => {
+    try {
+      const createData = {
+        prefilled_message: 'This is a dummy QR code',
+      };
+      await toastPromise(createQRCode(createData).unwrap(), {
+        loading: 'Creating QR Code...',
+        success: 'QR Code created successfully',
+        error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to create QR Code',
+      });
+    } catch (err) {
+      console.error('Create error', err);
+    }
+  };
+
   const handleOpenModal = (qr?: IQRCode) => {
     if (qr) {
       setFormData(qr);
       setEditingId(qr._id || null);
       setIsEditMode(true);
+      setErrors({});
+      setIsModalOpen(true);
     } else {
-      setFormData({});
-      setEditingId(null);
-      setIsEditMode(false);
+      handleInstantCreate();
     }
-    setErrors({});
-    setIsModalOpen(true);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -103,19 +116,9 @@ export function useQRCodesPage() {
           success: 'QR Code updated successfully',
           error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to update QR Code',
         });
-      } else {
-        // When creating, send prefilled_message
-        const createData = {
-          prefilled_message: formData.prefilled_message,
-        };
-        await toastPromise(createQRCode(createData).unwrap(), {
-          loading: 'Creating QR Code...',
-          success: 'QR Code created successfully',
-          error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to create QR Code',
-        });
+        setIsModalOpen(false);
+        setFormData({});
       }
-      setIsModalOpen(false);
-      setFormData({});
     } catch (err: any) {
       if (err?.data?.errors) {
         setErrors(err.data.errors);
