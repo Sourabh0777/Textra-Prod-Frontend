@@ -35,7 +35,6 @@ export default function BusinessesPage() {
     handleChange,
     handleSubmit,
     handleDelete,
-    handleGenerateQR,
   } = useBusinessesPage();
 
   if (loading) {
@@ -94,7 +93,6 @@ export default function BusinessesPage() {
               onEditDetails={handleOpenDetailsModal}
               onEditWhatsApp={handleOpenWhatsAppModal}
               onDelete={handleDelete}
-              onGenerateQR={handleGenerateQR}
             />
           </CardBody>
         </Card>

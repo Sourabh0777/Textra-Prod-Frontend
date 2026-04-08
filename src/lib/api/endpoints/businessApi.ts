@@ -87,14 +87,6 @@ export const businessApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Business', id }, 'Business', 'User'],
     }),
-    generateQR: builder.mutation<any, { business_id: string }>({
-      query: (body) => ({
-        url: '/core/businesses/generate-qr',
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: ['Business'],
-    }),
   }),
 });
 
@@ -111,5 +103,4 @@ export const {
   useGetBusinessDetailsQuery,
   useUpdateBusinessDetailsMutation,
   useUpdateBusinessWabaMutation,
-  useGenerateQRMutation,
 } = businessApi;

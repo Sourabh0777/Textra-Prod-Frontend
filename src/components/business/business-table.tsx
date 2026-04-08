@@ -10,16 +10,9 @@ interface BusinessTableProps {
   onEditDetails: (business: IBusiness) => void;
   onEditWhatsApp: (business: IBusiness) => void;
   onDelete: (id: string) => void;
-  onGenerateQR: (id: string) => void;
 }
 
-export function BusinessTable({
-  businesses,
-  onEditDetails,
-  onEditWhatsApp,
-  onDelete,
-  onGenerateQR,
-}: BusinessTableProps) {
+export function BusinessTable({ businesses, onEditDetails, onEditWhatsApp, onDelete }: BusinessTableProps) {
   return (
     <div className="overflow-x-auto">
       <Table>
@@ -30,7 +23,7 @@ export function BusinessTable({
             <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Owner Info</TableHeaderCell>
             <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Location</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">Status</TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">QR Status</TableHeaderCell>
+            <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">QR Code</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
           </TableRow>
         </TableHead>
@@ -79,22 +72,28 @@ export function BusinessTable({
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3 text-center sm:text-left">
                 {business.qr?.code ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-[10px] sm:text-xs bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
-                  >
-                    QR Created
-                  </Button>
+                  <div className="flex items-center gap-3 group relative">
+                    {business.qr.qr_image_url && (
+                      <div className="w-10 h-10 border border-neutral-200 rounded p-1 bg-white shadow-sm overflow-hidden flex-shrink-0">
+                        <img src={business.qr.qr_image_url} alt="QR Code" className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[10px] sm:text-xs font-mono font-bold text-neutral-700 truncate">
+                        {business.qr.code}
+                      </span>
+                      {business.qr.prefilled_message && (
+                        <span
+                          className="text-[9px] sm:text-[10px] text-neutral-500 line-clamp-1 italic"
+                          title={business.qr.prefilled_message}
+                        >
+                          "{business.qr.prefilled_message}"
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ) : (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="text-[10px] sm:text-xs"
-                    onClick={() => onGenerateQR(business._id || '')}
-                  >
-                    Generate QR
-                  </Button>
+                  <span className="text-[10px] sm:text-xs text-neutral-400 italic">No QR Assigned</span>
                 )}
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3 text-right">
@@ -135,7 +134,7 @@ export function BusinessTable({
           ))}
           {businesses.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-neutral-500">
+              <TableCell colSpan={7} className="text-center py-12 text-neutral-500">
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-lg font-medium text-neutral-400">No Businesses Found</span>
                 </div>
