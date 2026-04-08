@@ -18,7 +18,6 @@ export function QRCodeTable({ qrCodes, onEdit, onDelete }: QRCodeTableProps) {
             <TableHeaderCell className="px-4 py-3">ID</TableHeaderCell>
             <TableHeaderCell className="px-4 py-3">Code</TableHeaderCell>
             <TableHeaderCell className="px-4 py-3">Prefilled Message</TableHeaderCell>
-            <TableHeaderCell className="px-4 py-3">Deep Link URL</TableHeaderCell>
             <TableHeaderCell className="px-4 py-3 text-right">Actions</TableHeaderCell>
           </TableRow>
         </TableHead>
@@ -31,16 +30,6 @@ export function QRCodeTable({ qrCodes, onEdit, onDelete }: QRCodeTableProps) {
                 <span className="line-clamp-2 max-w-xs" title={qr.prefilled_message}>
                   {qr.prefilled_message || '-'}
                 </span>
-              </TableCell>
-              <TableCell className="px-4 py-3 text-sm text-neutral-600">
-                <a
-                  href={qr.deep_link_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline inline-block max-w-[200px] truncate"
-                >
-                  {qr.deep_link_url || '-'}
-                </a>
               </TableCell>
               <TableCell className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
@@ -56,7 +45,7 @@ export function QRCodeTable({ qrCodes, onEdit, onDelete }: QRCodeTableProps) {
           ))}
           {qrCodes.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-12 text-neutral-500">
+              <TableCell colSpan={4} className="text-center py-12 text-neutral-500">
                 No QR Codes found
               </TableCell>
             </TableRow>
