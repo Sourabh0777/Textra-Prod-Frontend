@@ -50,12 +50,7 @@ export interface IBusiness {
   monthly_message_limit?: number;
   current_month_message_count?: number;
   last_limit_reset_date?: string | Date;
-  qr?: {
-    code?: string;
-    prefilled_message?: string;
-    deep_link_url?: string;
-    qr_image_url?: string;
-  };
+  qr_code_id?: string | IQRCode;
 }
 
 export interface IQRCode {
