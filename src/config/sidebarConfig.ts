@@ -9,6 +9,7 @@ import {
   Settings,
   MessageSquareText,
   Bike,
+  QrCode,
 } from 'lucide-react';
 export type SidebarKey = keyof typeof SIDEBAR_CONFIG;
 
@@ -25,4 +26,5 @@ export const SIDEBAR_CONFIG = {
   'whatsapp-logs': { label: 'WhatsApp Logs', href: '/vehicle-service/whatsapp-logs', icon: MessageSquare },
   templates: { label: 'Templates', href: '/vehicle-service/templates', icon: MessageSquareText },
   cars: { label: 'Cars', href: '/vehicle-service/cars', icon: Car },
+  'qr-codes': { label: 'QR Code', href: '/vehicle-service/qr', icon: QrCode },
 } as const;
