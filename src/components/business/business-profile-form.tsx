@@ -209,8 +209,8 @@ export function BusinessProfileForm({
               </div>
             )}
 
-            {!user?.business_id.business_id && (
-              <div className="space-y-6">
+            <div className="space-y-6">
+              {!user?.business_id.business_id && (
                 <div className="text-blue-800 space-y-4 mb-6 text-sm">
                   <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-md text-yellow-800 font-medium">
                     ⚠️ <span className="font-semibold">Important Step:</span> Please enter the{' '}
@@ -222,51 +222,52 @@ export function BusinessProfileForm({
                     and links directly to us.
                   </p>
                 </div>
-                <Input
-                  label="Business Profile ID"
-                  name="business_id"
-                  value={formData.business_id || ''}
-                  onChange={onInputChange}
-                  error={errors.business_id}
-                  fullWidth
-                  required
-                />
+              )}
+              <Input
+                label="Business Profile ID"
+                name="business_id"
+                value={formData.business_id || ''}
+                onChange={onInputChange}
+                error={errors.business_id}
+                fullWidth
+                required
+              />
 
-                <Input
-                  label="WABA ID"
-                  name="waba_id"
-                  value={formData.waba_id || ''}
-                  error={errors.waba_id}
-                  fullWidth
-                  disabled
-                />
+              <Input
+                label="WABA ID"
+                name="waba_id"
+                value={formData.waba_id || ''}
+                error={errors.waba_id}
+                fullWidth
+                disabled
+              />
 
-                <Input
-                  label="Phone Number ID"
-                  name="phone_number_id"
-                  value={formData.phone_number_id || ''}
-                  error={errors.phone_number_id}
-                  fullWidth
-                  disabled
-                />
+              <Input
+                label="Phone Number ID"
+                name="phone_number_id"
+                value={formData.phone_number_id || ''}
+                error={errors.phone_number_id}
+                fullWidth
+                disabled
+              />
 
-                <Input
-                  label="Display Number"
-                  name="phone_number_display"
-                  value={formData.phone_number_display || ''}
-                  onChange={onInputChange}
-                  error={errors.phone_number_display}
-                  fullWidth
-                  disabled
-                />
+              <Input
+                label="Display Number"
+                name="phone_number_display"
+                value={formData.phone_number_display || ''}
+                onChange={onInputChange}
+                error={errors.phone_number_display}
+                fullWidth
+                disabled
+              />
 
-                <div className="flex justify-end pt-4">
-                  <Button type="button" loading={wabaSaving} onClick={handleWabaSaveClick}>
-                    Save WhatsApp Config
-                  </Button>
-                </div>
+              <div className="flex justify-end pt-4">
+                <Button type="button" loading={wabaSaving} onClick={handleWabaSaveClick}>
+                  Save WhatsApp Config
+                </Button>
               </div>
-            )}
+            </div>
+
             {/* Zero Integration Info Card */}
             {!isActive && user?.business_id.business_id && (
               <div className="mb-8 mt-2 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm">
