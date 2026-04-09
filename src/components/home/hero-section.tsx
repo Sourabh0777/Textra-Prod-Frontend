@@ -35,11 +35,7 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-              <Link
-                href="https://business.facebook.com/messaging/whatsapp/onboard/?app_id=2076414226456262&config_id=1446461537160697"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href="#">
                 <Button
                   size="lg"
                   className="bg-primary hover:bg-primary-dark text-white px-8 py-7 text-lg rounded-2xl shadow-xl shadow-blue-200/50 transition-all hover:scale-105 active:scale-95 group"
