@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { MessageSquare, ArrowRight, Facebook } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 
 export function HeroSection() {
   return (
@@ -34,24 +33,17 @@ export function HeroSection() {
               the phone and more time on growth.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-              <Link href="#">
-                <Button
-                  size="lg"
-                  className="bg-primary hover:bg-primary-dark text-white px-8 py-7 text-lg rounded-2xl shadow-xl shadow-blue-200/50 transition-all hover:scale-105 active:scale-95 group"
+            <div className="pt-4">
+              <p className="text-lg font-medium text-neutral-700">
+                Textra is a Product of{' '}
+                <Link
+                  href="https://www.logicra.xyz/"
+                  target="_blank"
+                  className="text-blue-600 font-bold hover:underline"
                 >
-                  Start Your Free Trial
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="px-8 py-7 text-lg rounded-2xl text-neutral-600 hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-all flex items-center gap-2"
-              >
-                <Facebook className="w-5 h-5 text-[#1877F2]" />
-                Login with Facebook
-              </Button>
+                  Logicra Technologies
+                </Link>
+              </p>
             </div>
 
             <div className="flex items-center justify-center lg:justify-start gap-4 text-sm text-neutral-500 pt-2">
