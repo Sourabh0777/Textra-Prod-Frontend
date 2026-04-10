@@ -151,6 +151,15 @@ export function ReminderTable({
                             <Button
                               variant="ghost"
                               size="sm"
+                              className="text-blue-600 hover:bg-blue-50"
+                              onClick={() => onResend(reminder)}
+                              title="Resend Notification"
+                            >
+                              Resend
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               className="text-green-600 hover:bg-green-50"
                               onClick={() => onCheckIn(reminder)}
                               title="Customer Check-in"

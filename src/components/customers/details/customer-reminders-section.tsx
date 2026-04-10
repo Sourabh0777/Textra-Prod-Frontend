@@ -104,6 +104,11 @@ export function CustomerRemindersSection({ reminders, vehicles, customer }: Cust
 
   const handleResend = async (reminder: IReminder) => {
     try {
+      await toastPromise(triggerReminder({ reminder_id: reminder._id! }).unwrap(), {
+        loading: 'Sending reminder...',
+        success: 'Reminder sent successfully',
+        error: (err) => err?.data?.message || 'Failed to send reminder',
+      });
     } catch (err) {
       console.error('Resend error', err);
     }
