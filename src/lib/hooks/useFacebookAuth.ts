@@ -1,197 +1,85 @@
-// 'use client';
+'use client';
 
-// import { useEffect, useState } from 'react';
-// import { useSearchParams, useRouter } from 'next/navigation';
-// import { env } from '@/env';
-// import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
-// import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { env } from '@/env';
+import { useFacebookOAuthMutation } from '@/lib/api/oAuthApi';
+import { toast } from 'sonner';
 
-// export function useFacebookAuth() {
-//   const searchParams = useSearchParams();
-//   const router = useRouter();
-//   const codeFromUrl = searchParams.get('code');
-//   const [isLoggingIn, setIsLoggingIn] = useState(false);
-//   const [isCompleted, setIsCompleted] = useState(false);
-//   const [facebookOAuth] = useFacebookOAuthMutation();
+export function useFacebookAuth() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const codeFromUrl = searchParams.get('code');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [facebookOAuth] = useFacebookOAuthMutation();
 
-//   const handleReturnWithCode = async (code: string) => {
-//     setIsLoggingIn(true);
-//     setIsCompleted(false);
-//     try {
-//       console.log('--- Detected OAuth Code in URL ---');
-//       console.log('Code:', code.substring(0, 10) + '...');
+  const handleReturnWithCode = async (code: string) => {
+    setIsLoggingIn(true);
+    setIsCompleted(false);
+    try {
+      console.log('--- Detected OAuth Code in URL ---');
+      console.log('Code:', code.substring(0, 10) + '...');
 
-//       console.log('Calling internal OAuth API...');
-//       const result = await facebookOAuth({ code, userID: '' }).unwrap();
+      console.log('Calling internal OAuth API...');
+      const result = await facebookOAuth({ code, userID: '' }).unwrap();
 
-//       if (result.success) {
-//         console.log('Backend OAuth Success:', result);
-//         toast.success('Successfully connected to Facebook Business');
-//         setIsCompleted(true);
-//         // Optional: Clean up URL by removing the code param
-//         window.history.replaceState({}, '', window.location.pathname);
+      if (result.success) {
+        console.log('Backend OAuth Success:', result);
+        toast.success('Successfully connected to Facebook Business');
+        setIsCompleted(true);
+        // Optional: Clean up URL by removing the code param
+        window.history.replaceState({}, '', window.location.pathname);
 
-//         // Redirect to dashboard
-//         router.push('/dashboard');
-//       } else {
-//         console.error('Backend OAuth Error:', result.message);
-//         toast.error(result.message || 'Facebook connection failed');
-//       }
-//     } catch (error: any) {
-//       console.error('Error in OAuth return handler:', error);
-//       toast.error(error?.data?.message || 'Error connecting to Facebook');
-//     } finally {
-//       setIsLoggingIn(false);
-//     }
-//   };
+        // Redirect to dashboard
+        router.push('/dashboard');
+      } else {
+        console.error('Backend OAuth Error:', result.message);
+        toast.error(result.message || 'Facebook connection failed');
+      }
+    } catch (error: any) {
+      console.error('Error in OAuth return handler:', error);
+      toast.error(error?.data?.message || 'Error connecting to Facebook');
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
-//   useEffect(() => {
-//     if (codeFromUrl) {
-//       handleReturnWithCode(codeFromUrl);
-//     }
-//   }, [codeFromUrl]);
+  useEffect(() => {
+    if (codeFromUrl) {
+      handleReturnWithCode(codeFromUrl);
+    }
+  }, [codeFromUrl]);
 
-//   const onFacebookLogin = async () => {
-//     try {
-//       const YOUR_APP_ID = env.NEXT_PUBLIC_FACEBOOK_APP_ID;
-//       const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
-//       const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
+  const onFacebookLogin = async () => {
+    try {
+      //   const YOUR_APP_ID = env.NEXT_PUBLIC_FACEBOOK_APP_ID;
+      const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
+      const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
 
-//       const scopes = [
-//         'whatsapp_business_messaging',
-//         'whatsapp_business_management',
-//         'whatsapp_business_manage_events',
-//         'public_profile',
-//       ].join(',');
+      const scopes = [
+        'whatsapp_business_messaging',
+        'whatsapp_business_management',
+        'whatsapp_business_manage_events',
+        'public_profile',
+      ].join(',');
 
-//       const dialogUrl = `https://www.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
+      const dialogUrl = 'asd'; // `https://www.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
 
-//       console.log('Redirecting to Manual Facebook Login Dialog...');
-//       console.log('URL:', dialogUrl);
+      console.log('Redirecting to Manual Facebook Login Dialog...');
+      console.log('URL:', dialogUrl);
 
-//       window.location.href = dialogUrl;
-//     } catch (error) {
-//       console.error('Facebook Login Error:', error);
-//       toast.error('Failed to initiate Facebook login');
-//     }
-//   };
+      window.location.href = dialogUrl;
+    } catch (error) {
+      console.error('Facebook Login Error:', error);
+      toast.error('Failed to initiate Facebook login');
+    }
+  };
 
-//   return {
-//     onFacebookLogin,
-//     isLoggingIn,
-//     isCompleted,
-//     handleReturnWithCode,
-//   };
-// }
-
-// /////////////////////////////////////////////////////////
-// route.ts;
-// import { auth } from '@clerk/nextjs/server';
-// import { NextResponse } from 'next/server';
-// import { env } from '@/env';
-
-// export async function POST(req: Request) {
-//   try {
-//     const { getToken, userId } = await auth();
-//     const token = await getToken();
-
-//     if (!userId) {
-//       console.warn('Warning: No userId found. Continuing for debugging...');
-//     }
-//     const body = await req.json();
-//     const { code } = body;
-
-//     if (!code) {
-//       return NextResponse.json({ success: false, message: 'Code is required' }, { status: 400 });
-//     }
-
-//     // Exchange code for short-lived access token
-//     console.log('1. Attempting short-lived token exchange...');
-//     console.log('Using Redirect URI:', `[${env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI}]`);
-
-//     const tokenExchangeUrl =
-//       `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
-//       new URLSearchParams({
-//         client_id: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-//         redirect_uri: env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI,
-//         client_secret: env.FACEBOOK_APP_SECRET,
-//         code,
-//       });
-
-//     const tokenResponse = await fetch(tokenExchangeUrl);
-//     const tokenData = await tokenResponse.json();
-
-//     console.log('Short-lived token response status:', tokenResponse.status);
-//     console.log('Short-lived token response data:', JSON.stringify(tokenData, null, 2));
-
-//     if (!tokenResponse.ok) {
-//       console.error('Facebook Token Exchange Error:', tokenData);
-//       return NextResponse.json(
-//         { success: false, message: tokenData.error?.message || 'Failed to exchange code' },
-//         { status: tokenResponse.status },
-//       );
-//     }
-
-//     const shortLivedToken = tokenData.access_token;
-//     console.log('Short-lived Token obtained successfully');
-
-//     // Exchange short-lived token for long-lived access token
-//     const longLivedUrl =
-//       `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
-//       new URLSearchParams({
-//         grant_type: 'fb_exchange_token',
-//         client_id: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
-//         client_secret: env.FACEBOOK_APP_SECRET,
-//         fb_exchange_token: shortLivedToken,
-//       });
-
-//     console.log('2. Attempting long-lived token exchange...');
-//     const longLivedResponse = await fetch(longLivedUrl);
-//     const longLivedData = await longLivedResponse.json();
-
-//     if (!longLivedResponse.ok) {
-//       console.error('Facebook Long-lived Token Error:', longLivedData);
-//       return NextResponse.json(
-//         { success: false, message: longLivedData.error?.message || 'Failed to get long-lived token' },
-//         { status: longLivedResponse.status },
-//       );
-//     }
-
-//     const longLivedToken = longLivedData.access_token;
-//     console.log('--- OAuth API Route Success ---');
-//     console.log('Final Long-lived Token:', longLivedToken);
-
-//     // Call backend API with the new live token
-//     try {
-//       console.log('3. Attempting backend callback...');
-//       const backendCallbackUrl = `${env.NEXT_PUBLIC_API_URL}/core/auth/facebook-callback`;
-//       const backendResponse = await fetch(backendCallbackUrl, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify({ accessToken: longLivedToken }),
-//       });
-
-//       const backendData = await backendResponse.json();
-//       console.log('Backend callback response status:', backendResponse.status);
-//       console.log('Backend callback response data:', JSON.stringify(backendData, null, 2));
-
-//       if (!backendResponse.ok) {
-//         return NextResponse.json(
-//           { success: false, message: backendData.message || 'Backend callback failed' },
-//           { status: backendResponse.status },
-//         );
-//       }
-
-//       return NextResponse.json(backendData);
-//     } catch (backendError) {
-//       console.error('Backend Callback Error:', backendError);
-//       return NextResponse.json({ success: false, message: 'Failed to communicate with backend' }, { status: 500 });
-//     }
-//   } catch (error) {
-//     console.error('OAuth API Route Error:', error);
-//     return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
-//   }
-// }
+  return {
+    onFacebookLogin,
+    isLoggingIn,
+    isCompleted,
+    handleReturnWithCode,
+  };
+}
