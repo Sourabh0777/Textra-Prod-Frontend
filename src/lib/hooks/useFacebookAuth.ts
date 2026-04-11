@@ -53,9 +53,10 @@ export function useFacebookAuth() {
 
   const onFacebookLogin = async () => {
     try {
-      //   const YOUR_APP_ID = env.NEXT_PUBLIC_FACEBOOK_APP_ID;
+      const YOUR_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
       const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
       const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
+      const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION;
 
       const scopes = [
         'whatsapp_business_messaging',
@@ -64,7 +65,7 @@ export function useFacebookAuth() {
         'public_profile',
       ].join(',');
 
-      const dialogUrl = 'asd'; // `https://www.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
+      const dialogUrl = `https://www.facebook.com/${WHATSAPP_API_VERSION}/dialog/oauth?client_id=${YOUR_APP_ID}&redirect_uri=${encodeURIComponent(YOUR_REDIRECT_URI)}&state=${YOUR_STATE}&scope=${scopes}&response_type=code`;
 
       console.log('Redirecting to Manual Facebook Login Dialog...');
       console.log('URL:', dialogUrl);
