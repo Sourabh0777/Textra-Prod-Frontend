@@ -4,13 +4,6 @@ import { env } from '@/env';
 
 export async function POST(req: Request) {
   try {
-    const YOUR_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID;
-    const YOUR_REDIRECT_URI = env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI;
-    const YOUR_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-    const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-    const YOUR_STATE = Math.random().toString(36).substring(7); // Random state for security
-    const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION;
     const { getToken, userId } = await auth();
     const token = await getToken();
 
@@ -29,16 +22,15 @@ export async function POST(req: Request) {
     console.log('Using Redirect URI:', `[${env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI}]`);
 
     const tokenExchangeUrl =
-      `https://graph.facebook.com/${WHATSAPP_API_VERSION}/oauth/access_token?` +
+      `https://graph.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
       new URLSearchParams({
-        client_id: YOUR_APP_ID || '',
-        redirect_uri: YOUR_REDIRECT_URI || '',
-        client_secret: YOUR_APP_SECRET || '',
+        client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
+        redirect_uri: process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI || '',
+        client_secret: process.env.FACEBOOK_APP_SECRET || '',
         code,
       });
-    const tokenResponse = await fetch(tokenExchangeUrl);
 
-    // const tokenResponse = await fetch(tokenExchangeUrl);
+    const tokenResponse = await fetch(tokenExchangeUrl);
     const tokenData = await tokenResponse.json();
 
     console.log('Short-lived token response status:', tokenResponse.status);
@@ -57,11 +49,11 @@ export async function POST(req: Request) {
 
     // Exchange short-lived token for long-lived access token
     const longLivedUrl =
-      `https://graph.facebook.com/${WHATSAPP_API_VERSION}/oauth/access_token?` +
+      `https://graph.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
       new URLSearchParams({
         grant_type: 'fb_exchange_token',
-        client_id: YOUR_APP_ID || '',
-        client_secret: YOUR_APP_SECRET || '',
+        client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
+        client_secret: process.env.FACEBOOK_APP_SECRET || '',
         fb_exchange_token: shortLivedToken,
       });
 
@@ -84,7 +76,7 @@ export async function POST(req: Request) {
     // Call backend API with the new live token
     try {
       console.log('3. Attempting backend callback...');
-      const backendCallbackUrl = `${NEXT_PUBLIC_API_URL}/core/auth/facebook-callback`;
+      const backendCallbackUrl = `${env.NEXT_PUBLIC_API_URL}/core/auth/facebook-callback`;
       const backendResponse = await fetch(backendCallbackUrl, {
         method: 'POST',
         headers: {
