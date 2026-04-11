@@ -32,6 +32,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FACEBOOK_REDIRECT_URI: z.string().url(),
     NEXT_PUBLIC_FACEBOOK_APP_ID: z.string().min(1),
     NEXT_PUBLIC_FACEBOOK_API_VERSION: z.string().min(1),
+    NEXT_PUBLIC_FACEBOOK_CONFIG_ID: z.string().min(1),
   },
 
   /**
@@ -56,6 +57,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FACEBOOK_REDIRECT_URI: process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI,
     NEXT_PUBLIC_FACEBOOK_APP_ID: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
     NEXT_PUBLIC_FACEBOOK_API_VERSION: process.env.NEXT_PUBLIC_FACEBOOK_API_VERSION,
+    NEXT_PUBLIC_FACEBOOK_CONFIG_ID: process.env.NEXT_PUBLIC_FACEBOOK_CONFIG_ID,
   },
 
   /**
