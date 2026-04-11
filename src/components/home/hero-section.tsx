@@ -1,9 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Facebook } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useFacebookAuth } from '@/lib/hooks/useFacebookAuth';
 
 export function HeroSection() {
+  const { onFacebookLogin, isLoggingIn } = useFacebookAuth();
+
   return (
     <section className="relative pt-5 pb-16 md:pt-5 md:pb-24 overflow-hidden">
       {/* Background decoration */}
@@ -15,12 +19,24 @@ export function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           <div className="flex-1 text-center lg:text-left space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              Whatsapp remminder Solution
+            <div className="flex items-center justify-center lg:justify-start gap-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Whatsapp remminder Solution
+              </div>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={onFacebookLogin}
+                loading={isLoggingIn}
+                className="rounded-full shadow-sm hover:shadow-md transition-all px-6"
+              >
+                <Facebook className="w-4 h-4" />
+                Connect Facebook
+              </Button>
             </div>
 
             <h1 className="text-2xl md:text-4xl font-extrabold text-primary tracking-tight leading-[1.1]">
