@@ -22,11 +22,11 @@ export async function POST(req: Request) {
     console.log('Using Redirect URI:', `[${env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI}]`);
 
     const tokenExchangeUrl =
-      `https://graph.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
+      `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
       new URLSearchParams({
-        client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
-        redirect_uri: process.env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI || '',
-        client_secret: process.env.FACEBOOK_APP_SECRET || '',
+        client_id: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+        redirect_uri: env.NEXT_PUBLIC_FACEBOOK_REDIRECT_URI,
+        client_secret: env.FACEBOOK_APP_SECRET,
         code,
       });
 
@@ -49,11 +49,11 @@ export async function POST(req: Request) {
 
     // Exchange short-lived token for long-lived access token
     const longLivedUrl =
-      `https://graph.facebook.com/${process.env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
+      `https://graph.facebook.com/${env.NEXT_PUBLIC_FACEBOOK_API_VERSION}/oauth/access_token?` +
       new URLSearchParams({
         grant_type: 'fb_exchange_token',
-        client_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '',
-        client_secret: process.env.FACEBOOK_APP_SECRET || '',
+        client_id: env.NEXT_PUBLIC_FACEBOOK_APP_ID,
+        client_secret: env.FACEBOOK_APP_SECRET,
         fb_exchange_token: shortLivedToken,
       });
 
