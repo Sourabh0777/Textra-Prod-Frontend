@@ -67,10 +67,19 @@ export function useBusinessProfile() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'is_active' ? value === 'true' : value,
-    }));
+    // Special handling for phone number: allow only digits and max 10 chars
+    if (name === 'phone_number') {
+      const numericValue = value.replace(/\D/g, '').slice(0, 10);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: numericValue,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: name === 'is_active' ? value === 'true' : value,
+      }));
+    }
 
     if (errors[name]) {
       setErrors((prev) => {
@@ -85,6 +94,21 @@ export function useBusinessProfile() {
   const handleSave = async () => {
     try {
       setErrors({});
+
+      // Client-side validation for phone number
+      if (formData.phone_number && formData.phone_number.length !== 10) {
+        setErrors((prev) => ({
+          ...prev,
+          phone_number: 'Phone number must be exactly 10 digits',
+        }));
+        toastPromise(Promise.reject(new Error('Validation failed')), {
+          loading: 'Saving business details...',
+          success: '',
+          error: 'Phone number must be exactly 10 digits',
+        });
+        return;
+      }
+
       await toastPromise(updateBusinessDetails(formData).unwrap(), {
         loading: 'Saving business details...',
         success: 'Business details updated successfully',

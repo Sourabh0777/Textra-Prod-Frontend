@@ -123,15 +123,24 @@ export function BusinessProfileForm({
               required
             />
 
-            <Input
-              label="Phone Number"
-              name="phone_number"
-              value={formData.phone_number || ''}
-              onChange={onInputChange}
-              error={errors.phone_number}
-              fullWidth
-              required
-            />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-neutral-700">
+                Phone Number <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-2">
+                <div className="flex items-center justify-center px-3 py-2 bg-neutral-100 border border-neutral-300 rounded text-neutral-600 font-bold whitespace-nowrap min-w-[50px]">
+                  +91
+                </div>
+                <Input
+                  name="phone_number"
+                  value={formData.phone_number || ''}
+                  onChange={onInputChange}
+                  error={errors.phone_number}
+                  fullWidth
+                  required
+                />
+              </div>
+            </div>
 
             <Input
               label="City"
