@@ -201,9 +201,6 @@ export function CarModal({
             error={errors.registration_number}
             fullWidth
           />
-          <p className="mt-[-12px] text-[10px] text-neutral-500">
-            Format: State Code + District + Series + Number (e.g., MH 12 AB 1234)
-          </p>
 
           <div className="space-y-2">
             <Input

@@ -24,10 +24,8 @@ export const vehicleSchema = z.object({
   fuel_type: z.string().optional(),
   registration_number: z
     .string()
-    .min(1, 'Registration number is required')
-    .refine((val) => /^[A-Z]{2}[0-9]{2}[A-Z]{0,2}[0-9]{4}$/.test(val.replace(/\s/g, '').toUpperCase()), {
-      message: 'Invalid Indian number plate format (e.g. MH12AB1234)',
-    }),
+    .min(5, 'Minimum 5 characters')
+    .max(10, 'Maximum 10 characters'),
   year: z
     .number({ invalid_type_error: 'Year is required' })
     .min(1900)

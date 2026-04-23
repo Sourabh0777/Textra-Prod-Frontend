@@ -18,6 +18,7 @@ export function QRCodeTable({ qrCodes, onEdit, onDelete, onConnect }: QRCodeTabl
       <div className="flex flex-col">
         <span className="font-medium text-neutral-900">{qr.business_id.business_name}</span>
         <span className="text-xs text-neutral-500">{qr.business_id.phone_number}</span>
+        <span className="text-xs text-neutral-500">{qr.business_id._id}</span>
       </div>
     );
   };
