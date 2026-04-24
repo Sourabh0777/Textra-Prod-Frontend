@@ -6,25 +6,13 @@ import { Badge } from '@/components/ui/badge';
 import { ICustomer, FlowStep } from '@/types';
 import { formatDate } from '@/lib/utils';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Info, MoreHorizontal, LayoutList } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 interface CustomerTableProps {
   customers: ICustomer[];
   onEdit: (customer: ICustomer) => void;
   onDelete: (id: string) => void;
 }
-
-const STEP_CONFIG: Record<string, { label: string; variant: any }> = {
-  [FlowStep.START]: { label: 'Started', variant: 'secondary' },
-  [FlowStep.ASK_VEHICLE]: { label: 'Vehicle Info', variant: 'info' },
-  [FlowStep.VEHICLE_CONFIRM]: { label: 'Confirmation', variant: 'info' },
-  [FlowStep.ASK_LAST_SERVICE]: { label: 'Service Info', variant: 'info' },
-  [FlowStep.ASK_VEHICLE_TYPE]: { label: 'Vehicle Type', variant: 'info' },
-  [FlowStep.ASK_DAILY_USAGE]: { label: 'Usage Info', variant: 'info' },
-  [FlowStep.ASK_MODEL]: { label: 'Model Info', variant: 'info' },
-  [FlowStep.RETURNING_USER_OPTIONS]: { label: 'Returning', variant: 'warning' },
-  [FlowStep.COMPLETED]: { label: 'Finished', variant: 'success' },
-};
 
 export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProps) {
   const [openDraftId, setOpenDraftId] = useState<string | null>(null);
@@ -41,7 +29,7 @@ export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProp
           <TableRow>
             <TableHeaderCell className="px-2 md:px-4 py-3">Customer Info</TableHeaderCell>
             <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Contact</TableHeaderCell>
-            <TableHeaderCell className="px-2 md:px-4 py-3 text-center">Onboarding Status</TableHeaderCell>
+            <TableHeaderCell className="px-2 md:px-4 py-3 text-left">Onboarding Status</TableHeaderCell>
             <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Joined</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">Account</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-right">Actions</TableHeaderCell>
@@ -68,69 +56,52 @@ export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProp
                 </div>
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3">
-                <div className="flex flex-col items-center gap-1.5">
-                  <div className="flex items-center gap-2">
-                    {customer.onboarding?.status ? (
+                {customer.onboarding ? (
+                  <div className="flex flex-col gap-1.5 min-w-[120px]">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Badge
                         variant={customer.onboarding.status === 'COMPLETED' ? 'success' : 'warning'}
-                        className="text-[10px] uppercase tracking-wider font-bold"
+                        className="text-[10px] uppercase font-bold px-1.5 py-0"
                       >
                         {customer.onboarding.status}
                       </Badge>
-                    ) : (
-                      <span className="text-neutral-400 text-xs">-</span>
-                    )}
+                      <span
+                        className="text-[10px] font-medium text-neutral-600 truncate max-w-[100px]"
+                        title={customer.onboarding.current_step}
+                      >
+                        {customer.onboarding.current_step}
+                      </span>
+                    </div>
 
-                    {customer.onboarding?.draft && (
-                      <div className="relative">
+                    {customer.onboarding.draft && (
+                      <div className="flex flex-col">
                         <button
                           onClick={(e) => toggleDraft(customer._id || '', e)}
-                          className="flex items-center justify-center h-6 w-6 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 transition-colors"
-                          title="View Draft Data"
+                          className="text-[10px] font-semibold text-blue-600 hover:text-blue-800 transition-colors w-fit underline decoration-dotted"
                         >
-                          <LayoutList className="h-3.5 w-3.5" />
+                          {openDraftId === customer._id ? 'Hide Draft Data' : 'View Draft Data'}
                         </button>
 
                         {openDraftId === customer._id && (
-                          <>
-                            <div className="fixed inset-0 z-40" onClick={() => setOpenDraftId(null)} />
-                            <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-white border border-neutral-200 rounded-xl shadow-2xl p-4 animate-in fade-in zoom-in duration-200 origin-top-right">
-                              <div className="flex items-center gap-2 border-b pb-2 mb-3">
-                                <Info className="h-4 w-4 text-blue-500" />
-                                <h4 className="font-bold text-sm text-neutral-900">Onboarding Draft</h4>
+                          <div className="mt-2 space-y-1 border-t border-neutral-100 pt-1 text-[10px] animate-in fade-in duration-200">
+                            {Object.entries(customer.onboarding.draft).map(([key, value]) => (
+                              <div key={key} className="flex gap-2">
+                                <span className="text-neutral-400 capitalize whitespace-nowrap">
+                                  {key.replace(/_/g, ' ')}:
+                                </span>
+                                <span className="text-neutral-700 font-medium truncate">
+                                  {value ? (key.includes('date') ? formatDate(value as string) : String(value)) : 'N/A'}
+                                </span>
                               </div>
-                              <div className="space-y-2.5">
-                                {Object.entries(customer.onboarding?.draft || {}).map(([key, value]) => (
-                                  <div key={key} className="flex flex-col">
-                                    <span className="text-[10px] uppercase text-neutral-400 font-bold tracking-tight">
-                                      {key.replace(/_/g, ' ')}
-                                    </span>
-                                    <span className="text-xs text-neutral-800 font-medium truncate">
-                                      {value
-                                        ? key.includes('date')
-                                          ? formatDate(value as string)
-                                          : String(value)
-                                        : 'N/A'}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </>
+                            ))}
+                          </div>
                         )}
                       </div>
                     )}
                   </div>
-
-                  {customer.onboarding?.current_step && (
-                    <Badge
-                      variant={STEP_CONFIG[customer.onboarding.current_step]?.variant || 'secondary'}
-                      className="text-[9px] py-0 px-2 font-normal italic"
-                    >
-                      {STEP_CONFIG[customer.onboarding.current_step]?.label || customer.onboarding.current_step}
-                    </Badge>
-                  )}
-                </div>
+                ) : (
+                  <span className="text-neutral-400 text-[10px] italic">--</span>
+                )}
               </TableCell>
               <TableCell className="hidden lg:table-cell px-2 md:px-4 py-3">
                 <span className="text-sm text-neutral-600">{formatDate(customer.created_at || '')}</span>
