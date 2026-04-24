@@ -30,6 +30,7 @@ export function useCustomersPage() {
     data: customersResponse,
     isLoading: loadingCustomers,
     error: customersError,
+    refetch: refetchCustomers,
   } = useFetchCustomersQuery(undefined, {
     skip: !isLoaded || !clerkUser,
   });
@@ -173,6 +174,7 @@ export function useCustomersPage() {
     setErrors,
     searchQuery,
     setSearchQuery,
+    refetchCustomers,
     handleOpenModal,
     handleChange,
     handleSubmit,

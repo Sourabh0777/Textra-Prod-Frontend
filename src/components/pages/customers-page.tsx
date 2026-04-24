@@ -11,6 +11,8 @@ import { useCustomersPage } from '@/lib/hooks/use-customers-page';
 import { CustomerTable } from '@/components/customers/customer-table';
 import { CustomerModal } from '@/components/customers/customer-modal';
 
+import { RefreshCw } from 'lucide-react';
+
 export default function CustomersPage() {
   const {
     filteredCustomers,
@@ -25,11 +27,20 @@ export default function CustomersPage() {
     errors,
     searchQuery,
     setSearchQuery,
+    refetchCustomers,
     handleOpenModal,
     handleChange,
     handleSubmit,
     handleDelete,
   } = useCustomersPage();
+
+  const [isRefetching, setIsRefetching] = React.useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefetching(true);
+    await refetchCustomers();
+    setTimeout(() => setIsRefetching(false), 500);
+  };
 
   if (loading) {
     return (
@@ -50,6 +61,9 @@ export default function CustomersPage() {
           <Card>
             <CardBody>
               <p className="text-red-500">Error loading customers. Please try again later.</p>
+              <Button onClick={() => refetchCustomers()} className="mt-4">
+                Retry
+              </Button>
             </CardBody>
           </Card>
         </div>
@@ -77,7 +91,15 @@ export default function CustomersPage() {
               />
             </div>
           </div>
-          <Button onClick={() => handleOpenModal()}>+ Add Customer</Button>
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <Button variant="secondary" onClick={handleRefresh} disabled={isRefetching} className="gap-2">
+              <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button onClick={() => handleOpenModal()} className="flex-1 md:flex-none">
+              + Add Customer
+            </Button>
+          </div>
         </div>
 
         <Card>
