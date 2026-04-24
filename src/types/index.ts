@@ -64,6 +64,23 @@ export interface IQRCode {
   created_at?: string | Date;
 }
 
+export enum FlowStep {
+  START = 'START',
+  ASK_VEHICLE = 'ASK_VEHICLE',
+  VEHICLE_CONFIRM = 'VEHICLE_CONFIRM',
+  ASK_LAST_SERVICE = 'ASK_LAST_SERVICE',
+  ASK_VEHICLE_TYPE = 'ASK_VEHICLE_TYPE',
+  ASK_DAILY_USAGE = 'ASK_DAILY_USAGE',
+  ASK_MODEL = 'ASK_MODEL',
+  RETURNING_USER_OPTIONS = 'RETURNING_USER_OPTIONS',
+  COMPLETED = 'COMPLETED',
+}
+
+export enum OnboardingStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+}
+
 export interface ICustomer {
   _id?: string;
   business_id: string;
@@ -71,6 +88,19 @@ export interface ICustomer {
   phone_number: string;
   email?: string;
   is_active: boolean;
+  onboarding?: {
+    status: OnboardingStatus;
+    current_step: FlowStep;
+    draft?: {
+      vehicle_number?: string;
+      last_service_option?: string;
+      next_service_date?: Date | string;
+      vehicle_type?: string;
+      daily_usage?: string;
+      vehicle_model?: string;
+    };
+    last_interaction_at?: Date | string;
+  };
   created_at?: Date;
 }
 
