@@ -56,7 +56,10 @@ export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProp
                 </div>
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3">
-                {customer.onboarding ? (
+                {customer.onboarding &&
+                (customer.onboarding.status !== 'PENDING' ||
+                  customer.onboarding.current_step !== 'START' ||
+                  (customer.onboarding.draft && Object.keys(customer.onboarding.draft).length > 0)) ? (
                   <div className="flex flex-col gap-1.5 min-w-[120px]">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge
@@ -73,7 +76,7 @@ export function CustomerTable({ customers, onEdit, onDelete }: CustomerTableProp
                       </span>
                     </div>
 
-                    {customer.onboarding.draft && (
+                    {customer.onboarding.draft && Object.keys(customer.onboarding.draft).length > 0 && (
                       <div className="flex flex-col">
                         <button
                           onClick={(e) => toggleDraft(customer._id || '', e)}
