@@ -77,19 +77,21 @@ export default function CustomerPortalPage() {
 
   if (loading)
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-        <p className="mt-4 text-xs font-bold text-neutral-400 uppercase tracking-widest">Loading Portal...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#f8f9fc]">
+        <div className="w-10 h-10 border-[3px] border-[#15368A]/10 border-t-[#15368A] rounded-full animate-spin"></div>
+        <p className="mt-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Connecting to portal...</p>
       </div>
     );
 
   if (error || !customerDetails)
     return (
-      <div className="flex items-center justify-center min-h-screen p-6 bg-neutral-50 text-center">
+      <div className="flex items-center justify-center min-h-screen p-6 bg-[#f8f9fc] text-center">
         <div className="max-w-xs space-y-4">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
-          <h2 className="text-xl font-bold">Invalid Portal Link</h2>
-          <p className="text-sm text-neutral-400">Please contact support or check your link again.</p>
+          <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+            <AlertCircle className="w-7 h-7 text-red-500" />
+          </div>
+          <h2 className="text-lg font-bold text-neutral-800">Portal Unavailable</h2>
+          <p className="text-xs text-neutral-400 leading-relaxed">This link may have expired or is invalid. Please contact your service center.</p>
         </div>
       </div>
     );
@@ -99,10 +101,10 @@ export default function CustomerPortalPage() {
   const businessName = (customer.business_id as any)?.business_name;
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] text-neutral-800">
+    <div className="min-h-screen bg-[#f8f9fc] text-neutral-800">
       <PortalHeader />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-6">
         <PortalHero customerName={customer.name} businessName={businessName} nextService={nextService} />
 
         <PortalStats vehicleCount={vehicles.length} serviceCount={services.length} reminderCount={reminders.length} />

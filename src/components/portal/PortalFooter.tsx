@@ -6,21 +6,20 @@ import Link from 'next/link';
 
 export const PortalFooter = ({ businessName }: { businessName: string }) => {
   return (
-    <footer className="bg-white border-t border-neutral-100 py-12 text-center space-y-6">
-      <div className="flex flex-col items-center gap-2">
-         <Image src="/logo/logo.png" alt="Logo" width={24} height={24} className="opacity-30 grayscale" />
-         <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em]">
-           Verified by Textra Automotive
-         </p>
+    <footer className="bg-white border-t border-neutral-100 py-8 mt-8">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <Image src="/logo/logo.png" alt="Logo" width={16} height={16} className="opacity-30 grayscale" />
+          <p className="text-[10px] font-semibold text-neutral-400">
+            Powered by <span className="font-bold text-neutral-500">Textra</span> · {businessName || 'Service Portal'}
+          </p>
+        </div>
+        <div className="flex items-center gap-5 text-[10px] font-semibold text-neutral-400">
+          <Link href="#" className="hover:text-[#15368A] transition-colors">Privacy</Link>
+          <Link href="#" className="hover:text-[#15368A] transition-colors">Terms</Link>
+          <Link href="#" className="hover:text-[#15368A] transition-colors">Support</Link>
+        </div>
       </div>
-      <div className="flex justify-center gap-6 text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
-         <Link href="#" className="hover:text-blue-600">Privacy</Link>
-         <Link href="#" className="hover:text-blue-600">Terms</Link>
-         <Link href="#" className="hover:text-blue-600">Support</Link>
-      </div>
-      <p className="text-[9px] text-neutral-300 font-medium">
-        © 2026 {businessName || 'Service Center'}. All data encrypted.
-      </p>
     </footer>
   );
 };
