@@ -3,17 +3,9 @@
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Card, CardBody } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { StateTable } from '@/components/config/StateTable';
-import { StateModal } from '@/components/config/StateModal';
-import { ZoneModal } from '@/components/config/ZoneModal';
-import { CarBrandTable } from '@/components/config/CarBrandTable';
-import { CarBrandModal } from '@/components/config/CarBrandModal';
-import { CarModelModal } from '@/components/config/CarModelModal';
-import { useConfigurationsPage } from '@/lib/hooks/use-configurations-page';
-import { useCarBrandsConfig } from '@/lib/hooks/use-car-brands-config';
-import { Plus } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
+import { StatesZonesManager } from '@/components/config/StatesZonesManager';
+import { CarBrandsModelsManager } from '@/components/config/CarBrandsModelsManager';
 
 export function ConfigurationsPage() {
   const [hasHydrated, setHasHydrated] = useState(false);
@@ -21,58 +13,10 @@ export function ConfigurationsPage() {
     setHasHydrated(true);
   }, []);
 
-  const {
-    states,
-    loadingStates,
-    zones,
-    loadingZones,
-    isStateModalOpen,
-    setIsStateModalOpen,
-    stateFormData,
-    setStateFormData,
-    handleOpenStateModal,
-    handleStateSubmit,
-    handleDeleteState,
-    isZoneModalOpen,
-    setIsZoneModalOpen,
-    zoneFormData,
-    setZoneFormData,
-    handleOpenZoneModal,
-    handleZoneSubmit,
-    handleDeleteZone,
-    expandedStates,
-    toggleStateExpansion,
-    zonesByState,
-  } = useConfigurationsPage();
-
-  const {
-    brands,
-    loadingBrands,
-    editingBrand,
-    editingModel,
-    isBrandModalOpen,
-    setIsBrandModalOpen,
-    brandFormData,
-    setBrandFormData,
-    handleOpenBrandModal,
-    handleBrandSubmit,
-    handleDeleteBrand,
-    isModelModalOpen,
-    setIsModelModalOpen,
-    modelFormData,
-    setModelFormData,
-    handleOpenModelModal,
-    handleModelSubmit,
-    handleDeleteModel,
-    activeBrandIdForModel,
-    expandedBrands,
-    toggleBrandExpansion,
-  } = useCarBrandsConfig();
-
   if (!hasHydrated) {
     return (
       <>
-        <Header title="Project Configurations" subtitle="Manage states and zones for business categorization" />
+        <Header title="Project Configurations" subtitle="Manage project settings and data" />
         <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
           <Card>
             <CardBody>
@@ -88,106 +32,12 @@ export function ConfigurationsPage() {
 
   return (
     <>
-      <Header title="Project Configurations" subtitle="Manage states and zones for business categorization" />
+      <Header title="Project Configurations" subtitle="Manage project settings and data" />
 
       <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
-        <Card>
-          <CardBody>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">Manage States & Zones</h2>
-              <Button onClick={() => handleOpenStateModal()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add State
-              </Button>
-            </div>
-
-            {loadingStates ? (
-              <div className="flex justify-center py-12">
-                <Loader />
-              </div>
-            ) : (
-              <StateTable
-                states={states}
-                onEdit={handleOpenStateModal}
-                onDelete={handleDeleteState}
-                expandedStates={expandedStates}
-                onToggleExpand={toggleStateExpansion}
-                zonesByState={zonesByState}
-                onAddZone={handleOpenZoneModal}
-                onEditZone={handleOpenZoneModal}
-                onDeleteZone={handleDeleteZone}
-              />
-            )}
-          </CardBody>
-        </Card>
-
-        {/* Car Brands & Models Card */}
-        <Card>
-          <CardBody>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">Manage Car Brands & Models</h2>
-              <Button onClick={() => handleOpenBrandModal()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Brand
-              </Button>
-            </div>
-
-            {loadingBrands ? (
-              <div className="flex justify-center py-12">
-                <Loader />
-              </div>
-            ) : (
-              <CarBrandTable
-                brands={brands}
-                onEdit={handleOpenBrandModal}
-                onDelete={handleDeleteBrand}
-                expandedBrands={expandedBrands}
-                onToggleExpand={toggleBrandExpansion}
-                onAddModel={handleOpenModelModal}
-                onEditModel={handleOpenModelModal}
-                onDeleteModel={handleDeleteModel}
-              />
-            )}
-          </CardBody>
-        </Card>
+        <StatesZonesManager />
+        <CarBrandsModelsManager />
       </div>
-
-      <StateModal
-        isOpen={isStateModalOpen}
-        onClose={() => setIsStateModalOpen(false)}
-        onSubmit={handleStateSubmit}
-        formData={stateFormData}
-        setFormData={setStateFormData}
-        isEdit={!!stateFormData._id}
-      />
-
-      <ZoneModal
-        isOpen={isZoneModalOpen}
-        onClose={() => setIsZoneModalOpen(false)}
-        onSubmit={handleZoneSubmit}
-        formData={zoneFormData}
-        setFormData={setZoneFormData}
-        states={states}
-        isEdit={!!zoneFormData._id}
-      />
-
-      <CarBrandModal
-        isOpen={isBrandModalOpen}
-        onClose={() => setIsBrandModalOpen(false)}
-        onSubmit={handleBrandSubmit}
-        formData={brandFormData}
-        setFormData={setBrandFormData}
-        isEdit={!!editingBrand}
-      />
-
-      <CarModelModal
-        isOpen={isModelModalOpen}
-        onClose={() => setIsModelModalOpen(false)}
-        onSubmit={handleModelSubmit}
-        formData={modelFormData}
-        setFormData={setModelFormData}
-        isEdit={!!editingModel}
-      />
     </>
   );
 }
