@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import SearchableDropdown from '@/components/ui/searchable-dropdown';
-import { VEHICLE_TYPES, INDIAN_TWO_WHEELER_BRANDS } from '@/config/vehicle-config';
+import { ALL_VEHICLE_TYPES, CAR_VEHICLE_TYPES } from '@/constants/vehicle-types';
 import type { IVehicle, ICustomer } from '@/types';
+import { useFetchTwoWheelerBrandsQuery } from '@/lib/api/endpoints/twoWheelerBrandsApi';
+import { useFetchBrandsQuery } from '@/lib/api/endpoints/carBrandsApi';
 
 interface VehicleModalProps {
   isOpen: boolean;
@@ -36,6 +38,53 @@ export function VehicleModal({
   onCustomerChange,
   onBrandChange,
 }: VehicleModalProps) {
+  // Determine if current vehicle type is a car
+  const isCar = useMemo(() => {
+    return CAR_VEHICLE_TYPES.some((t) => t.value === formData.vehicle_type);
+  }, [formData.vehicle_type]);
+
+  // Fetch Brands dynamically
+  const { data: twoWheelerBrands = [], isLoading: loadingTwoWheelerBrands } = useFetchTwoWheelerBrandsQuery(undefined, {
+    skip: !isOpen || isCar,
+  });
+  const { data: carBrands = [], isLoading: loadingCarBrands } = useFetchBrandsQuery(undefined, {
+    skip: !isOpen || !isCar,
+  });
+
+  const activeBrands = isCar ? carBrands : twoWheelerBrands;
+  const isLoadingBrands = isCar ? loadingCarBrands : loadingTwoWheelerBrands;
+
+  // Map brands for SearchableDropdown
+  const brandOptions = useMemo(() => {
+    return (activeBrands || [])
+      .filter((b) => b.is_active)
+      .map((b) => ({
+        value: b.name,
+        label: b.name,
+      }));
+  }, [activeBrands]);
+
+  // Map models for SearchableDropdown based on selected brand
+  const modelOptions = useMemo(() => {
+    if (!formData.brand) return [];
+    const selectedBrand = (activeBrands || []).find((b) => b.name === formData.brand);
+    if (!selectedBrand || !selectedBrand.models) return [];
+    return selectedBrand.models.map((m) => ({
+      value: m.name,
+      label: m.name,
+    }));
+  }, [activeBrands, formData.brand]);
+
+  const handleBrandSelection = (val: string) => {
+    onBrandChange(val);
+    // Reset model when brand changes
+    onFormDataChange({ ...formData, brand: val, vehicle_model: '' });
+  };
+
+  const handleModelSelection = (val: string) => {
+    onFormDataChange({ ...formData, vehicle_model: val });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -70,29 +119,39 @@ export function VehicleModal({
             name="vehicle_type"
             value={formData.vehicle_type || ''}
             onChange={onInputChange}
-            options={VEHICLE_TYPES}
+            options={ALL_VEHICLE_TYPES}
             error={errors.vehicle_type}
             fullWidth
           />
+          
+          {isLoadingBrands ? (
+            <div className="text-xs text-neutral-500 animate-pulse py-2">Loading brands...</div>
+          ) : (
+            <SearchableDropdown
+              fieldLabel="Brand"
+              placeholder="Select or search brand"
+              selectedVal={formData.brand || ''}
+              handleChange={(val) => handleBrandSelection(val as string)}
+              options={brandOptions}
+              label="label"
+              id="value"
+              error={errors.brand}
+              fullWidth
+            />
+          )}
+
           <SearchableDropdown
-            fieldLabel="Brand"
-            placeholder="Select or search brand"
-            selectedVal={formData.brand || ''}
-            handleChange={(val) => onBrandChange(val as string)}
-            options={INDIAN_TWO_WHEELER_BRANDS}
+            fieldLabel="Model"
+            placeholder={formData.brand ? 'Select or search model' : 'Please select a brand first'}
+            selectedVal={formData.vehicle_model || ''}
+            handleChange={(val) => handleModelSelection(val as string)}
+            options={modelOptions}
             label="label"
             id="value"
-            error={errors.brand}
-            fullWidth
-          />
-          <Input
-            label="Model"
-            name="vehicle_model"
-            value={formData.vehicle_model || ''}
-            onChange={onInputChange}
             error={errors.vehicle_model}
             fullWidth
           />
+
           <Input
             label="Registration Number / Number Plate"
             name="registration_number"

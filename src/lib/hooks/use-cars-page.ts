@@ -12,7 +12,7 @@ import { useCreateServiceMutation } from '@/lib/api/endpoints/serviceApi';
 import type { IVehicle } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 import { vehicleSchema } from '@/lib/validations/schemas';
-import { CAR_VEHICLE_TYPES } from '@/config/vehicle-config';
+import { CAR_VEHICLE_TYPES } from '@/constants/vehicle-types';
 
 export function useCarsPage() {
   const { user: clerkUser, isLoaded } = useUser();

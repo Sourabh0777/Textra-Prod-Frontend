@@ -4,7 +4,7 @@ import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import SearchableDropdown from '@/components/ui/searchable-dropdown';
-import { CAR_VEHICLE_TYPES } from '@/config/vehicle-config';
+import { CAR_VEHICLE_TYPES } from '@/constants/vehicle-types';
 import type { IVehicle, ICustomer } from '@/types';
 import { useFetchBrandsQuery } from '@/lib/api/endpoints/carBrandsApi';
 
