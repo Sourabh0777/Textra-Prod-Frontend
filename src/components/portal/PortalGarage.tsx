@@ -61,13 +61,6 @@ export const PortalGarage = ({ vehicles, onAdd, onEdit, onDelete }: PortalGarage
               </div>
               <div className="bg-neutral-50 px-3 py-2.5 rounded-lg border border-neutral-100/80">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <Fuel className="w-2.5 h-2.5 text-amber-500" />
-                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Fuel</p>
-                </div>
-                <p className="text-xs font-bold text-neutral-700">{vehicle.fuel_type || 'Petrol'}</p>
-              </div>
-              <div className="bg-neutral-50 px-3 py-2.5 rounded-lg border border-neutral-100/80">
-                <div className="flex items-center gap-1 mb-0.5">
                   <Gauge className="w-2.5 h-2.5 text-emerald-500" />
                   <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Daily</p>
                 </div>
@@ -76,7 +69,7 @@ export const PortalGarage = ({ vehicles, onAdd, onEdit, onDelete }: PortalGarage
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-1.5 pt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="flex justify-end gap-1.5 pt-1 transition-all duration-300">
               <button
                 onClick={() => onEdit(vehicle)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold text-[#15368A] bg-[#15368A]/5 hover:bg-[#15368A]/10 rounded-md transition-colors"
@@ -85,7 +78,7 @@ export const PortalGarage = ({ vehicles, onAdd, onEdit, onDelete }: PortalGarage
               </button>
               <button
                 onClick={() => onDelete(vehicle._id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold text-red-500 bg-red-100 rounded-md hover:bg-red-200 transition-colors"
               >
                 <Trash2 className="w-3 h-3" /> Remove
               </button>
