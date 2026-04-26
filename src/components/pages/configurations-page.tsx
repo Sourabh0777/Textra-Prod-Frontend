@@ -6,6 +6,7 @@ import { Card, CardBody } from '@/components/ui/card';
 import { Loader } from '@/components/ui/loader';
 import { StatesZonesManager } from '@/components/config/StatesZonesManager';
 import { CarBrandsModelsManager } from '@/components/config/CarBrandsModelsManager';
+import { TwoWheelerBrandsModelsManager } from '@/components/config/TwoWheelerBrandsModelsManager';
 
 export function ConfigurationsPage() {
   const [hasHydrated, setHasHydrated] = useState(false);
@@ -37,6 +38,7 @@ export function ConfigurationsPage() {
       <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
         <StatesZonesManager />
         <CarBrandsModelsManager />
+        <TwoWheelerBrandsModelsManager />
       </div>
     </>
   );

@@ -232,3 +232,16 @@ export interface ICarBrand {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export interface ITwoWheelerModel {
+  name: string;
+}
+
+export interface ITwoWheelerBrand {
+  _id?: string;
+  name: string;
+  models: ITwoWheelerModel[];
+  is_active: boolean;
+  created_at?: Date;
+  updated_at?: Date;
+}

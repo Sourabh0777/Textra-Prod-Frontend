@@ -54,6 +54,7 @@ export const baseApi = createApi({
     'State',
     'Zone',
     'QRCode',
+    'TwoWheelerBrand',
   ],
   endpoints: () => ({}),
 });
