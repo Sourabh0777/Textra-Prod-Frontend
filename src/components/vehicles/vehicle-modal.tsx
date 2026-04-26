@@ -4,10 +4,9 @@ import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import SearchableDropdown from '@/components/ui/searchable-dropdown';
-import { ALL_VEHICLE_TYPES, CAR_VEHICLE_TYPES } from '@/constants/vehicle-types';
+import { TWO_WHEELER_TYPES } from '@/constants/vehicle-types';
 import type { IVehicle, ICustomer } from '@/types';
 import { useFetchTwoWheelerBrandsQuery } from '@/lib/api/endpoints/twoWheelerBrandsApi';
-import { useFetchBrandsQuery } from '@/lib/api/endpoints/carBrandsApi';
 
 interface VehicleModalProps {
   isOpen: boolean;
@@ -38,42 +37,31 @@ export function VehicleModal({
   onCustomerChange,
   onBrandChange,
 }: VehicleModalProps) {
-  // Determine if current vehicle type is a car
-  const isCar = useMemo(() => {
-    return CAR_VEHICLE_TYPES.some((t) => t.value === formData.vehicle_type);
-  }, [formData.vehicle_type]);
-
-  // Fetch Brands dynamically
-  const { data: twoWheelerBrands = [], isLoading: loadingTwoWheelerBrands } = useFetchTwoWheelerBrandsQuery(undefined, {
-    skip: !isOpen || isCar,
+  // Fetch Two-Wheeler Brands dynamically
+  const { data: brands = [], isLoading: isLoadingBrands } = useFetchTwoWheelerBrandsQuery(undefined, {
+    skip: !isOpen,
   });
-  const { data: carBrands = [], isLoading: loadingCarBrands } = useFetchBrandsQuery(undefined, {
-    skip: !isOpen || !isCar,
-  });
-
-  const activeBrands = isCar ? carBrands : twoWheelerBrands;
-  const isLoadingBrands = isCar ? loadingCarBrands : loadingTwoWheelerBrands;
 
   // Map brands for SearchableDropdown
   const brandOptions = useMemo(() => {
-    return (activeBrands || [])
+    return (brands || [])
       .filter((b) => b.is_active)
       .map((b) => ({
         value: b.name,
         label: b.name,
       }));
-  }, [activeBrands]);
+  }, [brands]);
 
   // Map models for SearchableDropdown based on selected brand
   const modelOptions = useMemo(() => {
     if (!formData.brand) return [];
-    const selectedBrand = (activeBrands || []).find((b) => b.name === formData.brand);
+    const selectedBrand = (brands || []).find((b) => b.name === formData.brand);
     if (!selectedBrand || !selectedBrand.models) return [];
     return selectedBrand.models.map((m) => ({
       value: m.name,
       label: m.name,
     }));
-  }, [activeBrands, formData.brand]);
+  }, [brands, formData.brand]);
 
   const handleBrandSelection = (val: string) => {
     onBrandChange(val);
@@ -119,7 +107,7 @@ export function VehicleModal({
             name="vehicle_type"
             value={formData.vehicle_type || ''}
             onChange={onInputChange}
-            options={ALL_VEHICLE_TYPES}
+            options={TWO_WHEELER_TYPES}
             error={errors.vehicle_type}
             fullWidth
           />
