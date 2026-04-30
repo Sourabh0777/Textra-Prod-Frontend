@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import SearchableDropdown from '@/components/ui/searchable-dropdown';
@@ -16,9 +16,19 @@ interface AssignQRCodeModalProps {
 
 export function AssignQRCodeModal({ isOpen, onClose, qrCode, onAssign, isAssigning }: AssignQRCodeModalProps) {
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
-  const { data: businesses, isLoading } = useFetchBusinessesWithoutQRQuery(undefined, {
+  const {
+    data: businesses,
+    isLoading,
+    refetch,
+  } = useFetchBusinessesWithoutQRQuery(undefined, {
     skip: !isOpen,
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      refetch();
+    }
+  }, [isOpen, refetch]);
 
   const handleSave = async () => {
     if (selectedBusinessId) {
