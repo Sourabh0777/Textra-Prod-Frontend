@@ -76,10 +76,7 @@ export function useQRCodesPage() {
 
   const handleInstantCreate = async () => {
     try {
-      const createData = {
-        prefilled_message: 'This is a dummy QR code',
-      };
-      await toastPromise(createQRCode(createData).unwrap(), {
+      await toastPromise(createQRCode().unwrap(), {
         loading: 'Creating QR Code...',
         success: 'QR Code created successfully',
         error: (err) => err?.data?.error?.reason || err?.data?.message || 'Failed to create QR Code',

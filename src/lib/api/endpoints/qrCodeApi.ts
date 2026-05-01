@@ -11,11 +11,10 @@ export const qrCodeApi = baseApi.injectEndpoints({
       query: (id) => `/core/qrcodes/${id}`,
       providesTags: (result, error, id) => [{ type: 'QRCode', id }],
     }),
-    createQRCode: builder.mutation<IQRCode, Partial<IQRCode>>({
-      query: (body) => ({
+    createQRCode: builder.mutation<IQRCode, void>({
+      query: () => ({
         url: '/core/qrcodes',
         method: 'POST',
-        body,
       }),
       invalidatesTags: ['QRCode'],
     }),
