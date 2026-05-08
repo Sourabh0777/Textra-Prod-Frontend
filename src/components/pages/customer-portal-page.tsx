@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useCustomerPortal } from '@/lib/hooks/use-customer-portal';
 import {
   useUpdatePortalProfileMutation,
-  useAddPortalVehicleMutation,
   useUpdatePortalVehicleMutation,
   useDeletePortalVehicleMutation,
 } from '@/lib/api/endpoints/portalCustomerApi';
@@ -28,7 +27,6 @@ export default function CustomerPortalPage() {
 
   // Mutations
   const [updatePortalProfile, { isLoading: isUpdatingProfile }] = useUpdatePortalProfileMutation();
-  const [addVehicle, { isLoading: isAddingVehicle }] = useAddPortalVehicleMutation();
   const [updateVehicle, { isLoading: isUpdatingVehicle }] = useUpdatePortalVehicleMutation();
   const [deleteVehicle, { isLoading: isDeletingVehicle }] = useDeletePortalVehicleMutation();
 
@@ -53,9 +51,6 @@ export default function CustomerPortalPage() {
       if (editingVehicle?._id) {
         await updateVehicle({ uid, vehicleId: editingVehicle._id, data }).unwrap();
         toast.success('Vehicle updated');
-      } else {
-        await addVehicle({ uid, data }).unwrap();
-        toast.success('Vehicle added');
       }
       setIsVehicleModalOpen(false);
       refetch();
@@ -91,7 +86,9 @@ export default function CustomerPortalPage() {
             <AlertCircle className="w-7 h-7 text-red-500" />
           </div>
           <h2 className="text-lg font-bold text-neutral-800">Portal Unavailable</h2>
-          <p className="text-xs text-neutral-400 leading-relaxed">This link may have expired or is invalid. Please contact your service center.</p>
+          <p className="text-xs text-neutral-400 leading-relaxed">
+            This link may have expired or is invalid. Please contact your service center.
+          </p>
         </div>
       </div>
     );
@@ -113,10 +110,6 @@ export default function CustomerPortalPage() {
           <div className="lg:col-span-8 space-y-12">
             <PortalGarage
               vehicles={vehicles}
-              onAdd={() => {
-                setEditingVehicle(null);
-                setIsVehicleModalOpen(true);
-              }}
               onEdit={(v) => {
                 setEditingVehicle(v);
                 setIsVehicleModalOpen(true);
@@ -148,7 +141,7 @@ export default function CustomerPortalPage() {
         onClose={() => setIsVehicleModalOpen(false)}
         onSave={onSaveVehicle}
         initialData={editingVehicle}
-        isLoading={isAddingVehicle || isUpdatingVehicle}
+        isLoading={isUpdatingVehicle}
       />
     </div>
   );

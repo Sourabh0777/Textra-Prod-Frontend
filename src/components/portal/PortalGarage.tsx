@@ -7,12 +7,11 @@ import { Plus, Car, Edit2, Trash2, Fuel, Gauge } from 'lucide-react';
 
 interface PortalGarageProps {
   vehicles: any[];
-  onAdd: () => void;
   onEdit: (vehicle: any) => void;
   onDelete: (id: string) => void;
 }
 
-export const PortalGarage = ({ vehicles, onAdd, onEdit, onDelete }: PortalGarageProps) => {
+export const PortalGarage = ({ vehicles, onEdit, onDelete }: PortalGarageProps) => {
   return (
     <section className="space-y-5">
       <div className="flex items-center justify-between">
@@ -20,13 +19,6 @@ export const PortalGarage = ({ vehicles, onAdd, onEdit, onDelete }: PortalGarage
           <h2 className="text-lg font-bold text-neutral-800">My Garage</h2>
           <p className="text-xs text-neutral-400">Your registered vehicles</p>
         </div>
-        <Button
-          onClick={onAdd}
-          size="sm"
-          className="bg-[#15368A] hover:bg-[#1a3f9e] text-white rounded-lg px-4 h-9 text-xs font-bold shadow-sm shadow-[#15368A]/15 transition-all hover:shadow-md"
-        >
-          <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Vehicle
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -90,7 +82,6 @@ export const PortalGarage = ({ vehicles, onAdd, onEdit, onDelete }: PortalGarage
           <div className="col-span-full py-12 text-center border-2 border-dashed border-[#15368A]/15 rounded-xl bg-[#15368A]/[0.02]">
             <Car className="w-8 h-8 text-[#15368A]/30 mx-auto mb-3" />
             <p className="text-sm font-semibold text-neutral-400">No vehicles registered yet</p>
-            <p className="text-xs text-neutral-300 mt-1">Tap "Add Vehicle" to register your first one.</p>
           </div>
         )}
       </div>

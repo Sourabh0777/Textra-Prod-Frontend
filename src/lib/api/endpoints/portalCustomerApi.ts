@@ -20,14 +20,7 @@ export const portalCustomerApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, { uid }) => [{ type: 'Customer', id: uid }],
     }),
-    addPortalVehicle: builder.mutation<any, { uid: string; data: any }>({
-      query: ({ uid, data }) => ({
-        url: `/portal/${uid}/vehicles`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Vehicle', 'Customer'],
-    }),
+
     updatePortalVehicle: builder.mutation<any, { uid: string; vehicleId: string; data: any }>({
       query: ({ uid, vehicleId, data }) => ({
         url: `/portal/${uid}/vehicles/${vehicleId}`,
@@ -49,7 +42,6 @@ export const portalCustomerApi = baseApi.injectEndpoints({
 export const {
   useFetchPortalDataQuery,
   useUpdatePortalProfileMutation,
-  useAddPortalVehicleMutation,
   useUpdatePortalVehicleMutation,
   useDeletePortalVehicleMutation,
 } = portalCustomerApi;
