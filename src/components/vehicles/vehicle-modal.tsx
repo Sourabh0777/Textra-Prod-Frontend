@@ -311,8 +311,8 @@ export function VehicleModal({
               <div className="pt-2 border-t border-neutral-100">
                 {renderServiceDateField()}
                 <p className="mt-1 text-xs text-blue-600 font-medium bg-blue-50 p-2 rounded">
-                  💡 If the bike is getting service today, please select the date here so that a service record and reminder
-                  will be automatically created.
+                  💡 If the bike is getting service today, please select the date here so that a service record and
+                  reminder will be automatically created.
                 </p>
               </div>
             </div>
@@ -323,7 +323,9 @@ export function VehicleModal({
             <>
               {/* Scenario Selector */}
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2 ml-0.5">What do you want to update?</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2 ml-0.5">
+                  What do you want to update?
+                </p>
                 <div className="grid grid-cols-2 gap-2">
                   {scenarios.map((s) => (
                     <button
@@ -340,7 +342,9 @@ export function VehicleModal({
                         {s.icon}
                       </span>
                       <div>
-                        <p className={`text-xs font-bold ${activeScenario === s.key ? 'text-blue-600' : 'text-neutral-600'}`}>
+                        <p
+                          className={`text-xs font-bold ${activeScenario === s.key ? 'text-blue-600' : 'text-neutral-600'}`}
+                        >
                           {s.label}
                         </p>
                         <p className="text-[10px] text-neutral-400 leading-tight mt-0.5">{s.hint}</p>
@@ -353,11 +357,7 @@ export function VehicleModal({
               <div className="border-t border-neutral-100" />
 
               {/* Scenario: Vehicle Info */}
-              {activeScenario === 'details' && (
-                <div className="space-y-4">
-                  {renderVehicleInfoFields()}
-                </div>
-              )}
+              {activeScenario === 'details' && <div className="space-y-4">{renderVehicleInfoFields()}</div>}
 
               {/* Scenario: Daily Travel */}
               {activeScenario === 'daily_travel' && (
@@ -388,14 +388,17 @@ export function VehicleModal({
                 <div className="space-y-4">
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                     <p className="text-xs text-amber-700 font-medium">
-                      ⚠️ Use this if the vehicle was serviced before the scheduled date (breakdown, chain issue, engine damage, etc.).
-                      This will close the current service cycle and create a new reminder from the service date.
+                      ⚠️ Use this if the vehicle was serviced before the scheduled date (breakdown, chain issue, engine
+                      damage, etc.). This will close the current service cycle and create a new reminder from the
+                      service date.
                     </p>
                   </div>
                   {renderServiceDateField()}
 
                   <div className="border-t border-dashed border-neutral-200 pt-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">Optionally update these too</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-3">
+                      Optionally update these too
+                    </p>
                     <div className="space-y-3">
                       {renderDailyTravelField()}
                       {renderServiceDueKmField()}
