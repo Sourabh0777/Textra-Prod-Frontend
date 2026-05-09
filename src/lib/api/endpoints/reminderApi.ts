@@ -26,14 +26,6 @@ export const reminderApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Reminder'],
     }),
-    updateReminder: builder.mutation<any, { id: string; data: any }>({
-      query: ({ id, data }) => ({
-        url: `/vehicle-service/reminders/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Reminder', id }, 'Reminder'],
-    }),
     deleteReminder: builder.mutation<any, string>({
       query: (id) => ({
         url: `/vehicle-service/reminders/${id}`,
@@ -56,7 +48,6 @@ export const {
   useFetchRemindersQuery,
   useFetchReminderQuery,
   useCreateReminderMutation,
-  useUpdateReminderMutation,
   useDeleteReminderMutation,
   useMarkVisitedMutation,
   useTriggerReminderWorkerMutation,

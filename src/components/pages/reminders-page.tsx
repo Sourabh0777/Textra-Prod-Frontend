@@ -23,7 +23,6 @@ export default function RemindersPage() {
     fetchError,
     isModalOpen,
     setIsModalOpen,
-    isEditMode,
     formData,
     errors,
     isCheckInOpen,
@@ -95,7 +94,6 @@ export default function RemindersPage() {
           reminders={filteredReminders}
           onResend={handleResend}
           onCheckIn={handleCheckInClick}
-          onEdit={handleOpenModal}
           onDelete={handleDelete}
           isCheckInLoading={isMarkingVisited}
         />
@@ -104,7 +102,6 @@ export default function RemindersPage() {
       <ReminderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        isEditMode={isEditMode}
         formData={formData}
         errors={errors}
         services={services}

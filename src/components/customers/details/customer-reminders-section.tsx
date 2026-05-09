@@ -6,7 +6,6 @@ import { ReminderModal } from '@/components/reminders/reminder-modal';
 import { Button } from '@/components/ui/button';
 import {
   useCreateReminderMutation,
-  useUpdateReminderMutation,
   useDeleteReminderMutation,
   useMarkVisitedMutation,
   useTriggerReminderWorkerMutation,
@@ -22,31 +21,20 @@ interface CustomerRemindersSectionProps {
 
 export function CustomerRemindersSection({ reminders, vehicles, customer }: CustomerRemindersSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IReminder>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [createReminder, { isLoading: isCreating }] = useCreateReminderMutation();
-  const [updateReminder, { isLoading: isUpdating }] = useUpdateReminderMutation();
   const [deleteReminder] = useDeleteReminderMutation();
   const [markVisited, { isLoading: isCheckingIn }] = useMarkVisitedMutation();
   const [triggerReminder] = useTriggerReminderWorkerMutation();
 
-  const isSubmitting = isCreating || isUpdating;
+  const isSubmitting = isCreating;
 
-  const handleOpenModal = (reminder?: IReminder) => {
-    if (reminder) {
-      setFormData(reminder);
-      setEditingId(reminder._id || null);
-      setIsEditMode(true);
-    } else {
-      setFormData({
-        customer_id: customer._id,
-      });
-      setEditingId(null);
-      setIsEditMode(false);
-    }
+  const handleOpenModal = () => {
+    setFormData({
+      customer_id: customer._id,
+    });
     setErrors({});
     setIsModalOpen(true);
   };
@@ -66,19 +54,11 @@ export function CustomerRemindersSection({ reminders, vehicles, customer }: Cust
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (isEditMode && editingId) {
-        await toastPromise(updateReminder({ id: editingId, data: formData }).unwrap(), {
-          loading: 'Updating reminder...',
-          success: 'Reminder updated successfully',
-          error: (err) => err?.data?.message || 'Failed to update reminder',
-        });
-      } else {
-        await toastPromise(createReminder(formData).unwrap(), {
-          loading: 'Adding reminder...',
-          success: 'Reminder added successfully',
-          error: (err) => err?.data?.message || 'Failed to add reminder',
-        });
-      }
+      await toastPromise(createReminder(formData).unwrap(), {
+        loading: 'Adding reminder...',
+        success: 'Reminder added successfully',
+        error: (err) => err?.data?.message || 'Failed to add reminder',
+      });
       setIsModalOpen(false);
       setFormData({});
     } catch (err: any) {
@@ -143,7 +123,6 @@ export function CustomerRemindersSection({ reminders, vehicles, customer }: Cust
             reminders={reminders}
             onResend={handleResend}
             onCheckIn={handleCheckIn}
-            onEdit={handleOpenModal}
             onDelete={handleDelete}
             isCheckInLoading={isCheckingIn}
           />
@@ -153,7 +132,6 @@ export function CustomerRemindersSection({ reminders, vehicles, customer }: Cust
       <ReminderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        isEditMode={isEditMode}
         formData={formData}
         errors={errors}
         services={[]} // This might need services from the page if we want to link them

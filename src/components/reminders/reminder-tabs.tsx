@@ -7,7 +7,6 @@ interface ReminderTabsProps {
   reminders: IReminder[];
   onResend: (reminder: IReminder) => void;
   onCheckIn: (reminder: IReminder) => void;
-  onEdit: (reminder: IReminder) => void;
   onDelete: (id: string) => void;
   isCheckInLoading?: boolean;
 }
@@ -16,7 +15,6 @@ export function ReminderTabs({
   reminders,
   onResend,
   onCheckIn,
-  onEdit,
   onDelete,
   isCheckInLoading,
 }: ReminderTabsProps) {
@@ -72,7 +70,6 @@ export function ReminderTabs({
             reminders={filteredReminders}
             onResend={onResend}
             onCheckIn={onCheckIn}
-            onEdit={onEdit}
             onDelete={onDelete}
             isCheckInLoading={isCheckInLoading}
           />

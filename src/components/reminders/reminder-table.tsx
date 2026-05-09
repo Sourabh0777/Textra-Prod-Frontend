@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Bell, Calendar, Smartphone, User, Trash2, Edit2, Send, CheckCircle2, Filter } from 'lucide-react';
+import { Bell, Calendar, Smartphone, User, Trash2, Send, CheckCircle2, Filter } from 'lucide-react';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
 import Link from 'next/link';
 import { IReminder, ReminderStatus } from '@/types';
@@ -10,7 +10,6 @@ interface ReminderTableProps {
   reminders: IReminder[];
   onResend: (reminder: IReminder) => void;
   onCheckIn: (reminder: IReminder) => void;
-  onEdit: (reminder: IReminder) => void;
   onDelete: (id: string) => void;
   isCheckInLoading?: boolean;
 }
@@ -19,7 +18,6 @@ export function ReminderTable({
   reminders,
   onResend,
   onCheckIn,
-  onEdit,
   onDelete,
   isCheckInLoading,
 }: ReminderTableProps) {
@@ -169,9 +167,6 @@ export function ReminderTable({
                             </Button>
                           </>
                         )}
-                        <Button variant="ghost" size="sm" onClick={() => onEdit(reminder)} title="Edit">
-                          Edit
-                        </Button>
                         <Button variant="danger" size="sm" onClick={() => onDelete(reminder._id || '')} title="Delete">
                           Del
                         </Button>
@@ -282,14 +277,6 @@ export function ReminderTable({
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      className="flex-1 border border-neutral-200 py-2 h-auto text-xs"
-                      onClick={() => onEdit(reminder)}
-                    >
-                      <Edit2 className="w-3.5 h-3.5 mr-1.5" />
-                      Edit
-                    </Button>
                     <Button
                       variant="danger"
                       className="flex-1 py-2 h-auto text-xs"

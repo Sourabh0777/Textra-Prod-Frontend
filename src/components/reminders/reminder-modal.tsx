@@ -7,7 +7,6 @@ import { IReminder, IService } from '@/types';
 interface ReminderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  isEditMode: boolean;
   formData: Partial<IReminder>;
   errors: Record<string, string>;
   services: IService[];
@@ -19,7 +18,6 @@ interface ReminderModalProps {
 export function ReminderModal({
   isOpen,
   onClose,
-  isEditMode,
   formData,
   errors,
   services,
@@ -31,9 +29,9 @@ export function ReminderModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditMode ? 'Edit Reminder' : 'Add New Reminder'}
+      title="Add New Reminder"
       onConfirm={onSubmit}
-      confirmText={isEditMode ? 'Update Reminder' : 'Add Reminder'}
+      confirmText="Add Reminder"
       loading={loading}
     >
       <div className="p-4">

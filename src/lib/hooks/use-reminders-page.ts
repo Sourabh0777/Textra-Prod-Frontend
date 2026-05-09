@@ -4,7 +4,6 @@ import { useUser } from '@clerk/nextjs';
 import {
   useFetchRemindersQuery,
   useCreateReminderMutation,
-  useUpdateReminderMutation,
   useDeleteReminderMutation,
   useMarkVisitedMutation,
   useTriggerReminderWorkerMutation,
@@ -16,10 +15,8 @@ import { toastPromise } from '@/lib/toast-utils';
 export function useRemindersPage() {
   const { user: clerkUser, isLoaded } = useUser();
 
-  // State for Add/Edit Modal
+  // State for Add Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IReminder>>({ retry_count: 0, status: ReminderStatus.PENDING });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +39,6 @@ export function useRemindersPage() {
   });
 
   const [createReminder, { isLoading: isCreating }] = useCreateReminderMutation();
-  const [updateReminder, { isLoading: isUpdating }] = useUpdateReminderMutation();
   const [deleteReminder] = useDeleteReminderMutation();
   const [markVisited, { isLoading: isMarkingVisited }] = useMarkVisitedMutation();
 
@@ -50,18 +46,10 @@ export function useRemindersPage() {
   const services = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse as any)?.data || [];
 
   const loading = !isLoaded || loadingReminders || loadingServices;
-  const isSubmitting = isCreating || isUpdating;
+  const isSubmitting = isCreating;
 
-  const handleOpenModal = (reminder?: IReminder) => {
-    if (reminder) {
-      setFormData(reminder);
-      setEditingId(reminder._id || null);
-      setIsEditMode(true);
-    } else {
-      setFormData({ retry_count: 0, status: ReminderStatus.PENDING });
-      setEditingId(null);
-      setIsEditMode(false);
-    }
+  const handleOpenModal = () => {
+    setFormData({ retry_count: 0, status: ReminderStatus.PENDING });
     setErrors({});
     setIsModalOpen(true);
   };
@@ -99,19 +87,11 @@ export function useRemindersPage() {
 
     try {
       setErrors({});
-      if (isEditMode && editingId) {
-        await toastPromise(updateReminder({ id: editingId, data: formData }).unwrap(), {
-          loading: 'Updating reminder...',
-          success: 'Reminder updated successfully',
-          error: (err) => err?.data?.message || err?.data?.error?.reason || 'Failed to update reminder',
-        });
-      } else {
-        await toastPromise(createReminder(formData).unwrap(), {
-          loading: 'Adding reminder...',
-          success: 'Reminder added successfully',
-          error: (err) => err?.data?.message || err?.data?.error?.reason || 'Failed to add reminder',
-        });
-      }
+      await toastPromise(createReminder(formData).unwrap(), {
+        loading: 'Adding reminder...',
+        success: 'Reminder added successfully',
+        error: (err) => err?.data?.message || err?.data?.error?.reason || 'Failed to add reminder',
+      });
       setIsModalOpen(false);
       setFormData({ retry_count: 0, status: ReminderStatus.PENDING });
     } catch (err: any) {
@@ -204,7 +184,6 @@ export function useRemindersPage() {
     fetchError,
     isModalOpen,
     setIsModalOpen,
-    isEditMode,
     formData,
     errors,
     isCheckInOpen,

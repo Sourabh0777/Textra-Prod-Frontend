@@ -5,7 +5,6 @@ interface ReminderActionsProps {
   reminder: IReminder;
   onResend: (reminder: IReminder) => void;
   onCheckIn: (reminder: IReminder) => void;
-  onEdit: (reminder: IReminder) => void;
   onDelete: (id: string) => void;
   isCheckInDisabled?: boolean;
 }
@@ -14,7 +13,6 @@ export function ReminderActions({
   reminder,
   onResend,
   onCheckIn,
-  onEdit,
   onDelete,
   isCheckInDisabled,
 }: ReminderActionsProps) {
@@ -46,9 +44,6 @@ export function ReminderActions({
           <div className="border-l border-neutral-200 h-6 mx-1 self-center" />
         </>
       )}
-      <Button variant="ghost" size="sm" onClick={() => onEdit(reminder)} title="Edit">
-        Edit
-      </Button>
       <Button variant="danger" size="sm" onClick={() => onDelete(reminder._id || '')} title="Delete">
         Del
       </Button>
