@@ -16,6 +16,7 @@ interface SearchableDropdownProps {
   error?: string;
   fullWidth?: boolean;
   searchKey?: string;
+  disabled?: boolean;
 }
 
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
@@ -30,6 +31,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   error,
   fullWidth = false,
   searchKey,
+  disabled = false,
 }) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -81,9 +83,12 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
             text-neutral-900 placeholder-neutral-400
             ${error ? 'border-red-500 focus:ring-red-500' : ''}
             ${isOpen ? 'ring-2 ring-blue-500 border-transparent' : ''}
+            ${disabled ? 'bg-neutral-100 cursor-not-allowed opacity-60' : ''}
           `}
-          onFocus={() => setIsOpen(true)}
+          disabled={disabled}
+          onFocus={() => { if (!disabled) setIsOpen(true); }}
           onChange={(e) => {
+            if (disabled) return;
             setQuery(e.target.value);
             if (!isOpen) setIsOpen(true);
           }}
