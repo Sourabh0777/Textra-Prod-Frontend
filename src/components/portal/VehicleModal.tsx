@@ -1,96 +1,195 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
-import { Label } from '../ui/label';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-
-const vehicleSchema = z.object({
-  vehicle_type: z.enum(['BIKE', 'SCOOTER', 'CAR']),
-  brand: z.string().min(1, 'Brand is required'),
-  vehicle_model: z.string().min(1, 'Model is required'),
-  fuel_type: z.string().min(1, 'Fuel type is required'),
-  registration_number: z.string().min(5, 'Invalid plate number'),
-  year: z.number().min(1900).max(new Date().getFullYear()),
-  daily_travel: z.number().min(1).max(1000),
-});
-
-type VehicleFormValues = z.infer<typeof vehicleSchema>;
+import { Select } from '@/components/ui/select';
+import SearchableDropdown from '@/components/ui/searchable-dropdown';
+import { TWO_WHEELER_TYPES } from '@/constants/vehicle-types';
+import { useFetchTwoWheelerBrandsQuery } from '@/lib/api/endpoints/twoWheelerBrandsApi';
 
 interface VehicleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: VehicleFormValues) => void;
+  onSave: (data: any) => void;
   initialData?: any;
   isLoading?: boolean;
 }
 
 export const VehicleModal = ({ isOpen, onClose, onSave, initialData, isLoading }: VehicleModalProps) => {
-  const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm<VehicleFormValues>({
-    resolver: zodResolver(vehicleSchema),
-    defaultValues: initialData || { vehicle_type: 'BIKE', year: new Date().getFullYear(), daily_travel: 30 }
+  const [formData, setFormData] = useState<any>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+    setErrors({});
+  }, [initialData, isOpen]);
+
+  const { data: brands = [], isLoading: isLoadingBrands } = useFetchTwoWheelerBrandsQuery(undefined, {
+    skip: !isOpen,
   });
 
-  React.useEffect(() => {
-    if (initialData) reset(initialData);
-  }, [initialData, reset]);
+  const brandOptions = useMemo(() => {
+    return (brands || [])
+      .filter((b: any) => b.is_active)
+      .map((b: any) => ({
+        value: b.name,
+        label: b.name,
+      }));
+  }, [brands]);
 
-  const vehicleType = watch('vehicle_type');
+  const modelOptions = useMemo(() => {
+    if (!formData.brand) return [];
+    const selectedBrand = (brands || []).find((b: any) => b.name === formData.brand);
+    if (!selectedBrand || !selectedBrand.models) return [];
+    return selectedBrand.models.map((m: any) => ({
+      value: m.name,
+      label: m.name,
+    }));
+  }, [brands, formData.brand]);
+
+  const handleBrandSelection = (val: string) => {
+    setFormData({ ...formData, brand: val, vehicle_model: '' });
+  };
+
+  const handleModelSelection = (val: string) => {
+    setFormData({ ...formData, vehicle_model: val });
+  };
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    
+    const newErrors: Record<string, string> = {};
+    if (!formData.vehicle_type) newErrors.vehicle_type = 'Required';
+    if (!formData.brand) newErrors.brand = 'Required';
+    if (!formData.vehicle_model) newErrors.vehicle_model = 'Required';
+    if (!formData.registration_number || formData.registration_number.length < 5) newErrors.registration_number = 'Required/Invalid';
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    onSave(formData);
+  };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? 'Update Vehicle' : 'Add New Vehicle'}>
-      <form onSubmit={handleSubmit(onSave)} className="space-y-6 max-h-[70vh] overflow-y-auto p-1 pr-2">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2 space-y-2">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">Type</Label>
-            <div className="grid grid-cols-3 gap-2">
-              {['BIKE', 'SCOOTER', 'CAR'].map(type => (
-                <button 
-                  key={type} 
-                  type="button" 
-                  onClick={() => setValue('vehicle_type', type as any)}
-                  className={`h-10 rounded-lg text-xs font-bold transition-all border ${vehicleType === type ? 'border-[#15368A] bg-[#15368A]/5 text-[#15368A]' : 'border-neutral-100 text-neutral-400'}`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">Brand</Label>
-            <Input {...register('brand')} className="h-10 text-sm" />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">Model</Label>
-            <Input {...register('vehicle_model')} className="h-10 text-sm" />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">Plate No</Label>
-            <Input {...register('registration_number')} className="h-10 text-sm uppercase" />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">Year</Label>
-            <Input type="number" {...register('year', { valueAsNumber: true })} className="h-10 text-sm" />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">Fuel</Label>
-            <Input {...register('fuel_type')} className="h-10 text-sm" />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[10px] font-bold uppercase text-neutral-400 tracking-widest ml-1">KM/Day</Label>
-            <Input type="number" {...register('daily_travel', { valueAsNumber: true })} className="h-10 text-sm" />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Update Vehicle"
+      onConfirm={handleSubmit}
+      confirmText="Update Vehicle"
+      loading={isLoading}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto p-4">
+        <Select
+          label="Vehicle Type"
+          name="vehicle_type"
+          value={formData.vehicle_type || ''}
+          onChange={onInputChange}
+          options={TWO_WHEELER_TYPES}
+          error={errors.vehicle_type}
+          fullWidth
+        />
+        
+        {isLoadingBrands ? (
+          <div className="text-xs text-neutral-500 animate-pulse py-2">Loading brands...</div>
+        ) : (
+          <SearchableDropdown
+            fieldLabel="Brand"
+            placeholder="Select or search brand"
+            selectedVal={formData.brand || ''}
+            handleChange={(val) => handleBrandSelection(val as string)}
+            options={brandOptions}
+            label="label"
+            id="value"
+            error={errors.brand}
+            fullWidth
+          />
+        )}
+
+        <SearchableDropdown
+          fieldLabel="Model"
+          placeholder={formData.brand ? 'Select or search model' : 'Please select a brand first'}
+          selectedVal={formData.vehicle_model || ''}
+          handleChange={(val) => handleModelSelection(val as string)}
+          options={modelOptions}
+          label="label"
+          id="value"
+          error={errors.vehicle_model}
+          fullWidth
+        />
+
+        <Input
+          label="Registration Number / Number Plate"
+          name="registration_number"
+          placeholder="e.g. MH12AB1234"
+          className="uppercase"
+          value={formData.registration_number || ''}
+          onChange={onInputChange}
+          error={errors.registration_number}
+          fullWidth
+        />
+
+        <div className="space-y-2">
+          <Input
+            label="Model Year"
+            name="year"
+            type="number"
+            placeholder="e.g. 2023"
+            value={formData.year || ''}
+            onChange={onInputChange}
+            error={errors.year}
+            fullWidth
+          />
+          <div className="flex gap-2">
+            {[2018, 2020, 2025].map((year) => (
+              <button
+                key={year}
+                type="button"
+                onClick={() => setFormData({ ...formData, year })}
+                className="px-3 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-blue-100 hover:text-blue-700 transition-colors border border-transparent hover:border-blue-200"
+              >
+                {year}
+              </button>
+            ))}
           </div>
         </div>
-        <div className="flex gap-3 pt-4 sticky bottom-0 bg-white">
-          <Button type="button" variant="secondary" className="flex-1 h-12 rounded-xl text-sm" onClick={onClose}>Cancel</Button>
-          <Button type="submit" className="flex-1 h-12 bg-[#15368A] text-white rounded-xl font-bold text-sm" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Data'}
-          </Button>
+
+        <div className="space-y-2">
+          <Input
+            label="Daily Travel (KM)"
+            name="daily_travel"
+            type="number"
+            placeholder="e.g. 30"
+            value={formData.daily_travel || ''}
+            onChange={(e) => setFormData({ ...formData, daily_travel: Number(e.target.value) })}
+            error={errors.daily_travel}
+            fullWidth
+          />
+          <div className="flex gap-2 flex-wrap">
+            {[10, 20, 30, 40, 50].map((km) => (
+              <button
+                key={km}
+                type="button"
+                onClick={() => setFormData({ ...formData, daily_travel: km })}
+                className="px-3 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-blue-100 hover:text-blue-700 transition-colors border border-transparent hover:border-blue-200"
+              >
+                {km} KM
+              </button>
+            ))}
+          </div>
         </div>
+
+
       </form>
     </Modal>
   );

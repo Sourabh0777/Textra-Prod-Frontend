@@ -1,8 +1,8 @@
 export const TWO_WHEELER_TYPES = [
-  { value: 'Scooty', label: 'Scooty' },
-  { value: 'Scooter', label: 'Scooter' },
-  { value: 'Bike', label: 'Bike' },
-  { value: 'Sports Bike', label: 'Sports Bike' },
+  { value: 'SCOOTY', label: 'Scooty' },
+  { value: 'SCOOTER', label: 'Scooter' },
+  { value: 'BIKE', label: 'Bike' },
+  { value: 'SPORTS BIKE', label: 'Sports Bike' },
 ];
 
 export const CAR_VEHICLE_TYPES = [
