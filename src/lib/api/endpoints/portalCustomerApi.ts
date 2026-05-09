@@ -14,7 +14,7 @@ export const portalCustomerApi = baseApi.injectEndpoints({
     }),
     updatePortalProfile: builder.mutation<any, { uid: string; data: any }>({
       query: ({ uid, data }) => ({
-        url: `/portal/${uid}`,
+        url: `/vehicle-service/portal/${uid}`,
         method: 'PUT',
         body: data,
       }),
@@ -23,7 +23,7 @@ export const portalCustomerApi = baseApi.injectEndpoints({
 
     updatePortalVehicle: builder.mutation<any, { uid: string; vehicleId: string; data: any }>({
       query: ({ uid, vehicleId, data }) => ({
-        url: `/portal/${uid}/vehicles/${vehicleId}`,
+        url: `/vehicle-service/portal/${uid}/vehicles/${vehicleId}`,
         method: 'PUT',
         body: data,
       }),
@@ -31,7 +31,7 @@ export const portalCustomerApi = baseApi.injectEndpoints({
     }),
     deletePortalVehicle: builder.mutation<any, { uid: string; vehicleId: string }>({
       query: ({ uid, vehicleId }) => ({
-        url: `/portal/${uid}/vehicles/${vehicleId}`,
+        url: `/vehicle-service/portal/${uid}/vehicles/${vehicleId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Vehicle'],
