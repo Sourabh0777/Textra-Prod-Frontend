@@ -14,10 +14,15 @@ import {
 export type SidebarKey = keyof typeof SIDEBAR_CONFIG;
 
 export const SIDEBAR_CONFIG = {
-  configurations: { label: 'Configurations', href: '/configurations', icon: Settings },
   dashboard: { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  'business-types': { label: 'Business Types', href: '/business-types', icon: Building2 },
-  businesses: { label: 'Businesses', href: '/businesses', icon: Building2 },
+  // admin
+  configurations: { label: 'Configurations', href: '/admin/configurations', icon: Settings },
+  'business-types': { label: 'Business Types', href: '/admin/business-types', icon: Building2 },
+  businesses: { label: 'Businesses', href: '/admin/businesses', icon: Building2 },
+  'qr-codes': { label: 'QR Code', href: '/admin/qr-codes', icon: QrCode },
+  // Sub admin
+
+  //Two wheeler /car
   business: { label: 'Business', href: '/vehicle-service/business', icon: Building2 },
   customers: { label: 'Customers', href: '/vehicle-service/customers', icon: Users },
   vehicles: { label: 'Vehicles', href: '/vehicle-service/vehicles', icon: Bike },
@@ -26,5 +31,4 @@ export const SIDEBAR_CONFIG = {
   'whatsapp-logs': { label: 'WhatsApp Logs', href: '/vehicle-service/whatsapp-logs', icon: MessageSquare },
   templates: { label: 'Templates', href: '/vehicle-service/templates', icon: MessageSquareText },
   cars: { label: 'Cars', href: '/vehicle-service/cars', icon: Car },
-  'qr-codes': { label: 'QR Code', href: '/qr-codes', icon: QrCode },
 } as const;
