@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: 'Textra',
-  description: 'Whatsapp remminder Solution',
+  description: 'WhatsApp Reminder Solution',
   url: process.env.NEXT_PUBLIC_APP_URL || 'https://textra.in',
   ogImage: 'https://textra.in/og.jpg',
   mainNav: [

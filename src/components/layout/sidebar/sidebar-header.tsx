@@ -11,7 +11,7 @@ export function SidebarHeader() {
         </div>
         <div>
           <h1 className="text-lg font-bold tracking-tight text-[#FFFFFF]">Textra</h1>
-          <p className="text-[#D9D9D9] text-[8px] uppercase tracking-[0.1em] font-bold">Whatsapp remminder Solution</p>
+          <p className="text-[#D9D9D9] text-[8px] uppercase tracking-[0.1em] font-bold">WhatsApp Reminder Solution</p>
         </div>
       </div>
     </div>

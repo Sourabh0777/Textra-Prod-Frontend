@@ -5,9 +5,9 @@ import { HowItWorksSection } from '@/components/home/how-it-works-section';
 import { FutureVisionSection } from '@/components/home/future-vision-section';
 
 export const metadata = constructMetadata({
-  title: 'Textra | Whatsapp remminder Solution',
+  title: 'Textra | WhatsApp Reminder Solution',
   description:
-    'Whatsapp remminder Solution for businesses. Streamline workflow, enhance customer trust, and scale with precision.',
+    'WhatsApp Reminder Solution for businesses. Streamline workflow, enhance customer trust, and scale with precision.',
 });
 
 export default function HomePage() {
