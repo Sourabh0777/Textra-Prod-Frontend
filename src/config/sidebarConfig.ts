@@ -21,8 +21,8 @@ export const SIDEBAR_CONFIG = {
   businesses: { label: 'Businesses', href: '/admin/businesses', icon: Building2 },
   'qr-codes': { label: 'QR Code', href: '/admin/qr-codes', icon: QrCode },
   // Sub admin
-
-  //Two wheeler /car
+  'sub-admin-customers': { label: 'Customers (SA)', href: '/sub-admin/customers', icon: Users },
+  // Vehicle Service
   business: { label: 'Business', href: '/vehicle-service/business', icon: Building2 },
   customers: { label: 'Customers', href: '/vehicle-service/customers', icon: Users },
   vehicles: { label: 'Vehicles', href: '/vehicle-service/vehicles', icon: Bike },

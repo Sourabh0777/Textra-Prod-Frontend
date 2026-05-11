@@ -102,7 +102,6 @@ export function CustomerModal({
               { value: 'false', label: 'Inactive' },
             ]}
             fullWidth
-            disabled
           />
         </form>
       </div>
