@@ -24,6 +24,7 @@ export function useSubAdminCustomersPage() {
   const [formData, setFormData] = useState<Partial<ICustomer>>({ is_active: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterStep, setFilterStep] = useState<string>('');
 
   // RTK Query hooks (using sub-admin endpoints)
   const {
@@ -49,11 +50,14 @@ export function useSubAdminCustomersPage() {
 
   const filteredCustomers = customers.filter((customer) => {
     const searchLower = searchQuery.toLowerCase();
-    return (
+    const matchesSearch =
       (customer.name?.toLowerCase() || '').includes(searchLower) ||
       (customer.phone_number?.toLowerCase() || '').includes(searchLower) ||
-      (customer.email?.toLowerCase() || '').includes(searchLower)
-    );
+      (customer.email?.toLowerCase() || '').includes(searchLower);
+
+    const matchesStep = filterStep === '' || customer.onboarding?.current_step === filterStep;
+
+    return matchesSearch && matchesStep;
   });
 
   const businesses = Array.isArray(businessesResponse) ? businessesResponse : (businessesResponse as any)?.data || [];
@@ -174,6 +178,8 @@ export function useSubAdminCustomersPage() {
     setErrors,
     searchQuery,
     setSearchQuery,
+    filterStep,
+    setFilterStep,
     refetchCustomers,
     handleOpenModal,
     handleChange,

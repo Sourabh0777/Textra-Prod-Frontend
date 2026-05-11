@@ -11,6 +11,8 @@ import { useSubAdminCustomersPage } from '@/lib/hooks/use-sub-admin-customers-pa
 import { SubAdminCustomerTable } from '@/components/sub-admin/sub-admin-customer-table';
 import { CustomerModal } from '@/components/customers/customer-modal';
 
+import { FlowStep } from '@/types';
+import { Select } from '@/components/ui/select';
 import { RefreshCw } from 'lucide-react';
 
 export default function SubAdminCustomersPage() {
@@ -27,6 +29,8 @@ export default function SubAdminCustomersPage() {
     errors,
     searchQuery,
     setSearchQuery,
+    filterStep,
+    setFilterStep,
     refetchCustomers,
     handleOpenModal,
     handleChange,
@@ -87,6 +91,18 @@ export default function SubAdminCustomersPage() {
                 placeholder="Search name, phone, email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                fullWidth
+              />
+            </div>
+            <div className="w-full md:w-48">
+              <Select
+                value={filterStep}
+                onChange={(e) => setFilterStep(e.target.value)}
+                placeholder="All Statuses"
+                options={Object.values(FlowStep).map((step) => ({
+                  value: step,
+                  label: step.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                }))}
                 fullWidth
               />
             </div>

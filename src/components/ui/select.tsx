@@ -5,9 +5,10 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   error?: string;
   fullWidth?: boolean;
   options: Array<{ value: string; label: string }>;
+  placeholder?: string;
 }
 
-export function Select({ label, error, fullWidth = false, options, className = '', ...props }: SelectProps) {
+export function Select({ label, error, fullWidth = false, options, className = '', placeholder = 'Select an option', ...props }: SelectProps) {
   return (
     <div className={fullWidth ? 'w-full' : ''}>
       {label && (
@@ -31,7 +32,7 @@ export function Select({ label, error, fullWidth = false, options, className = '
         `}
         {...props}
       >
-        <option value="">Select an option</option>
+        <option value="">{placeholder}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
