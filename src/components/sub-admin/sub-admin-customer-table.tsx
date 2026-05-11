@@ -14,6 +14,7 @@ interface SubAdminCustomerTableProps {
 }
 
 export function SubAdminCustomerTable({ customers, onEdit, onDelete }: SubAdminCustomerTableProps) {
+  console.log('🚀 ~ SubAdminCustomerTable ~ customers:', customers);
   const [openDraftId, setOpenDraftId] = useState<string | null>(null);
 
   const toggleDraft = (id: string, e: React.MouseEvent) => {
@@ -28,6 +29,7 @@ export function SubAdminCustomerTable({ customers, onEdit, onDelete }: SubAdminC
           <TableRow>
             <TableHeaderCell className="px-2 md:px-4 py-3">Customer Info</TableHeaderCell>
             <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Contact</TableHeaderCell>
+            <TableHeaderCell className="hidden md:table-cell px-2 md:px-4 py-3">Business</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-left">Onboarding Status</TableHeaderCell>
             <TableHeaderCell className="hidden lg:table-cell px-2 md:px-4 py-3">Joined</TableHeaderCell>
             <TableHeaderCell className="px-2 md:px-4 py-3 text-center sm:text-left">Account</TableHeaderCell>
@@ -52,6 +54,25 @@ export function SubAdminCustomerTable({ customers, onEdit, onDelete }: SubAdminC
                 <div className="flex flex-col">
                   <span className="text-sm text-neutral-700 font-medium">{customer.phone_number}</span>
                   {customer.email && <span className="text-xs text-neutral-500">{customer.email}</span>}
+                </div>
+              </TableCell>
+              <TableCell className="hidden md:table-cell px-2 md:px-4 py-3">
+                <div className="flex flex-col">
+                  {typeof customer.business_id === 'object' && customer.business_id !== null ? (
+                    <>
+                      <span
+                        className="text-sm text-neutral-700 font-medium truncate max-w-[150px]"
+                        title={(customer.business_id as any).business_name}
+                      >
+                        {(customer.business_id as any).business_name || 'N/A'}
+                      </span>
+                      <span className="text-xs text-neutral-500">
+                        {(customer.business_id as any).city || 'Unknown City'}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-sm text-neutral-500 italic">Unknown</span>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="px-2 md:px-4 py-3">
@@ -136,7 +157,7 @@ export function SubAdminCustomerTable({ customers, onEdit, onDelete }: SubAdminC
           ))}
           {customers.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-neutral-500">
+              <TableCell colSpan={7} className="text-center py-12 text-neutral-500">
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-lg font-medium text-neutral-400">No Customers Found</span>
                   <p className="text-sm">Try adjusting your search criteria</p>
