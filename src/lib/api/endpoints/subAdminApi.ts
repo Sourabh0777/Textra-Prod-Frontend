@@ -41,13 +41,13 @@ export const subAdminApi = baseApi.injectEndpoints({
     fetchSubAdminVehicles: builder.query<any, string | void>({
       query: (customerId) =>
         customerId
-          ? `/sub-admin/vehicle-service/vehicles?customer_id=${customerId}`
-          : '/sub-admin/vehicle-service/vehicles',
+          ? `/core/sub-admin/vehicles?customer_id=${customerId}`
+          : '/core/sub-admin/vehicles',
       providesTags: ['Vehicle'],
     }),
     createSubAdminVehicle: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/sub-admin/vehicle-service/vehicles',
+        url: '/core/sub-admin/vehicles',
         method: 'POST',
         body,
       }),
@@ -55,7 +55,7 @@ export const subAdminApi = baseApi.injectEndpoints({
     }),
     updateSubAdminVehicle: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
-        url: `/sub-admin/vehicle-service/vehicles/${id}`,
+        url: `/core/sub-admin/vehicles/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -63,7 +63,7 @@ export const subAdminApi = baseApi.injectEndpoints({
     }),
     deleteSubAdminVehicle: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/sub-admin/vehicle-service/vehicles/${id}`,
+        url: `/core/sub-admin/vehicles/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Vehicle'],

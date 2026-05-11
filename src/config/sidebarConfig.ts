@@ -22,6 +22,7 @@ export const SIDEBAR_CONFIG = {
   'qr-codes': { label: 'QR Code', href: '/admin/qr-codes', icon: QrCode },
   // Sub admin
   'sub-admin-customers': { label: 'Customers (SA)', href: '/sub-admin/customers', icon: Users },
+  'sub-admin-vehicles': { label: 'Vehicles (SA)', href: '/sub-admin/vehicles', icon: Bike },
   // Vehicle Service
   business: { label: 'Business', href: '/vehicle-service/business', icon: Building2 },
   customers: { label: 'Customers', href: '/vehicle-service/customers', icon: Users },
@@ -32,3 +33,4 @@ export const SIDEBAR_CONFIG = {
   templates: { label: 'Templates', href: '/vehicle-service/templates', icon: MessageSquareText },
   cars: { label: 'Cars', href: '/vehicle-service/cars', icon: Car },
 } as const;
+
