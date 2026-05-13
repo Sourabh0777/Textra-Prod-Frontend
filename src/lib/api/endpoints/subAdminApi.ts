@@ -133,6 +133,14 @@ export const subAdminApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder', 'Service', 'Vehicle'],
     }),
+    triggerSubAdminReminderWorker: builder.mutation<any, { reminder_id: string }>({
+      query: (body) => ({
+        url: '/core/sub-admin/reminders/send',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Reminder'],
+    }),
 
     // Business
     getSubAdminBusinessDetails: builder.query<IBusiness, void>({
@@ -176,6 +184,7 @@ export const {
   useUpdateSubAdminReminderMutation,
   useDeleteSubAdminReminderMutation,
   useMarkSubAdminVisitedMutation,
+  useTriggerSubAdminReminderWorkerMutation,
   useGetSubAdminBusinessDetailsQuery,
   useUpdateSubAdminBusinessDetailsMutation,
   useUpdateSubAdminBusinessWabaMutation,

@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react';
-import { Bell, Calendar, Smartphone, User, Trash2, Send, CheckCircle2, Filter } from 'lucide-react';
+import { Bell, Calendar, Smartphone, User, Trash2, Send, CheckCircle2, Filter, Building2 } from 'lucide-react';
 import { Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '@/components/ui/table';
-import Link from 'next/link';
 import { IReminder, ReminderStatus } from '@/types';
-import { ReminderStatusBadge } from './reminder-status-badge';
+import { ReminderStatusBadge } from '@/components/reminders/reminder-status-badge';
 import { Button } from '@/components/ui/button';
 
-interface ReminderTableProps {
+interface SubAdminReminderTableProps {
   reminders: IReminder[];
   onResend: (reminder: IReminder) => void;
   onCheckIn: (reminder: IReminder) => void;
@@ -14,7 +13,7 @@ interface ReminderTableProps {
   isCheckInLoading?: boolean;
 }
 
-export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isCheckInLoading }: ReminderTableProps) {
+export function SubAdminReminderTable({ reminders, onResend, onCheckIn, onDelete, isCheckInLoading }: SubAdminReminderTableProps) {
   const [selectedStatus, setSelectedStatus] = useState<ReminderStatus | 'all'>('all');
 
   const statusOptions = [
@@ -79,6 +78,7 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
               <TableRow>
                 <TableHeaderCell>Customer</TableHeaderCell>
                 <TableHeaderCell>Vehicle</TableHeaderCell>
+                <TableHeaderCell>Business</TableHeaderCell>
                 <TableHeaderCell className="hidden md:table-cell">Notification</TableHeaderCell>
                 <TableHeaderCell className="hidden lg:table-cell">Due Date</TableHeaderCell>
                 <TableHeaderCell>Status</TableHeaderCell>
@@ -90,16 +90,14 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
               {filteredReminders.map((reminder: IReminder) => {
                 const customer = reminder.customer_id as any;
                 const vehicle = reminder.vehicle_id as any;
+                const business = reminder.business_id as any;
                 return (
                   <TableRow key={reminder._id}>
                     <TableCell>
                       <div className="flex flex-col">
-                        <Link
-                          href={`/vehicle-service/customers/${customer?._id}`}
-                          className="font-bold text-blue-600 hover:text-blue-800 transition-colors"
-                        >
+                        <span className="font-bold text-neutral-900">
                           {customer?.name || 'Unknown'}
-                        </Link>
+                        </span>
                         <span className="text-xs text-neutral-500">{customer?.phone_number || '-'}</span>
                       </div>
                     </TableCell>
@@ -111,6 +109,12 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
                         <span className="text-xs font-mono bg-neutral-100 text-neutral-600 px-1 rounded w-fit">
                           {vehicle?.registration_number}
                         </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-neutral-600">
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span className="text-sm">{business?.name || 'Global'}</span>
                       </div>
                     </TableCell>
                     <TableCell className="hidden md:table-cell text-sm">
@@ -171,7 +175,7 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
               })}
               {filteredReminders.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-neutral-500">
+                  <TableCell colSpan={8} className="text-center py-8 text-neutral-500">
                     No reminders found.
                   </TableCell>
                 </TableRow>
@@ -185,6 +189,7 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
           {filteredReminders.map((reminder: IReminder) => {
             const customer = reminder.customer_id as any;
             const vehicle = reminder.vehicle_id as any;
+            const business = reminder.business_id as any;
             const isCompleted = reminder.status === ReminderStatus.COMPLETED;
 
             return (
@@ -198,12 +203,9 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
                       <User className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col">
-                      <Link
-                        href={`/vehicle-service/customers/${customer?._id}`}
-                        className="font-bold text-blue-600 hover:text-blue-800 transition-colors text-sm"
-                      >
+                      <span className="font-bold text-neutral-900 text-sm">
                         {customer?.name || 'Unknown'}
-                      </Link>
+                      </span>
                       <span className="text-xs text-neutral-500">{customer?.phone_number || '-'}</span>
                     </div>
                   </div>
@@ -221,6 +223,11 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
                       </span>
                       <span className="text-xs font-mono text-neutral-500">{vehicle?.registration_number}</span>
                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-neutral-600 bg-neutral-50 p-2 rounded-lg text-xs">
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>Business: {business?.name || 'Global'}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 pt-2">

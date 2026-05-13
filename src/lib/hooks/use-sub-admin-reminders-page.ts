@@ -6,11 +6,9 @@ import {
   useCreateSubAdminReminderMutation,
   useDeleteSubAdminReminderMutation,
   useMarkSubAdminVisitedMutation,
+  useTriggerSubAdminReminderWorkerMutation,
   useFetchSubAdminServicesQuery,
 } from '@/lib/api/endpoints/subAdminApi';
-import {
-  useTriggerReminderWorkerMutation,
-} from '@/lib/api/endpoints/reminderApi';
 import { IReminder, ReminderStatus } from '@/types';
 import { toastPromise } from '@/lib/toast-utils';
 
@@ -46,7 +44,7 @@ export function useSubAdminRemindersPage() {
   
   // NOTE: These might need sub-admin versions in the backend if business logic is restricted
   const [markVisited, { isLoading: isMarkingVisited }] = useMarkSubAdminVisitedMutation();
-  const [triggerWorker, { isLoading: isTriggeringWorker }] = useTriggerReminderWorkerMutation();
+  const [triggerWorker, { isLoading: isTriggeringWorker }] = useTriggerSubAdminReminderWorkerMutation();
 
   const reminders = Array.isArray(remindersResponse) ? remindersResponse : (remindersResponse as any)?.data || [];
   const services = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse as any)?.data || [];

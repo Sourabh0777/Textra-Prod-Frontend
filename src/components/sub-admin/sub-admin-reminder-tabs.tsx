@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { IReminder } from '@/types';
-import { ReminderTable } from './reminder-table';
+import { SubAdminReminderTable } from './sub-admin-reminder-table';
 import { Card, CardBody } from '@/components/ui/card';
 
-interface ReminderTabsProps {
+interface SubAdminReminderTabsProps {
   reminders: IReminder[];
   onResend: (reminder: IReminder) => void;
   onCheckIn: (reminder: IReminder) => void;
@@ -11,7 +11,7 @@ interface ReminderTabsProps {
   isCheckInLoading?: boolean;
 }
 
-export function ReminderTabs({ reminders, onResend, onCheckIn, onDelete, isCheckInLoading }: ReminderTabsProps) {
+export function SubAdminReminderTabs({ reminders, onResend, onCheckIn, onDelete, isCheckInLoading }: SubAdminReminderTabsProps) {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'completed'>('upcoming');
 
   const upcomingReminders = reminders.filter((r) => r.status !== 'completed');
@@ -60,7 +60,7 @@ export function ReminderTabs({ reminders, onResend, onCheckIn, onDelete, isCheck
 
       <Card className="!px-0 !py-0">
         <CardBody className="!px-0 !py-0">
-          <ReminderTable
+          <SubAdminReminderTable
             reminders={filteredReminders}
             onResend={onResend}
             onCheckIn={onCheckIn}

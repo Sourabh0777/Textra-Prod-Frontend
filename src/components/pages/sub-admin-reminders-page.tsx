@@ -10,7 +10,7 @@ import { Loader, RefreshCw } from 'lucide-react';
 import { useSubAdminRemindersPage } from '@/lib/hooks/use-sub-admin-reminders-page';
 
 // Sub-components
-import { ReminderTabs } from '@/components/reminders/reminder-tabs';
+import { SubAdminReminderTabs } from '@/components/sub-admin/sub-admin-reminder-tabs';
 import { ReminderModal } from '@/components/reminders/reminder-modal';
 import { CheckInDialog } from '@/components/reminders/check-in-dialog';
 
@@ -109,7 +109,7 @@ export default function SubAdminRemindersPage() {
           </div>
         </div>
 
-        <ReminderTabs
+        <SubAdminReminderTabs
           reminders={filteredReminders}
           onResend={handleResend}
           onCheckIn={handleCheckInClick}
