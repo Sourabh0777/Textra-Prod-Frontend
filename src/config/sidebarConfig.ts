@@ -23,6 +23,8 @@ export const SIDEBAR_CONFIG = {
   // Sub admin
   'sub-admin-customers': { label: 'Customers (SA)', href: '/sub-admin/customers', icon: Users },
   'sub-admin-vehicles': { label: 'Vehicles (SA)', href: '/sub-admin/vehicles', icon: Bike },
+  'sub-admin-services': { label: 'Services (SA)', href: '/sub-admin/services', icon: Wrench },
+  'sub-admin-reminders': { label: 'Reminders (SA)', href: '/sub-admin/reminders', icon: Clock },
   // Vehicle Service
   business: { label: 'Business', href: '/vehicle-service/business', icon: Building2 },
   customers: { label: 'Customers', href: '/vehicle-service/customers', icon: Users },

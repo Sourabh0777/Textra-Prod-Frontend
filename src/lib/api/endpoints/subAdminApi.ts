@@ -69,6 +69,71 @@ export const subAdminApi = baseApi.injectEndpoints({
       invalidatesTags: ['Vehicle'],
     }),
 
+    // Services
+    fetchSubAdminServices: builder.query<any, string | void>({
+      query: (vehicleId) => (vehicleId ? `/core/sub-admin/services?vehicle_id=${vehicleId}` : '/core/sub-admin/services'),
+      providesTags: ['Service'],
+    }),
+    createSubAdminService: builder.mutation<any, any>({
+      query: (body) => ({
+        url: '/core/sub-admin/services',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Service', 'Vehicle'],
+    }),
+    updateSubAdminService: builder.mutation<any, { id: string; data: any }>({
+      query: ({ id, data }) => ({
+        url: `/core/sub-admin/services/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Service', id }, 'Service', 'Vehicle'],
+    }),
+    deleteSubAdminService: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/core/sub-admin/services/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Service', 'Vehicle'],
+    }),
+
+    // Reminders
+    fetchSubAdminReminders: builder.query<any, void>({
+      query: () => '/core/sub-admin/reminders',
+      providesTags: ['Reminder'],
+    }),
+    createSubAdminReminder: builder.mutation<any, any>({
+      query: (body) => ({
+        url: '/core/sub-admin/reminders',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Reminder', 'Vehicle'],
+    }),
+    updateSubAdminReminder: builder.mutation<any, { id: string; data: any }>({
+      query: ({ id, data }) => ({
+        url: `/core/sub-admin/reminders/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Reminder', id }, 'Reminder', 'Vehicle'],
+    }),
+    deleteSubAdminReminder: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/core/sub-admin/reminders/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Reminder', 'Vehicle'],
+    }),
+    markSubAdminVisited: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/core/sub-admin/reminders/${id}/shop-visit`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Reminder', id }, 'Reminder', 'Service', 'Vehicle'],
+    }),
+
     // Business
     getSubAdminBusinessDetails: builder.query<IBusiness, void>({
       query: () => '/core/sub-admin/businesses/business',
@@ -102,6 +167,15 @@ export const {
   useCreateSubAdminVehicleMutation,
   useUpdateSubAdminVehicleMutation,
   useDeleteSubAdminVehicleMutation,
+  useFetchSubAdminServicesQuery,
+  useCreateSubAdminServiceMutation,
+  useUpdateSubAdminServiceMutation,
+  useDeleteSubAdminServiceMutation,
+  useFetchSubAdminRemindersQuery,
+  useCreateSubAdminReminderMutation,
+  useUpdateSubAdminReminderMutation,
+  useDeleteSubAdminReminderMutation,
+  useMarkSubAdminVisitedMutation,
   useGetSubAdminBusinessDetailsQuery,
   useUpdateSubAdminBusinessDetailsMutation,
   useUpdateSubAdminBusinessWabaMutation,
