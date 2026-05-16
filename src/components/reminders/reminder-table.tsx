@@ -146,6 +146,7 @@ export function ReminderTable({ reminders, onResend, onCheckIn, onDelete, isChec
                               className="text-blue-600 hover:bg-blue-50"
                               onClick={() => onResend(reminder)}
                               title="Resend Notification"
+                              disabled
                             >
                               Resend
                             </Button>
