@@ -108,6 +108,17 @@ export function BusinessDetailsModal({
             error={errors.business_name}
             fullWidth
           />
+          <Select
+            label="Status *"
+            name="is_active"
+            value={formData.is_active === false ? 'false' : 'true'}
+            onChange={onInputChange}
+            options={[
+              { value: 'true', label: 'Active' },
+              { value: 'false', label: 'Inactive' },
+            ]}
+            fullWidth
+          />
           <Input
             label="Owner Name *"
             name="owner_name"
