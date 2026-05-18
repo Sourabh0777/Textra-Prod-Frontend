@@ -6,8 +6,8 @@ export function SidebarHeader() {
   return (
     <div className="p-6 bg-[#15368A]/80 backdrop-blur-xl sticky top-0 z-10 border-b border-white/10">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
-          <Image src="/logo/logo.png" alt="Textra" width={28} height={28} />
+        <div className="w-10 h-10 bg-white/10 text-blue flex items-center justify-center">
+          <Image src="/logo/official-logo.jpeg" alt="Textra" width={28} height={28} />
         </div>
         <div>
           <h1 className="text-lg font-bold tracking-tight text-[#FFFFFF]">Textra</h1>
