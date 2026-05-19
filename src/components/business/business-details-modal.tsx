@@ -167,10 +167,18 @@ export function BusinessDetailsModal({
             }
             onChange={onInputChange}
             options={
-              zones?.map((z) => ({
-                value: z._id || '',
-                label: z.name,
-              })) || []
+              zones
+                ?.filter((z) => {
+                  const selectedStateId =
+                    typeof formData.state_id === 'object' ? (formData.state_id as any)?._id : formData.state_id;
+                  if (!selectedStateId) return false;
+                  const zoneStateId = typeof z.state_id === 'object' ? (z.state_id as any)?._id : z.state_id;
+                  return zoneStateId === selectedStateId;
+                })
+                .map((z) => ({
+                  value: z._id || '',
+                  label: z.name,
+                })) || []
             }
             error={errors.zone_id}
             fullWidth
