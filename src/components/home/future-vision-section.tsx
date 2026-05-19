@@ -2,8 +2,13 @@
 
 import { Stethoscope, Scissors, Sparkles, Car, Utensils, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 export function FutureVisionSection() {
+  const [email, setEmail] = useState('');
+  const [industry, setIndustry] = useState('Dental Clinic');
+  const [isLoading, setIsLoading] = useState(false);
+
   const industries = [
     { name: 'Dental & Medical Clinics', icon: <Stethoscope className="w-5 h-5" /> },
     { name: 'Salons & Spas', icon: <Scissors className="w-5 h-5" /> },
@@ -11,10 +16,34 @@ export function FutureVisionSection() {
     { name: 'And many more!', icon: <Sparkles className="w-5 h-5 text-yellow-500" /> },
   ];
 
-  const onformSubmit = (e: React.FormEvent) => {
+  // const onformSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log('Form submitted!'); // Placeholder for form submission logic
+  //   console.log(e);
+  // };
+
+  // In your form component (where the "Join Waitlist" button is)
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted!'); // Placeholder for form submission logic
-    console.log(e);
+    try {
+      const response = await fetch('/api/waitlist/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert('Success! Check your email.');
+      } else {
+        alert('Something went wrong');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
 
@@ -57,26 +86,29 @@ export function FutureVisionSection() {
               <p className="text-neutral-500">Join our waitlist to be notified when we expand to your industry!</p>
             </div>
 
-            <form className="space-y-4" onSubmit={onformSubmit}>
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-neutral-700">Email Address</label>
                 <input
                   type="email"
                   placeholder="name@company.com"
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-neutral-700">Your Industry</label>
-                <select className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                <select value={industry}
+      onChange={(e) => setIndustry(e.target.value)} className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
                   <option>Dental Clinic</option>
                   <option>Salon / Spa</option>
                   <option>Medical Services</option>
                   <option>Other</option>
                 </select>
               </div>
-              <Button className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl py-6 font-bold shadow-lg shadow-blue-900/10 transition-all hover:scale-[1.02]">
-                Join the Waitlist
+              <Button type="submit"
+    disabled={isLoading} className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl py-6 font-bold shadow-lg shadow-blue-900/10 transition-all hover:scale-[1.02]">
+                {isLoading ? 'Submitting...' : 'Join the Waitlist'}
               </Button>
             </form>
           </div>
