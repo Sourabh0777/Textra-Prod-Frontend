@@ -11,6 +11,13 @@ export function FutureVisionSection() {
     { name: 'And many more!', icon: <Sparkles className="w-5 h-5 text-yellow-500" /> },
   ];
 
+  const onformSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Form submitted!'); // Placeholder for form submission logic
+    console.log(e);
+  };
+
+
   return (
     <section className="py-24 bg-primary text-white overflow-hidden relative">
       {/* Decorative patterns */}
@@ -50,7 +57,7 @@ export function FutureVisionSection() {
               <p className="text-neutral-500">Join our waitlist to be notified when we expand to your industry!</p>
             </div>
 
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-4" onSubmit={onformSubmit}>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-neutral-700">Email Address</label>
                 <input

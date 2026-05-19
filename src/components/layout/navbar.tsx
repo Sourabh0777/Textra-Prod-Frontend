@@ -33,7 +33,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
           )}
           {isMobile && (
             <Link href="/" className="flex lg:hidden items-center gap-2">
-              <Image src="/logo/logo.png" alt="Textra" width={28} height={28} className="rounded-lg" />
+              <Image src="/logo/official-logo.jpeg" alt="Textra" width={28} height={28} className="rounded-lg" />
               <span className="text-xl font-bold text-[#15368A]">Textra</span>
             </Link>
           )}
@@ -44,6 +44,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
           <div className="relative w-full group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-[#15368A] transition-colors" />
             <input
+              disabled 
               type="text"
               placeholder="Search anything..."
               className="w-full pl-10 pr-4 py-2 bg-neutral-100/50 border border-transparent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#15368A]/20 focus:bg-white focus:border-[#15368A]/30 transition-all duration-300"
@@ -54,7 +55,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
         {/* Right side - Actions & Profile */}
         <div className="flex items-center gap-2 md:gap-4">
           {/* Notifications */}
-          <button className="relative p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300 group">
+          <button className="relative p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300 group cursor-default">
             <Bell className="w-5 h-5" />
             {notifications > 0 && (
               <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white ring-1 ring-red-500/20 group-hover:scale-110 transition-transform">
