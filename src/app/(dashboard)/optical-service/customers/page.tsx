@@ -3,21 +3,41 @@
 import { useState } from 'react';
 import { useFetchOpticalCustomersQuery, useCreateOpticalCustomerMutation } from '@/lib/api/endpoints/opticalApi';
 import { Card } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader } from '@/components/ui/loader';
 import { Modal } from '@/components/ui/modal';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
-import { toast } from '@/lib/toast-utils';
-import { Search, UserPlus, Phone, Mail, Calendar, Trash2, Eye } from 'lucide-react';
+import { Search, UserPlus, Phone, Mail, Calendar, Eye } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
+
+type OpticalCustomer = {
+  _id: string;
+  uid: string;
+  name: string;
+  phone_number: string;
+  email?: string;
+  age?: number;
+  gender?: string;
+  created_at: string;
+};
+
+type NewPatientPayload = {
+  name: string;
+  phone_number: string;
+  email: string;
+  age: string;
+  gender: string;
+  address: string;
+  notes: string;
+};
 
 export default function OpticalCustomersList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newPatient, setNewPatient] = useState({
+  const [newPatient, setNewPatient] = useState<NewPatientPayload>({
     name: '',
     phone_number: '',
     email: '',
@@ -54,8 +74,12 @@ export default function OpticalCustomersList() {
         notes: '',
       });
       refetch();
-    } catch (err: any) {
-      toast.error(err.data?.message || 'Failed to create patient.');
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to create patient.';
+      toast.error(errorMessage);
     }
   };
 
@@ -97,23 +121,23 @@ export default function OpticalCustomersList() {
       <Card className="border border-slate-100 shadow-sm rounded-2xl overflow-hidden bg-white">
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
-            <Loader className="w-8 h-8 text-[#15368A] animate-spin" />
+            <Loader />
           </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50/50">
+              <TableHead className="bg-slate-50/50">
                 <TableRow>
-                  <TableHead className="font-bold text-slate-600">Patient Details</TableHead>
-                  <TableHead className="font-bold text-slate-600">Contact</TableHead>
-                  <TableHead className="font-bold text-slate-600">Demographics</TableHead>
-                  <TableHead className="font-bold text-slate-600">Registered</TableHead>
-                  <TableHead className="font-bold text-slate-600 text-right">Actions</TableHead>
+                  <TableHeaderCell className="font-bold text-slate-600">Patient Details</TableHeaderCell>
+                  <TableHeaderCell className="font-bold text-slate-600">Contact</TableHeaderCell>
+                  <TableHeaderCell className="font-bold text-slate-600">Demographics</TableHeaderCell>
+                  <TableHeaderCell className="font-bold text-slate-600">Registered</TableHeaderCell>
+                  <TableHeaderCell className="font-bold text-slate-600 text-right">Actions</TableHeaderCell>
                 </TableRow>
-              </TableHeader>
+              </TableHead>
               <TableBody>
                 {customers && customers.length > 0 ? (
-                  customers.map((customer: any) => (
+                  customers.map((customer: OpticalCustomer) => (
                     <TableRow key={customer._id} className="hover:bg-slate-50/30 transition-colors">
                       <TableCell>
                         <div className="flex flex-col">
@@ -253,7 +277,7 @@ export default function OpticalCustomersList() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="notes" className="text-slate-700">Optometrist's Notes / Complaints</Label>
+            <Label htmlFor="notes" className="text-slate-700">Optometrist&apos;s Notes / Complaints</Label>
             <Input
               id="notes"
               value={newPatient.notes}
@@ -266,7 +290,7 @@ export default function OpticalCustomersList() {
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               onClick={() => setIsAddModalOpen(false)}
               className="rounded-xl"
             >
