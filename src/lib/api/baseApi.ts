@@ -55,6 +55,11 @@ export const baseApi = createApi({
     'Zone',
     'QRCode',
     'TwoWheelerBrand',
+    'OpticalCustomer',
+    'Prescription',
+    'LensOrder',
+    'FrameOrder',
+    'Bill',
   ],
   endpoints: () => ({}),
 });

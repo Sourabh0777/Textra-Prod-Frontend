@@ -34,5 +34,12 @@ export const SIDEBAR_CONFIG = {
   'whatsapp-logs': { label: 'WhatsApp Logs', href: '/vehicle-service/whatsapp-logs', icon: MessageSquare },
   templates: { label: 'Templates', href: '/vehicle-service/templates', icon: MessageSquareText },
   cars: { label: 'Cars', href: '/vehicle-service/cars', icon: Car },
+  // Optical Service
+  'optical-dashboard': { label: 'Dashboard', href: '/optical-service', icon: LayoutDashboard },
+  'optical-customers': { label: 'Patients', href: '/optical-service/customers', icon: Users },
+  'optical-prescriptions': { label: 'Prescriptions', href: '/optical-service/prescriptions', icon: MessageSquareText },
+  'optical-orders': { label: 'Orders', href: '/optical-service/orders', icon: Wrench },
+  'optical-bills': { label: 'Bills & Invoices', href: '/optical-service/bills', icon: Clock },
+  'optical-analytics': { label: 'Analytics', href: '/optical-service/analytics', icon: LayoutDashboard },
 } as const;
 
