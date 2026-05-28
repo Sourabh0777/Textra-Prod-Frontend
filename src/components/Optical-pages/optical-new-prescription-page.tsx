@@ -90,7 +90,7 @@ export default function OpticalNewPrescriptionPage() {
                 <option value="">Select customer</option>
                 {customers?.map((customer: any) => (
                   <option key={customer._id} value={customer._id}>
-                    {customer.name} — {customer.phone_number}
+                    {customer.name} {customer.phone_number ? `— ${customer.phone_number}` : ''}
                   </option>
                 ))}
               </select>

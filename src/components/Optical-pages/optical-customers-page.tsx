@@ -15,9 +15,8 @@ import { toast } from 'sonner';
 
 type OpticalCustomer = {
   _id: string;
-  uid: string;
   name: string;
-  phone_number: string;
+  phone_number?: string;
   email?: string;
   age?: number;
   gender?: string;
@@ -52,8 +51,8 @@ export default function OpticalCustomersPage() {
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustomer.name || !newCustomer.phone_number) {
-      toast.error('Name and Phone number are required.');
+    if (!newCustomer.name) {
+      toast.error('Name is required.');
       return;
     }
 
@@ -142,14 +141,13 @@ export default function OpticalCustomersPage() {
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-semibold text-slate-800 text-sm">{customer.name}</span>
-                          <span className="text-slate-400 text-xxs mt-0.5 font-mono">{customer.uid}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col space-y-1 text-slate-600 text-xs">
                           <span className="flex items-center gap-1.5">
                             <Phone className="w-3.5 h-3.5 text-slate-400" />
-                            {customer.phone_number}
+                            {customer.phone_number || 'N/A'}
                           </span>
                           {customer.email && (
                             <span className="flex items-center gap-1.5 text-slate-400">
@@ -215,13 +213,12 @@ export default function OpticalCustomersPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="phone" className="text-slate-700">Phone Number *</Label>
+              <Label htmlFor="phone" className="text-slate-700">Phone Number (Optional)</Label>
               <Input
                 id="phone"
-                required
                 value={newCustomer.phone_number}
                 onChange={(e) => setNewCustomer({ ...newCustomer, phone_number: e.target.value })}
-                placeholder="10-digit mobile"
+                placeholder="e.g. 10-digit mobile"
                 className="rounded-xl border-slate-200"
               />
             </div>

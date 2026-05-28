@@ -1,10 +1,11 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useFetchOpticalCustomerQuery, useFetchPrescriptionsQuery, useFetchLensOrdersQuery, useFetchFrameOrdersQuery, useFetchBillsQuery } from '@/lib/api/endpoints/opticalApi';
+import { useFetchOpticalCustomerQuery, useFetchPrescriptionsQuery } from '@/lib/api/endpoints/opticalApi';
 import { Card } from '@/components/ui/card';
 import { Loader } from '@/components/ui/loader';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Phone, Mail, Calendar, User, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface OpticalCustomerDetailsPageProps {
@@ -14,9 +15,6 @@ interface OpticalCustomerDetailsPageProps {
 export default function OpticalCustomerDetailsPage({ customerId }: OpticalCustomerDetailsPageProps) {
   const { data: customer, isLoading: loadingCustomer } = useFetchOpticalCustomerQuery(customerId);
   const { data: prescriptions, isLoading: loadingPrescriptions } = useFetchPrescriptionsQuery(customerId);
-  const { data: lensOrders, isLoading: loadingLensOrders } = useFetchLensOrdersQuery({ customerId });
-  const { data: frameOrders, isLoading: loadingFrameOrders } = useFetchFrameOrdersQuery({ customerId });
-  const { data: bills, isLoading: loadingBills } = useFetchBillsQuery({ customerId } as any);
 
   if (loadingCustomer || !customer) {
     return (
@@ -32,144 +30,105 @@ export default function OpticalCustomerDetailsPage({ customerId }: OpticalCustom
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">{customer.name}</h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Customer profile, prescriptions, orders, and billing summary.
+            Customer profile registry and eye examination history.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/optical-service/orders"
-            className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200 transition-all duration-300"
-          >
-            Orders
-          </Link>
-          <Link
-            href="/optical-service/bills"
-            className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200 transition-all duration-300"
-          >
-            Bills
-          </Link>
-        </div>
+        <Link
+          href="/optical-service/prescriptions/new"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#15368A] text-white text-sm font-semibold hover:bg-[#0f286b] transition-all duration-300"
+        >
+          <PlusCircle className="w-4 h-4" />
+          Add Prescription
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
-          <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Contact</p>
-          <p className="text-slate-800 font-semibold mt-2">{customer.phone_number}</p>
-          <p className="text-slate-500 text-sm">{customer.email ?? 'No email provided'}</p>
+          <div className="flex items-center gap-2.5">
+            <Phone className="w-4 h-4 text-slate-400" />
+            <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Contact Number</p>
+          </div>
+          <p className="text-slate-800 font-semibold mt-2">{customer.phone_number || 'No contact number'}</p>
+          <p className="text-slate-500 text-sm flex items-center gap-1.5 mt-0.5">
+            <Mail className="w-3.5 h-3.5 text-slate-400" />
+            {customer.email ?? 'No email address'}
+          </p>
         </Card>
         <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
-          <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Age / Gender</p>
+          <div className="flex items-center gap-2.5">
+            <User className="w-4 h-4 text-slate-400" />
+            <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Age / Gender</p>
+          </div>
           <p className="text-slate-800 font-semibold mt-2">{customer.age ?? 'N/A'} yrs</p>
           <p className="text-slate-500 text-sm capitalize">{customer.gender ?? 'Unknown'}</p>
         </Card>
         <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
-          <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Records</p>
-          <p className="text-slate-800 font-semibold mt-2">{prescriptions?.length ?? 0} prescriptions</p>
-          <p className="text-slate-500 text-sm">{lensOrders?.length ?? 0} lens orders, {frameOrders?.length ?? 0} frame orders</p>
-          <p className="text-slate-500 text-sm">{bills?.length ?? 0} bills</p>
+          <div className="flex items-center gap-2.5">
+            <Calendar className="w-4 h-4 text-slate-400" />
+            <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Prescriptions Count</p>
+          </div>
+          <p className="text-slate-800 font-semibold mt-2">{prescriptions?.length ?? 0} eye diagnostics</p>
+          <p className="text-slate-500 text-sm">Recorded in customer profile</p>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      {customer.notes && (
         <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
-          <h2 className="text-lg font-semibold text-slate-900">Latest Prescriptions</h2>
-          <div className="mt-4">
-            {loadingPrescriptions ? (
-              <Loader />
-            ) : prescriptions?.length ? (
-              <ul className="space-y-3 text-slate-700 text-sm">
-                {prescriptions.slice(0, 4).map((item: any) => (
-                  <li key={item._id} className="rounded-2xl border border-slate-100 p-3 bg-slate-50">
-                    <p>{item.lens_type ?? 'Prescription'}</p>
-                    <p className="text-slate-400 text-xs">{new Date(item.created_at).toLocaleDateString('en-GB')}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-slate-400 text-sm">No prescriptions found.</p>
-            )}
-          </div>
+          <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Optometrist Notes / Primary Complaints</p>
+          <p className="text-slate-700 text-sm mt-2 font-medium bg-slate-50 border border-slate-100 rounded-xl p-3">{customer.notes}</p>
         </Card>
+      )}
 
-        <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
-          <h2 className="text-lg font-semibold text-slate-900">Recent Orders</h2>
-          <div className="mt-4">
-            {(loadingLensOrders || loadingFrameOrders) ? (
-              <Loader />
-            ) : (lensOrders?.slice(0, 3) ?? []).concat(frameOrders?.slice(0, 3) ?? []).length ? (
-              <ul className="space-y-3 text-slate-700 text-sm">
-                {(lensOrders ?? []).slice(0, 2).map((order: any) => (
-                  <li key={order._id} className="rounded-2xl border border-slate-100 p-3 bg-slate-50">
-                    <p className="font-semibold">Lens • {order.lens_type}</p>
-                    <p className="text-slate-400 text-xs">₹{order.price?.toFixed?.(2) ?? '0.00'}</p>
-                  </li>
-                ))}
-                {(frameOrders ?? []).slice(0, 2).map((order: any) => (
-                  <li key={order._id} className="rounded-2xl border border-slate-100 p-3 bg-slate-50">
-                    <p className="font-semibold">Frame • {order.frame_name}</p>
-                    <p className="text-slate-400 text-xs">₹{order.price?.toFixed?.(2) ?? '0.00'}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-slate-400 text-sm">No orders available.</p>
-            )}
+      <Card className="border border-slate-100 shadow-sm rounded-2xl overflow-hidden bg-white">
+        <div className="p-6 border-b border-slate-50 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-800">Eye Examination Registry</h2>
+            <p className="text-slate-400 text-xs mt-0.5">List of historical optical prescription details recorded.</p>
           </div>
-        </Card>
-
-        <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
-          <h2 className="text-lg font-semibold text-slate-900">Recent Bills</h2>
-          <div className="mt-4">
-            {loadingBills ? (
-              <Loader />
-            ) : bills?.length ? (
-              <ul className="space-y-3 text-slate-700 text-sm">
-                {bills.slice(0, 4).map((bill: any) => (
-                  <li key={bill._id} className="rounded-2xl border border-slate-100 p-3 bg-slate-50">
-                    <p>{bill.invoice_number}</p>
-                    <p className="text-slate-400 text-xs">₹{bill.total?.toFixed?.(2) ?? '0.00'}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-slate-400 text-sm">No bills found.</p>
-            )}
+        </div>
+        {loadingPrescriptions ? (
+          <div className="flex h-44 items-center justify-center">
+            <Loader />
           </div>
-        </Card>
-      </div>
-
-      <div className="overflow-x-auto">
-        <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Customer activity</h2>
-          <Table>
-            <thead>
-              <TableRow className="bg-slate-50/50">
-                <th className="px-6 py-3 text-left font-bold text-slate-600">Type</th>
-                <th className="px-6 py-3 text-left font-bold text-slate-600">Reference</th>
-                <th className="px-6 py-3 text-left font-bold text-slate-600">Amount</th>
-                <th className="px-6 py-3 text-left font-bold text-slate-600">Date</th>
-              </TableRow>
-            </thead>
-            <TableBody>
-              {(bills ?? []).slice(0, 4).map((bill: any) => (
-                <TableRow key={bill._id} className="hover:bg-slate-50/30 transition-colors">
-                  <TableCell>Bill</TableCell>
-                  <TableCell>{bill.invoice_number}</TableCell>
-                  <TableCell>₹{bill.total?.toFixed?.(2) ?? '0.00'}</TableCell>
-                  <TableCell>{new Date(bill.bill_date).toLocaleDateString('en-GB')}</TableCell>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <thead>
+                <TableRow className="bg-slate-50/50">
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Lens Type</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Right Eye (SPH/CYL/AXIS)</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Left Eye (SPH/CYL/AXIS)</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Examination Date</th>
                 </TableRow>
-              ))}
-              {!(bills?.length) && (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-slate-400">
-                    No recent activity recorded.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Card>
-      </div>
+              </thead>
+              <TableBody>
+                {prescriptions && prescriptions.length > 0 ? (
+                  prescriptions.map((item: any) => (
+                    <TableRow key={item._id} className="hover:bg-slate-50/30 transition-colors">
+                      <TableCell className="font-semibold text-slate-700">{item.lens_type || 'N/A'}</TableCell>
+                      <TableCell className="text-slate-600 text-xs">
+                        {item.right_sph ?? '-'} / {item.right_cyl ?? '-'} / {item.right_axis ?? '-'}
+                      </TableCell>
+                      <TableCell className="text-slate-600 text-xs">
+                        {item.left_sph ?? '-'} / {item.left_cyl ?? '-'} / {item.left_axis ?? '-'}
+                      </TableCell>
+                      <TableCell className="text-slate-500 text-xs">
+                        {new Date(item.created_at).toLocaleDateString('en-GB')}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-12 text-slate-400">
+                      No eye examination records stored for this customer yet.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }
