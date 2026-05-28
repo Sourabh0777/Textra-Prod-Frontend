@@ -8,12 +8,14 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
-import { Search, FileText, Trash2 } from 'lucide-react';
+import { Search, FileText, Trash2, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { Modal } from '@/components/ui/modal';
 
 export default function OpticalPrescriptionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { data: prescriptions, isLoading, refetch } = useFetchPrescriptionsQuery(undefined);
   const [deletePrescription, { isLoading: isDeleting }] = useDeletePrescriptionMutation();
 
@@ -84,44 +86,74 @@ export default function OpticalPrescriptionsPage() {
               </thead>
               <TableBody>
                 {filteredPrescriptions.length > 0 ? (
-                  filteredPrescriptions.map((prescription: any) => (
-                    <TableRow key={prescription._id} className="hover:bg-slate-50/30 transition-colors">
-                      <TableCell>
-                        <div className="flex flex-col text-slate-800 text-sm">
-                          <span className="font-semibold">{prescription.customer_id?.name ?? 'Unknown Customer'}</span>
-                          <span className="text-slate-400 text-xs">{prescription.customer_id?._id ?? prescription._id}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{prescription.lens_type ?? 'N/A'}</TableCell>
-                      <TableCell className="text-slate-600 text-xs">
-                        {prescription.right_sph ?? '-'} / {prescription.right_cyl ?? '-'} / {prescription.right_axis ?? '-'}
-                      </TableCell>
-                      <TableCell className="text-slate-600 text-xs">
-                        {prescription.left_sph ?? '-'} / {prescription.left_cyl ?? '-'} / {prescription.left_axis ?? '-'}
-                      </TableCell>
-                      <TableCell className="text-slate-500 text-xs">
-                        {new Date(prescription.created_at).toLocaleDateString('en-GB')}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="inline-flex items-center gap-2 justify-end">
-                          <Link
-                            href={`/optical-service/customers/${prescription.customer_id?._id}`}
-                            className="text-xs text-[#15368A] hover:underline"
-                          >
-                            View Customer
-                          </Link>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => handleDelete(prescription._id)}
-                            disabled={isDeleting}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  filteredPrescriptions.map((prescription: any) => {
+                    const isImage = prescription.prescription_type === 'image';
+                    return (
+                      <TableRow key={prescription._id} className="hover:bg-slate-50/30 transition-colors">
+                        <TableCell>
+                          <div className="flex flex-col text-slate-800 text-sm">
+                            <span className="font-semibold">{prescription.customer_id?.name ?? 'Unknown Customer'}</span>
+                            <span className="text-slate-400 text-xs">{prescription.customer_id?._id ?? prescription._id}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {isImage ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">
+                              Paper Prescription
+                            </span>
+                          ) : (
+                            prescription.lens_type ?? 'N/A'
+                          )}
+                        </TableCell>
+                        <TableCell className="text-slate-600 text-xs">
+                          {isImage ? (
+                            <span className="text-slate-400 italic">See Attached Photo</span>
+                          ) : (
+                            `${prescription.right_sph ?? '-'} / ${prescription.right_cyl ?? '-'} / ${prescription.right_axis ?? '-'}`
+                          )}
+                        </TableCell>
+                        <TableCell className="text-slate-600 text-xs">
+                          {isImage ? (
+                            <span className="text-slate-400 italic">See Attached Photo</span>
+                          ) : (
+                            `${prescription.left_sph ?? '-'} / ${prescription.left_cyl ?? '-'} / ${prescription.left_axis ?? '-'}`
+                          )}
+                        </TableCell>
+                        <TableCell className="text-slate-500 text-xs">
+                          {new Date(prescription.created_at).toLocaleDateString('en-GB')}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="inline-flex items-center gap-2 justify-end">
+                            {isImage && prescription.image_url && (
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setPreviewImage(prescription.image_url)}
+                                className="flex items-center gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-200"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                View Photo
+                              </Button>
+                            )}
+                            <Link
+                              href={`/optical-service/customers/${prescription.customer_id?._id}`}
+                              className="text-xs text-[#15368A] hover:underline font-semibold"
+                            >
+                              View Customer
+                            </Link>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => handleDelete(prescription._id)}
+                              disabled={isDeleting}
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-12 text-slate-400">
@@ -134,6 +166,42 @@ export default function OpticalPrescriptionsPage() {
           </div>
         )}
       </Card>
+
+      <Modal
+        isOpen={!!previewImage}
+        onClose={() => setPreviewImage(null)}
+        title="Prescription Details — Paper Scan"
+        size="lg"
+      >
+        <div className="flex flex-col items-center justify-center p-6 bg-slate-50/30">
+          {previewImage ? (
+            <div className="relative w-full flex justify-center bg-white rounded-2xl p-4 border border-slate-100 shadow-sm max-h-[60vh] overflow-hidden">
+              <img
+                src={previewImage}
+                alt="Prescription Paper Scan"
+                className="max-h-[55vh] object-contain rounded-xl"
+              />
+            </div>
+          ) : (
+            <p className="text-slate-400 py-12">No prescription image available.</p>
+          )}
+          <div className="mt-5 flex items-center justify-end w-full gap-3 border-t border-slate-100 pt-4 bg-white sticky bottom-0">
+            {previewImage && (
+              <a
+                href={previewImage}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl bg-[#15368A] hover:bg-[#0f286b] text-white text-xs font-semibold transition-all duration-300 shadow-sm"
+              >
+                Open Original Link
+              </a>
+            )}
+            <Button variant="secondary" onClick={() => setPreviewImage(null)}>
+              Close View
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

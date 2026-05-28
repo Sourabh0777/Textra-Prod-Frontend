@@ -17,6 +17,11 @@ export default function OpticalNewPrescriptionPage() {
   const { data: customers, isLoading } = useFetchOpticalCustomersQuery(undefined);
   const [createPrescription, { isLoading: isSaving }] = useCreatePrescriptionMutation();
 
+  const [prescriptionType, setPrescriptionType] = useState<'manual' | 'image'>('manual');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+
   const [form, setForm] = useState({
     customer_id: '',
     lens_type: '',
@@ -31,27 +36,61 @@ export default function OpticalNewPrescriptionPage() {
     notes: '',
   });
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 8 * 1024 * 1024) {
+        toast.error('Image size must be less than 8MB.');
+        return;
+      }
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setImagePreview(base64String);
+        setImageBase64(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!form.customer_id || !form.lens_type) {
-      toast.error('Please select a customer and lens type.');
+    if (!form.customer_id) {
+      toast.error('Please select a customer.');
+      return;
+    }
+    if (prescriptionType === 'manual' && !form.lens_type) {
+      toast.error('Please select a lens type.');
+      return;
+    }
+    if (prescriptionType === 'image' && !imageBase64) {
+      toast.error('Please snap or upload a prescription image.');
       return;
     }
 
     try {
-      await createPrescription({
+      const payload: any = {
         customer_id: form.customer_id,
-        lens_type: form.lens_type,
+        lens_type: form.lens_type || 'Paper Prescription',
         lens_material: form.lens_material || undefined,
         lens_coating: form.lens_coating || undefined,
-        right_sph: form.right_sph ? parseFloat(form.right_sph) : undefined,
-        right_cyl: form.right_cyl ? parseFloat(form.right_cyl) : undefined,
-        right_axis: form.right_axis ? parseFloat(form.right_axis) : undefined,
-        left_sph: form.left_sph ? parseFloat(form.left_sph) : undefined,
-        left_cyl: form.left_cyl ? parseFloat(form.left_cyl) : undefined,
-        left_axis: form.left_axis ? parseFloat(form.left_axis) : undefined,
         notes: form.notes || undefined,
-      }).unwrap();
+        prescription_type: prescriptionType,
+      };
+
+      if (prescriptionType === 'manual') {
+        payload.right_sph = form.right_sph ? parseFloat(form.right_sph) : undefined;
+        payload.right_cyl = form.right_cyl ? parseFloat(form.right_cyl) : undefined;
+        payload.right_axis = form.right_axis ? parseFloat(form.right_axis) : undefined;
+        payload.left_sph = form.left_sph ? parseFloat(form.left_sph) : undefined;
+        payload.left_cyl = form.left_cyl ? parseFloat(form.left_cyl) : undefined;
+        payload.left_axis = form.left_axis ? parseFloat(form.left_axis) : undefined;
+      } else {
+        payload.image_base64 = imageBase64;
+      }
+
+      await createPrescription(payload).unwrap();
       toast.success('Prescription created successfully.');
       router.push('/optical-service/prescriptions');
     } catch (error: unknown) {
@@ -77,6 +116,31 @@ export default function OpticalNewPrescriptionPage() {
       </div>
 
       <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-6">
+        <div className="flex rounded-xl bg-slate-100 p-1 mb-6">
+          <button
+            type="button"
+            onClick={() => setPrescriptionType('manual')}
+            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
+              prescriptionType === 'manual'
+                ? 'bg-white text-slate-800 shadow-sm'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Manual Entry
+          </button>
+          <button
+            type="button"
+            onClick={() => setPrescriptionType('image')}
+            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-300 ${
+              prescriptionType === 'image'
+                ? 'bg-white text-slate-800 shadow-sm'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Upload Photo / Click Image
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -96,12 +160,12 @@ export default function OpticalNewPrescriptionPage() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="lens_type">Lens Type</Label>
+              <Label htmlFor="lens_type">Lens Type {prescriptionType === 'image' && '(Optional)'}</Label>
               <Input
                 id="lens_type"
                 value={form.lens_type}
                 onChange={(e) => setForm({ ...form, lens_type: e.target.value })}
-                placeholder="Single Vision, Progressives..."
+                placeholder={prescriptionType === 'image' ? 'Paper Prescription, Single Vision...' : 'Single Vision, Progressives...'}
               />
             </div>
           </div>
@@ -136,75 +200,131 @@ export default function OpticalNewPrescriptionPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="right_sph">Right SPH</Label>
-              <Input
-                id="right_sph"
-                type="number"
-                step="0.01"
-                value={form.right_sph}
-                onChange={(e) => setForm({ ...form, right_sph: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="right_cyl">Right CYL</Label>
-              <Input
-                id="right_cyl"
-                type="number"
-                step="0.01"
-                value={form.right_cyl}
-                onChange={(e) => setForm({ ...form, right_cyl: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="right_axis">Right Axis</Label>
-              <Input
-                id="right_axis"
-                type="number"
-                value={form.right_axis}
-                onChange={(e) => setForm({ ...form, right_axis: e.target.value })}
-                placeholder="0"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="left_sph">Left SPH</Label>
-              <Input
-                id="left_sph"
-                type="number"
-                step="0.01"
-                value={form.left_sph}
-                onChange={(e) => setForm({ ...form, left_sph: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
-          </div>
+          {prescriptionType === 'manual' ? (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-slate-50 pt-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="right_sph">Right SPH</Label>
+                  <Input
+                    id="right_sph"
+                    type="number"
+                    step="0.01"
+                    value={form.right_sph}
+                    onChange={(e) => setForm({ ...form, right_sph: e.target.value })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="right_cyl">Right CYL</Label>
+                  <Input
+                    id="right_cyl"
+                    type="number"
+                    step="0.01"
+                    value={form.right_cyl}
+                    onChange={(e) => setForm({ ...form, right_cyl: e.target.value })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="right_axis">Right Axis</Label>
+                  <Input
+                    id="right_axis"
+                    type="number"
+                    value={form.right_axis}
+                    onChange={(e) => setForm({ ...form, right_axis: e.target.value })}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="left_sph">Left SPH</Label>
+                  <Input
+                    id="left_sph"
+                    type="number"
+                    step="0.01"
+                    value={form.left_sph}
+                    onChange={(e) => setForm({ ...form, left_sph: e.target.value })}
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="left_cyl">Left CYL</Label>
-              <Input
-                id="left_cyl"
-                type="number"
-                step="0.01"
-                value={form.left_cyl}
-                onChange={(e) => setForm({ ...form, left_cyl: e.target.value })}
-                placeholder="0.00"
-              />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="left_cyl">Left CYL</Label>
+                  <Input
+                    id="left_cyl"
+                    type="number"
+                    step="0.01"
+                    value={form.left_cyl}
+                    onChange={(e) => setForm({ ...form, left_cyl: e.target.value })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="left_axis">Left Axis</Label>
+                  <Input
+                    id="left_axis"
+                    type="number"
+                    value={form.left_axis}
+                    onChange={(e) => setForm({ ...form, left_axis: e.target.value })}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-4 border-t border-slate-50 pt-4">
+              <Label className="text-slate-700 font-semibold block">Prescription Image File</Label>
+              {!imagePreview ? (
+                <div className="border-2 border-dashed border-slate-200 hover:border-[#15368A]/50 transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-center bg-slate-50/50 cursor-pointer relative group">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleFileChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="p-3 bg-white shadow-sm border border-slate-100 rounded-xl mb-3 text-slate-400 group-hover:text-[#15368A] transition-colors duration-300">
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-semibold text-slate-700">Click or Tap to Snap / Upload Photo</p>
+                  <p className="text-xs text-slate-400 mt-1">Accepts any PNG, JPG, or WEBP up to 8MB</p>
+                </div>
+              ) : (
+                <div className="relative rounded-2xl overflow-hidden border border-slate-100 bg-slate-50/30 flex items-center justify-center p-4 min-h-[300px]">
+                  <img
+                    src={imagePreview}
+                    alt="Prescription preview"
+                    className="max-h-[300px] object-contain rounded-xl shadow-sm bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImageFile(null);
+                      setImagePreview(null);
+                      setImageBase64(null);
+                    }}
+                    className="absolute top-4 right-4 bg-rose-50 hover:bg-rose-100 text-rose-600 px-3.5 py-2 rounded-xl shadow-md border border-rose-100 hover:scale-105 active:scale-95 transition-all duration-200 text-xs font-semibold flex items-center gap-1.5"
+                  >
+                    Remove Photo
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="left_axis">Left Axis</Label>
-              <Input
-                id="left_axis"
-                type="number"
-                value={form.left_axis}
-                onChange={(e) => setForm({ ...form, left_axis: e.target.value })}
-                placeholder="0"
-              />
-            </div>
-          </div>
+          )}
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
             <Button variant="secondary" type="button" onClick={() => router.back()}>
