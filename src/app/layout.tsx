@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -20,11 +20,24 @@ import { constructMetadata } from '@/lib/seo';
 
 export const metadata = constructMetadata();
 
+export const viewport: Viewport = {
+  themeColor: '#1d4ed8',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} dynamic>
       <ReduxProvider>
         <html lang="en">
+          <head>
+            <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+            <meta name="apple-mobile-web-app-title" content="Textra" />
+          </head>
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             {children}
             <Toaster richColors position="top-right" />
@@ -34,3 +47,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </ClerkProvider>
   );
 }
+
