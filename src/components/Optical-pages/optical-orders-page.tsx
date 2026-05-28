@@ -68,7 +68,7 @@ export default function OpticalOrdersPage() {
               <thead>
                 <TableRow className="bg-slate-50/50">
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Order Type</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Patient</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Customer</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Product</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Price</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Quantity</th>

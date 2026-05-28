@@ -18,10 +18,10 @@ export default function OpticalPrescriptionsPage() {
   const [deletePrescription, { isLoading: isDeleting }] = useDeletePrescriptionMutation();
 
   const filteredPrescriptions = (prescriptions ?? []).filter((prescription: any) => {
-    const patient = prescription.customer_id?.name?.toString().toLowerCase() ?? '';
+    const customer = prescription.customer_id?.name?.toString().toLowerCase() ?? '';
     const lensType = prescription.lens_type?.toString().toLowerCase() ?? '';
     const query = searchTerm.toLowerCase();
-    return patient.includes(query) || lensType.includes(query) || prescription._id?.toString().includes(query);
+    return customer.includes(query) || lensType.includes(query) || prescription._id?.toString().includes(query);
   });
 
   const handleDelete = async (id: string) => {
@@ -40,7 +40,7 @@ export default function OpticalPrescriptionsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Prescriptions</h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Browse all optical prescriptions recorded for registered patients.
+            Browse all optical prescriptions recorded for registered customers.
           </p>
         </div>
         <Link
@@ -58,7 +58,7 @@ export default function OpticalPrescriptionsPage() {
           <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by patient name, lens type, or ID..."
+            placeholder="Search by customer name, lens type, or ID..."
             className="pl-10 w-full rounded-xl border-slate-200"
           />
         </div>
@@ -74,7 +74,7 @@ export default function OpticalPrescriptionsPage() {
             <Table>
               <thead>
                 <TableRow className="bg-slate-50/50">
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Patient</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Customer</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Lens Type</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Right Eye</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Left Eye</th>
@@ -88,7 +88,7 @@ export default function OpticalPrescriptionsPage() {
                     <TableRow key={prescription._id} className="hover:bg-slate-50/30 transition-colors">
                       <TableCell>
                         <div className="flex flex-col text-slate-800 text-sm">
-                          <span className="font-semibold">{prescription.customer_id?.name ?? 'Unknown Patient'}</span>
+                          <span className="font-semibold">{prescription.customer_id?.name ?? 'Unknown Customer'}</span>
                           <span className="text-slate-400 text-xs">{prescription.customer_id?._id ?? prescription._id}</span>
                         </div>
                       </TableCell>
@@ -108,7 +108,7 @@ export default function OpticalPrescriptionsPage() {
                             href={`/optical-service/customers/${prescription.customer_id?._id}`}
                             className="text-xs text-[#15368A] hover:underline"
                           >
-                            View Patient
+                            View Customer
                           </Link>
                           <Button
                             variant="secondary"

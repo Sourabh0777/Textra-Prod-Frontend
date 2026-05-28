@@ -58,7 +58,7 @@ export default function OpticalBillsPage() {
               <thead>
                 <TableRow className="bg-slate-50/50">
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Invoice</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Patient</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Customer</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Total</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Paid</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Status</th>

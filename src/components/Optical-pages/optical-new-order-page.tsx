@@ -33,7 +33,7 @@ export default function OpticalNewOrderPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form.customer_id || !form.price) {
-      toast.error('Please select a patient and enter a price.');
+      toast.error('Please select a customer and enter a price.');
       return;
     }
 
@@ -72,7 +72,7 @@ export default function OpticalNewOrderPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Create Optical Order</h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Create a new frame or lens order for a registered patient.
+            Create a new frame or lens order for a registered customer.
           </p>
         </div>
         <Link
@@ -106,14 +106,14 @@ export default function OpticalNewOrderPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="customer">Patient</Label>
+              <Label htmlFor="customer">Customer</Label>
               <select
                 id="customer"
                 value={form.customer_id}
                 onChange={(e) => setForm({ ...form, customer_id: e.target.value })}
                 className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-400"
               >
-                <option value="">Select patient</option>
+                <option value="">Select customer</option>
                 {customers?.map((customer: any) => (
                   <option key={customer._id} value={customer._id}>
                     {customer.name} — {customer.phone_number}

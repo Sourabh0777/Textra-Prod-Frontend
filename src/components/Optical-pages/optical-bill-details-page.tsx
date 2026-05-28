@@ -80,8 +80,8 @@ export default function OpticalBillDetailsPage({ billId, onRefresh }: OpticalBil
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
             <div>
-              <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Patient</p>
-              <p className="text-slate-800 font-semibold">{bill.customer_id?.name ?? 'Walk-in Patient'}</p>
+              <p className="text-slate-500 text-xs uppercase tracking-[0.2em]">Customer</p>
+              <p className="text-slate-800 font-semibold">{bill.customer_id?.name ?? 'Walk-in Customer'}</p>
               <p className="text-slate-400 text-xs">{bill.customer_id?.phone_number ?? 'No phone'}</p>
             </div>
             <div>

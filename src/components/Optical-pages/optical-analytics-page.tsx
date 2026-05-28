@@ -54,7 +54,7 @@ export default function OpticalAnalyticsPage() {
         <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-slate-400 text-xs uppercase tracking-[0.2em]">Active Patients</p>
+              <p className="text-slate-400 text-xs uppercase tracking-[0.2em]">Active Customers</p>
               <p className="text-2xl font-semibold text-slate-900">{summary?.active_customers ?? 0}</p>
             </div>
             <Calendar className="w-6 h-6 text-[#15368A]" />

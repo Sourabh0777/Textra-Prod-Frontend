@@ -44,7 +44,7 @@ export default function OpticalDashboardPage() {
       description: "Total outstanding balances",
     },
     {
-      title: "Active Patients",
+      title: "Active Customers",
       value: summary?.active_customers || 0,
       icon: Users,
       color: "from-purple-500 to-pink-600",
@@ -61,7 +61,7 @@ export default function OpticalDashboardPage() {
             Optical Shop Dashboard
           </h1>
           <p className="text-slate-500 mt-1 text-sm">
-            Quick statistics overview, patient registry summaries, and sales analytics.
+            Quick statistics overview, customer registry summaries, and sales analytics.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -120,7 +120,7 @@ export default function OpticalDashboardPage() {
             <thead>
               <TableRow>
                 <th className="px-6 py-3 text-left font-bold text-slate-600">Invoice Number</th>
-                <th className="px-6 py-3 text-left font-bold text-slate-600">Patient Name</th>
+                <th className="px-6 py-3 text-left font-bold text-slate-600">Customer Name</th>
                 <th className="px-6 py-3 text-left font-bold text-slate-600">Date</th>
                 <th className="px-6 py-3 text-left font-bold text-slate-600">Total Bill</th>
                 <th className="px-6 py-3 text-left font-bold text-slate-600">Amount Paid</th>
@@ -134,7 +134,7 @@ export default function OpticalDashboardPage() {
                 bills.map((bill: any) => (
                   <TableRow key={bill._id} className="hover:bg-slate-50/40 transition-colors duration-200">
                     <TableCell className="font-semibold text-slate-700">{bill.invoice_number}</TableCell>
-                    <TableCell className="text-slate-800 font-medium">{bill.customer_id?.name || 'Walk-in Patient'}</TableCell>
+                    <TableCell className="text-slate-800 font-medium">{bill.customer_id?.name || 'Walk-in Customer'}</TableCell>
                     <TableCell className="text-slate-500 text-xs">
                       {new Date(bill.bill_date).toLocaleDateString('en-GB')}
                     </TableCell>

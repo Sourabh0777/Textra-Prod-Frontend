@@ -32,7 +32,7 @@ export default function OpticalCustomerDetailsPage({ customerId }: OpticalCustom
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">{customer.name}</h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Patient profile, prescriptions, orders, and billing summary.
+            Customer profile, prescriptions, orders, and billing summary.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -140,7 +140,7 @@ export default function OpticalCustomerDetailsPage({ customerId }: OpticalCustom
 
       <div className="overflow-x-auto">
         <Card className="border border-slate-100 shadow-sm rounded-2xl bg-white p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Patient activity</h2>
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Customer activity</h2>
           <Table>
             <thead>
               <TableRow className="bg-slate-50/50">

@@ -36,7 +36,7 @@ export const SIDEBAR_CONFIG = {
   cars: { label: 'Cars', href: '/vehicle-service/cars', icon: Car },
   // Optical Service
   'optical-dashboard': { label: 'Dashboard', href: '/optical-service', icon: LayoutDashboard },
-  'optical-customers': { label: 'Patients', href: '/optical-service/customers', icon: Users },
+  'optical-customers': { label: 'Customers', href: '/optical-service/customers', icon: Users },
   'optical-prescriptions': { label: 'Prescriptions', href: '/optical-service/prescriptions', icon: MessageSquareText },
   'optical-orders': { label: 'Orders', href: '/optical-service/orders', icon: Wrench },
   'optical-bills': { label: 'Bills & Invoices', href: '/optical-service/bills', icon: Clock },

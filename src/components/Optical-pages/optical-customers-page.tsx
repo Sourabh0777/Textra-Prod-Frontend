@@ -24,7 +24,7 @@ type OpticalCustomer = {
   created_at: string;
 };
 
-type NewPatientPayload = {
+type NewCustomerPayload = {
   name: string;
   phone_number: string;
   email: string;
@@ -37,7 +37,7 @@ type NewPatientPayload = {
 export default function OpticalCustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newPatient, setNewPatient] = useState<NewPatientPayload>({
+  const [newCustomer, setNewCustomer] = useState<NewCustomerPayload>({
     name: '',
     phone_number: '',
     email: '',
@@ -50,21 +50,21 @@ export default function OpticalCustomersPage() {
   const { data: customers, isLoading, refetch } = useFetchOpticalCustomersQuery(searchTerm);
   const [createCustomer, { isLoading: isCreating }] = useCreateOpticalCustomerMutation();
 
-  const handleCreatePatient = async (e: React.FormEvent) => {
+  const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPatient.name || !newPatient.phone_number) {
+    if (!newCustomer.name || !newCustomer.phone_number) {
       toast.error('Name and Phone number are required.');
       return;
     }
 
     try {
       await createCustomer({
-        ...newPatient,
-        age: newPatient.age ? parseInt(newPatient.age, 10) : undefined,
+        ...newCustomer,
+        age: newCustomer.age ? parseInt(newCustomer.age, 10) : undefined,
       }).unwrap();
-      toast.success('Patient profile registered successfully!');
+      toast.success('Customer profile registered successfully!');
       setIsAddModalOpen(false);
-      setNewPatient({
+      setNewCustomer({
         name: '',
         phone_number: '',
         email: '',
@@ -78,7 +78,7 @@ export default function OpticalCustomersPage() {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : 'Failed to create patient.';
+          : 'Failed to create customer.';
       toast.error(errorMessage);
     }
   };
@@ -89,10 +89,10 @@ export default function OpticalCustomersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Patients Registry
+            Customers Registry
           </h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Manage eye examination patient profiles, records, and contact information.
+            Manage eye examination customer profiles, records, and contact information.
           </p>
         </div>
         <Button
@@ -100,7 +100,7 @@ export default function OpticalCustomersPage() {
           className="bg-[#15368A] hover:bg-[#0f286b] text-white flex items-center gap-2 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 shadow-md"
         >
           <UserPlus className="w-4 h-4" />
-          Add New Patient
+          Add New Customer
         </Button>
       </div>
 
@@ -111,7 +111,7 @@ export default function OpticalCustomersPage() {
           <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search patients by name or phone number..."
+            placeholder="Search customers by name or phone number..."
             className="pl-10 w-full border-slate-200 rounded-xl focus:border-[#15368A] transition-all"
           />
         </div>
@@ -128,7 +128,7 @@ export default function OpticalCustomersPage() {
             <Table>
               <thead>
                 <TableRow className="bg-slate-50/50">
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Patient Details</th>
+                  <th className="px-6 py-3 text-left font-bold text-slate-600">Customer Details</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Contact</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Demographics</th>
                   <th className="px-6 py-3 text-left font-bold text-slate-600">Registered</th>
@@ -184,7 +184,7 @@ export default function OpticalCustomersPage() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-12 text-slate-400">
-                      No patients registered with this criteria.
+                      No customers registered with this criteria.
                     </TableCell>
                   </TableRow>
                 )}
@@ -194,20 +194,20 @@ export default function OpticalCustomersPage() {
         )}
       </Card>
 
-      {/* Add Patient Modal */}
+      {/* Add Customer Modal */}
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Register New Patient"
+        title="Register New Customer"
       >
-        <form onSubmit={handleCreatePatient} className="space-y-4 pt-2">
+        <form onSubmit={handleCreateCustomer} className="space-y-4 pt-2">
           <div className="space-y-1.5">
-            <Label htmlFor="name" className="text-slate-700">Patient Full Name *</Label>
+            <Label htmlFor="name" className="text-slate-700">Customer Full Name *</Label>
             <Input
               id="name"
               required
-              value={newPatient.name}
-              onChange={(e) => setNewPatient({ ...newPatient, name: e.target.value })}
+              value={newCustomer.name}
+              onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
               placeholder="e.g. Ramesh Kumar"
               className="rounded-xl border-slate-200"
             />
@@ -219,8 +219,8 @@ export default function OpticalCustomersPage() {
               <Input
                 id="phone"
                 required
-                value={newPatient.phone_number}
-                onChange={(e) => setNewPatient({ ...newPatient, phone_number: e.target.value })}
+                value={newCustomer.phone_number}
+                onChange={(e) => setNewCustomer({ ...newCustomer, phone_number: e.target.value })}
                 placeholder="10-digit mobile"
                 className="rounded-xl border-slate-200"
               />
@@ -230,8 +230,8 @@ export default function OpticalCustomersPage() {
               <Input
                 id="email"
                 type="email"
-                value={newPatient.email}
-                onChange={(e) => setNewPatient({ ...newPatient, email: e.target.value })}
+                value={newCustomer.email}
+                onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
                 placeholder="name@domain.com"
                 className="rounded-xl border-slate-200"
               />
@@ -244,8 +244,8 @@ export default function OpticalCustomersPage() {
               <Input
                 id="age"
                 type="number"
-                value={newPatient.age}
-                onChange={(e) => setNewPatient({ ...newPatient, age: e.target.value })}
+                value={newCustomer.age}
+                onChange={(e) => setNewCustomer({ ...newCustomer, age: e.target.value })}
                 placeholder="Years"
                 className="rounded-xl border-slate-200"
               />
@@ -254,8 +254,8 @@ export default function OpticalCustomersPage() {
               <Label htmlFor="gender" className="text-slate-700">Gender</Label>
               <select
                 id="gender"
-                value={newPatient.gender}
-                onChange={(e) => setNewPatient({ ...newPatient, gender: e.target.value })}
+                value={newCustomer.gender}
+                onChange={(e) => setNewCustomer({ ...newCustomer, gender: e.target.value })}
                 className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-slate-400"
               >
                 <option value="male">Male</option>
@@ -269,8 +269,8 @@ export default function OpticalCustomersPage() {
             <Label htmlFor="address" className="text-slate-700">Postal Address</Label>
             <Input
               id="address"
-              value={newPatient.address}
-              onChange={(e) => setNewPatient({ ...newPatient, address: e.target.value })}
+              value={newCustomer.address}
+              onChange={(e) => setNewCustomer({ ...newCustomer, address: e.target.value })}
               placeholder="Full residence address"
               className="rounded-xl border-slate-200"
             />
@@ -280,8 +280,8 @@ export default function OpticalCustomersPage() {
             <Label htmlFor="notes" className="text-slate-700">Optometrist&apos;s Notes / Complaints</Label>
             <Input
               id="notes"
-              value={newPatient.notes}
-              onChange={(e) => setNewPatient({ ...newPatient, notes: e.target.value })}
+              value={newCustomer.notes}
+              onChange={(e) => setNewCustomer({ ...newCustomer, notes: e.target.value })}
               placeholder="e.g. blurred vision, dry eyes, frame upgrade"
               className="rounded-xl border-slate-200"
             />
@@ -301,7 +301,7 @@ export default function OpticalCustomersPage() {
               disabled={isCreating}
               className="bg-[#15368A] hover:bg-[#0d2663] text-white rounded-xl"
             >
-              {isCreating ? 'Creating...' : 'Register Patient'}
+              {isCreating ? 'Creating...' : 'Register Customer'}
             </Button>
           </div>
         </form>

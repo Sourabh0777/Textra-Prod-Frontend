@@ -60,7 +60,7 @@ export default function OpticalNewBillPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Create New Bill</h1>
-          <p className="text-slate-500 text-xs mt-0.5">Generate a billing record for a patient order.</p>
+          <p className="text-slate-500 text-xs mt-0.5">Generate a billing record for a customer order.</p>
         </div>
         <Link
           href="/optical-service/bills"
@@ -74,14 +74,14 @@ export default function OpticalNewBillPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="customer">Patient</Label>
+              <Label htmlFor="customer">Customer</Label>
               <select
                 id="customer"
                 value={form.customer_id}
                 onChange={(e) => setForm({ ...form, customer_id: e.target.value })}
                 className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-400"
               >
-                <option value="">Select patient</option>
+                <option value="">Select customer</option>
                 {customers?.map((customer: any) => (
                   <option key={customer._id} value={customer._id}>
                     {customer.name} — {customer.phone_number}

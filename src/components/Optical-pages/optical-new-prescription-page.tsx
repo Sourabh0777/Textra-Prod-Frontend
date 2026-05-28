@@ -34,7 +34,7 @@ export default function OpticalNewPrescriptionPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form.customer_id || !form.lens_type) {
-      toast.error('Please select a patient and lens type.');
+      toast.error('Please select a customer and lens type.');
       return;
     }
 
@@ -65,7 +65,7 @@ export default function OpticalNewPrescriptionPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">New Prescription</h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Record a new optical prescription for a registered patient.
+            Record a new optical prescription for a registered customer.
           </p>
         </div>
         <Link
@@ -80,14 +80,14 @@ export default function OpticalNewPrescriptionPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="customer">Patient</Label>
+              <Label htmlFor="customer">Customer</Label>
               <select
                 id="customer"
                 value={form.customer_id}
                 onChange={(e) => setForm({ ...form, customer_id: e.target.value })}
                 className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-400"
               >
-                <option value="">Select patient</option>
+                <option value="">Select customer</option>
                 {customers?.map((customer: any) => (
                   <option key={customer._id} value={customer._id}>
                     {customer.name} — {customer.phone_number}
