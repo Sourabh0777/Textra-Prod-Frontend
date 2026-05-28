@@ -94,77 +94,159 @@ export default function OpticalCustomerDetailsPage({ customerId }: OpticalCustom
             <Loader />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <thead>
-                <TableRow className="bg-slate-50/50">
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Lens Type</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Right Eye (SPH/CYL/AXIS)</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Left Eye (SPH/CYL/AXIS)</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Examination Date</th>
-                  <th className="px-6 py-3 text-right font-bold text-slate-600">Actions</th>
-                </TableRow>
-              </thead>
-              <TableBody>
-                {prescriptions && prescriptions.length > 0 ? (
-                  prescriptions.map((item: any) => {
-                    const isImage = item.prescription_type === 'image';
-                    return (
-                      <TableRow key={item._id} className="hover:bg-slate-50/30 transition-colors">
-                        <TableCell className="font-semibold text-slate-700">
-                          {isImage ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">
-                              Paper Prescription
-                            </span>
-                          ) : (
-                            item.lens_type || 'N/A'
-                          )}
-                        </TableCell>
-                        <TableCell className="text-slate-600 text-xs">
-                          {isImage ? (
-                            <span className="text-slate-400 italic">See Attached Photo</span>
-                          ) : (
-                            `${item.right_sph ?? '-'} / ${item.right_cyl ?? '-'} / ${item.right_axis ?? '-'}`
-                          )}
-                        </TableCell>
-                        <TableCell className="text-slate-600 text-xs">
-                          {isImage ? (
-                            <span className="text-slate-400 italic">See Attached Photo</span>
-                          ) : (
-                            `${item.left_sph ?? '-'} / ${item.left_cyl ?? '-'} / ${item.left_axis ?? '-'}`
-                          )}
-                        </TableCell>
-                        <TableCell className="text-slate-500 text-xs">
-                          {new Date(item.created_at).toLocaleDateString('en-GB')}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {isImage && item.image_url ? (
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => setPreviewImage(item.image_url)}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-200"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              View Photo
-                            </Button>
-                          ) : (
-                            <span className="text-slate-300 text-xs">—</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-slate-400">
-                      No eye examination records stored for this customer yet.
-                    </TableCell>
+          <>
+            {/* Desktop view */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <thead>
+                  <TableRow className="bg-slate-50/50">
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Lens Type</th>
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Right Eye (SPH/CYL/AXIS)</th>
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Left Eye (SPH/CYL/AXIS)</th>
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Examination Date</th>
+                    <th className="px-6 py-3 text-right font-bold text-slate-600">Actions</th>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                </thead>
+                <TableBody>
+                  {prescriptions && prescriptions.length > 0 ? (
+                    prescriptions.map((item: any) => {
+                      const isImage = item.prescription_type === 'image';
+                      return (
+                        <TableRow key={item._id} className="hover:bg-slate-50/30 transition-colors">
+                          <TableCell className="font-semibold text-slate-700">
+                            {isImage ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">
+                                Paper Prescription
+                              </span>
+                            ) : (
+                              item.lens_type || 'N/A'
+                            )}
+                          </TableCell>
+                          <TableCell className="text-slate-600 text-xs">
+                            {isImage ? (
+                              <span className="text-slate-400 italic">See Attached Photo</span>
+                            ) : (
+                              `${item.right_sph ?? '-'} / ${item.right_cyl ?? '-'} / ${item.right_axis ?? '-'}`
+                            )}
+                          </TableCell>
+                          <TableCell className="text-slate-600 text-xs">
+                            {isImage ? (
+                              <span className="text-slate-400 italic">See Attached Photo</span>
+                            ) : (
+                              `${item.left_sph ?? '-'} / ${item.left_cyl ?? '-'} / ${item.left_axis ?? '-'}`
+                            )}
+                          </TableCell>
+                          <TableCell className="text-slate-500 text-xs">
+                            {new Date(item.created_at).toLocaleDateString('en-GB')}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {isImage && item.image_url ? (
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setPreviewImage(item.image_url)}
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-200"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                View Photo
+                              </Button>
+                            ) : (
+                              <span className="text-slate-300 text-xs">—</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-12 text-slate-400">
+                        No eye examination records stored for this customer yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile view (stacked cards) */}
+            <div className="block md:hidden divide-y divide-slate-100 bg-white">
+              {prescriptions && prescriptions.length > 0 ? (
+                prescriptions.map((item: any) => {
+                  const isImage = item.prescription_type === 'image';
+                  return (
+                    <div key={item._id} className="p-4 space-y-3.5 bg-white">
+                      <div className="flex items-start justify-between">
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          Exam Date: {new Date(item.created_at).toLocaleDateString('en-GB')}
+                        </span>
+                        {isImage ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">
+                            Paper Scan
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#15368A] border border-blue-100 shadow-sm">
+                            {item.lens_type || 'Manual'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Diagnostic details */}
+                      {isImage ? (
+                        item.image_url ? (
+                          <div
+                            onClick={() => setPreviewImage(item.image_url)}
+                            className="bg-emerald-50/20 hover:bg-emerald-50/40 border border-emerald-100/50 rounded-xl p-3.5 flex items-center justify-between cursor-pointer transition-all active:scale-98"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="p-2 bg-emerald-100/60 text-emerald-700 rounded-lg">
+                                <Eye className="w-4 h-4" />
+                              </div>
+                              <div className="flex flex-col text-left">
+                                <span className="text-xs font-semibold text-slate-700">View Hand-written Scan</span>
+                                <span className="text-[10px] text-slate-400">Click to preview paper prescription</span>
+                              </div>
+                            </div>
+                            <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        ) : (
+                          <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center text-xs text-slate-400 italic">
+                            No Scan Image attached
+                          </div>
+                        )
+                      ) : (
+                        <div className="grid grid-cols-2 gap-3 bg-slate-50/50 rounded-xl p-3 border border-slate-100/40 text-xs">
+                          {/* Right Eye */}
+                          <div className="space-y-1">
+                            <p className="font-bold text-slate-700 border-b border-slate-200/60 pb-1">Right (OD)</p>
+                            <div className="space-y-0.5 text-slate-600 text-[11px]">
+                              <p><span className="text-slate-400">SPH:</span> <span className="font-medium text-slate-700">{item.right_sph ?? '—'}</span></p>
+                              <p><span className="text-slate-400">CYL:</span> <span className="font-medium text-slate-700">{item.right_cyl ?? '—'}</span></p>
+                              <p><span className="text-slate-400">AXIS:</span> <span className="font-medium text-slate-700">{item.right_axis ?? '—'}</span></p>
+                            </div>
+                          </div>
+                          {/* Left Eye */}
+                          <div className="space-y-1">
+                            <p className="font-bold text-slate-700 border-b border-slate-200/60 pb-1">Left (OS)</p>
+                            <div className="space-y-0.5 text-slate-600 text-[11px]">
+                              <p><span className="text-slate-400">SPH:</span> <span className="font-medium text-slate-700">{item.left_sph ?? '—'}</span></p>
+                              <p><span className="text-slate-400">CYL:</span> <span className="font-medium text-slate-700">{item.left_cyl ?? '—'}</span></p>
+                              <p><span className="text-slate-400">AXIS:</span> <span className="font-medium text-slate-700">{item.left_axis ?? '—'}</span></p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-12 text-slate-400 text-sm bg-white">
+                  No eye examination records stored for this customer yet.
+                </div>
+              )}
+            </div>
+          </>
         )}
       </Card>
 

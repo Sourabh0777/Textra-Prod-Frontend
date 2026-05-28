@@ -123,72 +123,126 @@ export default function OpticalCustomersPage() {
             <Loader />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <thead>
-                <TableRow className="bg-slate-50/50">
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Customer Details</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Contact</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Demographics</th>
-                  <th className="px-6 py-3 text-left font-bold text-slate-600">Registered</th>
-                  <th className="px-6 py-3 text-right font-bold text-slate-600">Actions</th>
-                </TableRow>
-              </thead>
-              <TableBody>
-                {customers && customers.length > 0 ? (
-                  customers.map((customer: OpticalCustomer) => (
-                    <TableRow key={customer._id} className="hover:bg-slate-50/30 transition-colors">
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-slate-800 text-sm">{customer.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col space-y-1 text-slate-600 text-xs">
-                          <span className="flex items-center gap-1.5">
-                            <Phone className="w-3.5 h-3.5 text-slate-400" />
-                            {customer.phone_number || 'N/A'}
-                          </span>
-                          {customer.email && (
-                            <span className="flex items-center gap-1.5 text-slate-400">
-                              <Mail className="w-3.5 h-3.5" />
-                              {customer.email}
+          <>
+            {/* Desktop view */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <thead>
+                  <TableRow className="bg-slate-50/50">
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Customer Details</th>
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Contact</th>
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Demographics</th>
+                    <th className="px-6 py-3 text-left font-bold text-slate-600">Registered</th>
+                    <th className="px-6 py-3 text-right font-bold text-slate-600">Actions</th>
+                  </TableRow>
+                </thead>
+                <TableBody>
+                  {customers && customers.length > 0 ? (
+                    customers.map((customer: OpticalCustomer) => (
+                      <TableRow key={customer._id} className="hover:bg-slate-50/30 transition-colors">
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-800 text-sm">{customer.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col space-y-1 text-slate-600 text-xs">
+                            <span className="flex items-center gap-1.5">
+                              <Phone className="w-3.5 h-3.5 text-slate-400" />
+                              {customer.phone_number || 'N/A'}
                             </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-slate-600 text-xs capitalize">
-                          {customer.age ? `${customer.age} yrs` : 'N/A'} • {customer.gender || 'N/A'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-slate-500 text-xs flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {new Date(customer.created_at).toLocaleDateString('en-GB')}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Link
-                          href={`/optical-service/customers/${customer._id}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold text-white bg-[#15368A] hover:bg-[#0d2663] transition-all"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          View Profile
-                        </Link>
+                            {customer.email && (
+                              <span className="flex items-center gap-1.5 text-slate-400">
+                                <Mail className="w-3.5 h-3.5" />
+                                {customer.email}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-slate-600 text-xs capitalize">
+                            {customer.age ? `${customer.age} yrs` : 'N/A'} • {customer.gender || 'N/A'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-slate-500 text-xs flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                            {new Date(customer.created_at).toLocaleDateString('en-GB')}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Link
+                            href={`/optical-service/customers/${customer._id}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold text-white bg-[#15368A] hover:bg-[#0d2663] transition-all"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            View Profile
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-12 text-slate-400">
+                        No customers registered with this criteria.
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-slate-400">
-                      No customers registered with this criteria.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile view (stacked cards) */}
+            <div className="block md:hidden divide-y divide-slate-100">
+              {customers && customers.length > 0 ? (
+                customers.map((customer: OpticalCustomer) => (
+                  <div key={customer._id} className="p-4 space-y-3 bg-white">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-800 text-base">{customer.name}</span>
+                      <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md font-medium border border-slate-100">
+                        ID: {customer._id.slice(-6)}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-slate-600 text-xs pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{customer.phone_number || 'No Phone'}</span>
+                      </div>
+                      <div className="text-right text-slate-500">
+                        {customer.age ? `${customer.age} yrs` : 'N/A'} • <span className="capitalize">{customer.gender || 'N/A'}</span>
+                      </div>
+                    </div>
+
+                    {customer.email && (
+                      <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate text-slate-400">{customer.email}</span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100/60 pt-2.5 mt-1.5">
+                      <span className="flex items-center gap-1 text-[11px]">
+                        <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-300" />
+                        Registered: {new Date(customer.created_at).toLocaleDateString('en-GB')}
+                      </span>
+                      <Link
+                        href={`/optical-service/customers/${customer._id}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-[#15368A] hover:bg-[#0d2663] transition-all shadow-sm"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        View Profile
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12 text-slate-400 text-sm bg-white">
+                  No customers registered with this criteria.
+                </div>
+              )}
+            </div>
+          </>
         )}
       </Card>
 

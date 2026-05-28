@@ -105,7 +105,8 @@ export default function OpticalDashboardPage() {
               View Registry <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="overflow-x-auto">
+          {/* Desktop View */}
+          <div className="hidden md:block overflow-x-auto">
             <Table>
               <thead>
                 <TableRow>
@@ -140,8 +141,32 @@ export default function OpticalDashboardPage() {
               </TableBody>
             </Table>
           </div>
-        </Card>
 
+          {/* Mobile View */}
+          <div className="block md:hidden divide-y divide-slate-100 bg-white">
+            {customers && customers.length > 0 ? (
+              customers.slice(0, 5).map((cust: any) => (
+                <div key={cust._id} className="p-4 flex items-center justify-between gap-4">
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-semibold text-slate-700 text-sm truncate">{cust.name}</span>
+                    <span className="text-slate-400 text-xs truncate">{cust.phone_number || 'No Phone'}</span>
+                  </div>
+                  <Link
+                    href={`/optical-service/customers/${cust._id}`}
+                    className="inline-flex items-center justify-center px-3 py-1.5 rounded-xl text-xs font-semibold text-[#15368A] bg-[#15368A]/5 border border-transparent transition-colors duration-200"
+                  >
+                    Profile
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-slate-400 text-xs bg-white">
+                No customers registered yet.
+              </div>
+            )}
+          </div>
+        </Card>
+ 
         {/* Recent Prescriptions */}
         <Card className="border border-slate-100 shadow-sm rounded-2xl overflow-hidden bg-white">
           <div className="p-6 border-b border-slate-50 flex items-center justify-between">
@@ -156,7 +181,9 @@ export default function OpticalDashboardPage() {
               All Prescriptions <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Desktop View */}
+          <div className="hidden md:block overflow-x-auto">
             <Table>
               <thead>
                 <TableRow>
@@ -185,6 +212,34 @@ export default function OpticalDashboardPage() {
                 )}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Mobile View */}
+          <div className="block md:hidden divide-y divide-slate-100 bg-white">
+            {prescriptions && prescriptions.length > 0 ? (
+              prescriptions.slice(0, 5).map((pres: any) => {
+                const isImage = pres.prescription_type === 'image';
+                return (
+                  <div key={pres._id} className="p-4 flex items-center justify-between gap-4">
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-semibold text-slate-700 text-sm truncate">
+                        {pres.customer_id?.name || 'Unknown'}
+                      </span>
+                      <span className="text-slate-400 text-xs truncate">
+                        {isImage ? 'Paper Prescription' : (pres.lens_type || 'Manual')}
+                      </span>
+                    </div>
+                    <span className="text-slate-400 text-[10px] shrink-0">
+                      {new Date(pres.created_at).toLocaleDateString('en-GB')}
+                    </span>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-center py-8 text-slate-400 text-xs bg-white">
+                No prescriptions generated yet.
+              </div>
+            )}
           </div>
         </Card>
       </div>
