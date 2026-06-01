@@ -37,6 +37,4 @@ export const SIDEBAR_CONFIG = {
   // Optical Service
   'optical-dashboard': { label: 'Dashboard', href: '/optical-service', icon: LayoutDashboard },
   'optical-customers': { label: 'Customers', href: '/optical-service/customers', icon: Users },
-  'optical-prescriptions': { label: 'Prescriptions', href: '/optical-service/prescriptions', icon: MessageSquareText },
 } as const;
-
