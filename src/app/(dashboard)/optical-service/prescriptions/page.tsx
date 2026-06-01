@@ -1,5 +1,5 @@
-import OpticalPrescriptionsPage from '@/components/Optical-pages/optical-prescriptions-page';
+import OpticalDashboardPage from '@/components/Optical-pages/optical-dashboard-page';
 
 export default function Page() {
-  return <OpticalPrescriptionsPage />;
+  return <OpticalDashboardPage />;
 }
