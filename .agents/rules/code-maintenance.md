@@ -70,3 +70,43 @@ We adhere strictly to the Next.js App Router patterns to keep the client codebas
 *   **ESLint Rules:** Never bypass lint rules. Run `npm run lint` before committing code.
 *   **Prettier Formatter:** Keep coding style consistent by running `npm run format`.
 *   **Git Quality Gate:** Do not modify or bypass the Husky hooks and `lint-staged` setups. Commits are verified automatically to protect repository health.
+
+---
+
+## 7. Component Refactoring & API Query Patterns (Hooks Separation)
+
+To ensure maximum maintainability, clean testability, and standard-compliant React coding, all feature-rich or complex dashboard views must adhere to the **decoupled state hook and sub-components architecture**.
+
+### 7.1 Separation of Hooks and UI
+*   **Encapsulate State & Actions**: Do not bleed state variables, RTK Query hooks, validations, and click handlers directly inside large JSX page controllers. Move them into a dedicated custom React hook (e.g., `useOpticalDashboard` or `useServicesPage`) stored inside `src/lib/hooks/` (or a corresponding feature hook folder).
+*   **Pure Orchestrators**: The main entry component (e.g., `OpticalDashboardPage`) should only invoke the custom hook, destructure required states and handlers, and mount focused sibling sub-components.
+*   **Single-Purpose Sibling Views**: Break large view sections into modular sibling sub-components in the same feature folder (e.g., `customer-directory.tsx`, `prescription-form.tsx`, `diagnostics-timeline.tsx`). Keep their props clean, simple, and strictly typed.
+
+### 7.2 Clerk Authentication & Query Skips
+*   **Secure API Requests**: Every backend integration query (e.g., `useFetchOpticalCustomersQuery`) must wait for Clerk to load the user session context.
+*   **Skip Option Configuration**: Always fetch user status using Clerk's `useUser()` hook:
+    ```typescript
+    const { user: clerkUser, isLoaded } = useUser();
+    ```
+    Then, pass the `skip` flag inside the query config option:
+    ```typescript
+    const { data: response } = useFetchSomeDataQuery(undefined, {
+      skip: !isLoaded || !clerkUser,
+    });
+    ```
+    For child queries requiring active keys (e.g., `activeCustomerId`), extend the skip condition symmetrically:
+    ```typescript
+    skip: !activeCustomerId || !isLoaded || !clerkUser
+    ```
+
+### 7.3 Safe API Response Parsing & Normalization
+*   **Robust Fallback Arrays**: Normalize backend RTK responses directly inside the custom hook using conditional array and nested data checks to prevent rendering breakdowns:
+    ```typescript
+    const items = Array.isArray(itemsResponse) ? itemsResponse : (itemsResponse as any)?.data || [];
+    ```
+
+### 7.4 Smartphone POS Compact Layout Design
+*   **Extreme High-Density**: POS and smartphone-facing command interfaces must compress spaces to eliminate scrolling.
+*   **Pill & Capsule Buttons**: Purge bulky emojis or massive cards; use single-row inline text pills (`[Single] [Bifocal]`) and badge rows.
+*   **Micro Camera Snap Row**: Shrink drag-and-drop boxes to inline upload bars that render a tiny preview thumbnail next to the camera input trigger.
+
