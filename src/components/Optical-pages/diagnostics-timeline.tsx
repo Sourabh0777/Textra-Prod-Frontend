@@ -20,9 +20,7 @@ export function DiagnosticsTimeline({
   return (
     <Card className="p-2 border border-slate-100 shadow-sm rounded-lg bg-white space-y-1.5">
       <div className="flex items-center justify-between border-b border-slate-50 pb-1">
-        <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">
-          Diagnostic History
-        </span>
+        <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">Diagnostic History</span>
         <span className="text-[9.5px] font-bold text-[#15368A] bg-blue-50 px-1 rounded-sm">
           {prescriptions?.length || 0} Logs
         </span>
@@ -50,12 +48,9 @@ export function DiagnosticsTimeline({
                 key={pres._id}
                 className="py-1 flex items-center justify-between gap-2 hover:bg-slate-50 rounded transition-colors"
               >
-                <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0" onClick={() => setPreviewModalImage(pres.image_url)}>
                   {/* Thumbnail */}
-                  <div
-                    onClick={() => setPreviewModalImage(pres.image_url)}
-                    className="w-7 h-9 bg-white border border-slate-200 rounded overflow-hidden shadow-xxs cursor-pointer relative flex items-center justify-center shrink-0"
-                  >
+                  <div className="w-7 h-9 bg-white border border-slate-200 rounded overflow-hidden shadow-xxs cursor-pointer relative flex items-center justify-center shrink-0">
                     <img src={pres.image_url} alt="Thumbnail" className="w-full h-full object-cover" />
                   </div>
 
