@@ -19,6 +19,7 @@ export function Sidebar({ onClose, isOpen }: SidebarProps) {
   const { getToken } = useAuth();
   const [menus, setMenus] = useState<SidebarKey[]>([]);
   const { user } = useCurrentUser();
+  console.log(user?.role);
 
   const onLogin = async () => {};
 

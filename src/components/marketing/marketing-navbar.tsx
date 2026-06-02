@@ -4,10 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@clerk/nextjs';
+import { useFetchUserData } from '@/lib/hooks/useFetchUserData';
+import { UserRole } from '@/types';
 
 export function MarketingNavbar() {
   const { isSignedIn } = useAuth();
-
+  const { user } = useFetchUserData();
+  console.log('🚀 ~ MarketingNavbar ~ user:', user);
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-neutral-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +30,7 @@ export function MarketingNavbar() {
 
           <div className="flex items-center gap-2 sm:gap-4">
             {isSignedIn ? (
-              <Link href="/dashboard">
+              <Link href={user?.role === UserRole.OPTICAL_SERVICE ? '/optical-service/customers' : '/dashboard'}>
                 <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-6 whitespace-nowrap">
                   Dashboard
                 </Button>

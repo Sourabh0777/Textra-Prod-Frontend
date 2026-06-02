@@ -1,6 +1,10 @@
 export enum UserRole {
   ADMIN = 'admin',
+  SUB_ADMIN = 'sub_admin',
   TWO_WHEELER_SERVICE = 'two_wheeler_service',
+  NONE = 'none',
+  CAR_SERVICE = 'car_service',
+  OPTICAL_SERVICE = 'optical_service',
 }
 
 export interface IState {
