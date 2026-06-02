@@ -35,9 +35,7 @@ export function PrescriptionForm({
   return (
     <Card className="p-2 border border-slate-100 shadow-sm rounded-lg bg-white space-y-2">
       <div className="flex items-center justify-between border-b border-slate-50 pb-1">
-        <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">
-          Log Prescription Details
-        </span>
+        <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">Prescription</span>
         <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1 rounded-sm">Step 2 of 2</span>
       </div>
 
