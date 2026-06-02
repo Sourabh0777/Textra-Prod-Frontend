@@ -46,9 +46,9 @@ export function MarketingNavbar() {
                   </Button>
                 </Link>
                 <Link href="/sign-up">
-                  <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-4 sm:px-6 shadow-md transition-all hover:scale-105 whitespace-nowrap">
+                  {/* <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-4 sm:px-6 shadow-md transition-all hover:scale-105 whitespace-nowrap">
                     Get Started
-                  </Button>
+                  </Button> */}
                 </Link>
               </>
             )}
