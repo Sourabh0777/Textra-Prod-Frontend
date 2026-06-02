@@ -35,6 +35,18 @@ export function useOpticalDashboard() {
   // New customer form state
   const [newCustName, setNewCustName] = useState('');
   const [newCustPhone, setNewCustPhone] = useState('');
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  const handleCustNameChange = (val: string) => {
+    setNewCustName(val);
+    if (nameError) setNameError(null);
+  };
+
+  const handleCustPhoneChange = (val: string) => {
+    setNewCustPhone(val);
+    if (phoneError) setPhoneError(null);
+  };
 
   // New prescription form state
   const [spectacleType, setSpectacleType] = useState<'single' | 'kt' | 'progressive' | 'contact'>('single');
@@ -63,24 +75,53 @@ export function useOpticalDashboard() {
   // Handle registration of new customer
   const handleAddCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustName.trim()) {
-      toast.error('Please enter customer name.');
-      return;
+    setNameError(null);
+    setPhoneError(null);
+
+    const trimmedName = newCustName.trim();
+    const trimmedPhone = newCustPhone.trim();
+
+    let hasError = false;
+
+    if (!trimmedName) {
+      setNameError('Name is required');
+      hasError = true;
+    } else if (trimmedName.length < 2) {
+      setNameError('At least 2 characters');
+      hasError = true;
     }
-    if (!newCustPhone.trim()) {
-      toast.error('Please enter phone number.');
+
+    if (!trimmedPhone) {
+      setPhoneError('Phone is required');
+      hasError = true;
+    } else {
+      const cleanPhone = trimmedPhone.replace(/^\+/, '');
+      const isNumeric = /^\d+$/.test(cleanPhone);
+      if (!isNumeric) {
+        setPhoneError('Digits only');
+        hasError = true;
+      } else if (cleanPhone.length < 10 || cleanPhone.length > 12) {
+        setPhoneError('10-12 digits');
+        hasError = true;
+      }
+    }
+
+    if (hasError) {
+      toast.error('Please correct the errors in the form.');
       return;
     }
 
     try {
       const result = await createCustomer({
-        name: newCustName.trim(),
-        phone_number: newCustPhone.trim(),
+        name: trimmedName,
+        phone_number: trimmedPhone,
       }).unwrap();
 
       toast.success('Customer registered successfully!');
       setNewCustName('');
       setNewCustPhone('');
+      setNameError(null);
+      setPhoneError(null);
 
       // Auto-select the newly created customer
       if (result?._id) {
@@ -95,8 +136,12 @@ export function useOpticalDashboard() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) {
-        toast.error('Image size must be less than 50MB.');
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please upload an image file (PNG, JPG, etc.).');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Image size must be less than 10MB.');
         return;
       }
       const reader = new FileReader();
@@ -182,6 +227,10 @@ export function useOpticalDashboard() {
     setNewCustName,
     newCustPhone,
     setNewCustPhone,
+    nameError,
+    phoneError,
+    handleCustNameChange,
+    handleCustPhoneChange,
     spectacleType,
     setSpectacleType,
     priceCategory,

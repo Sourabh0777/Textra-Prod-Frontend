@@ -12,6 +12,8 @@ interface CustomerDirectoryProps {
   setNewCustName: (val: string) => void;
   newCustPhone: string;
   setNewCustPhone: (val: string) => void;
+  nameError?: string | null;
+  phoneError?: string | null;
   isCreatingCustomer: boolean;
   handleAddCustomer: (e: React.FormEvent) => void;
   isCustomersLoading: boolean;
@@ -27,6 +29,8 @@ export function CustomerDirectory({
   setNewCustName,
   newCustPhone,
   setNewCustPhone,
+  nameError,
+  phoneError,
   isCreatingCustomer,
   handleAddCustomer,
   isCustomersLoading,
@@ -49,27 +53,53 @@ export function CustomerDirectory({
         </div>
 
         <div className="border-t border-slate-100 pt-1.5">
-          <form onSubmit={handleAddCustomer} className="flex gap-1 items-center">
-            <Input
-              value={newCustName}
-              onChange={(e) => setNewCustName(e.target.value)}
-              placeholder="New Customer Name"
-              className="h-7.5 text-xs rounded-md border-slate-200 focus-visible:ring-[#15368A] flex-1 px-2"
-            />
-            <Input
-              value={newCustPhone}
-              onChange={(e) => setNewCustPhone(e.target.value)}
-              placeholder="Phone"
-              type="tel"
-              className="h-7.5 text-xs rounded-md border-slate-200 focus-visible:ring-[#15368A] w-24 px-2"
-            />
-            <Button
-              type="submit"
-              disabled={isCreatingCustomer}
-              className="bg-[#15368A] hover:bg-[#0f286b] h-7.5 px-2.5 rounded-md text-[10px] font-bold shrink-0"
-            >
-              {isCreatingCustomer ? '...' : '+ Add'}
-            </Button>
+          <form onSubmit={handleAddCustomer} className="flex flex-col gap-1">
+            <div className="flex gap-1 items-center">
+              <Input
+                value={newCustName}
+                onChange={(e) => setNewCustName(e.target.value)}
+                placeholder="New Customer Name"
+                className={`h-7.5 text-xs rounded-md transition-all flex-1 px-2 ${
+                  nameError
+                    ? 'border-rose-400 bg-rose-50/10 text-rose-900 focus-visible:ring-rose-400 placeholder:text-rose-300'
+                    : 'border-slate-200 focus-visible:ring-[#15368A]'
+                }`}
+              />
+              <Input
+                value={newCustPhone}
+                onChange={(e) => setNewCustPhone(e.target.value)}
+                placeholder="Phone"
+                type="tel"
+                className={`h-7.5 text-xs rounded-md transition-all w-24 px-2 ${
+                  phoneError
+                    ? 'border-rose-400 bg-rose-50/10 text-rose-900 focus-visible:ring-rose-400 placeholder:text-rose-300'
+                    : 'border-slate-200 focus-visible:ring-[#15368A]'
+                }`}
+              />
+              <Button
+                type="submit"
+                disabled={isCreatingCustomer}
+                className="bg-[#15368A] hover:bg-[#0f286b] h-7.5 px-2.5 rounded-md text-[10px] font-bold shrink-0"
+              >
+                {isCreatingCustomer ? '...' : '+ Add'}
+              </Button>
+            </div>
+
+            {/* Inline Error Helper Messages */}
+            {(nameError || phoneError) && (
+              <div className="flex flex-col gap-0.5 px-1 pt-0.5 animate-in slide-in-from-top-1 duration-150">
+                {nameError && (
+                  <span className="text-[9.5px] font-extrabold text-rose-500 flex items-center gap-1">
+                    ⚠️ Name: {nameError}
+                  </span>
+                )}
+                {phoneError && (
+                  <span className="text-[9.5px] font-extrabold text-rose-500 flex items-center gap-1">
+                    ⚠️ Phone: {phoneError}
+                  </span>
+                )}
+              </div>
+            )}
           </form>
         </div>
       </div>

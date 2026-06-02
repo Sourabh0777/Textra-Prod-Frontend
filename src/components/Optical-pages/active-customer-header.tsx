@@ -16,23 +16,64 @@ export function ActiveCustomerHeader({ id, name, phoneNumber, onClear }: ActiveC
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editName, setEditName] = useState(name);
   const [editPhone, setEditPhone] = useState(phoneNumber);
+  const [editNameError, setEditNameError] = useState<string | null>(null);
+  const [editPhoneError, setEditPhoneError] = useState<string | null>(null);
 
   const [updateCustomer, { isLoading: isUpdating }] = useUpdateOpticalCustomerMutation();
+
+  const handleEditNameChange = (val: string) => {
+    setEditName(val);
+    if (editNameError) setEditNameError(null);
+  };
+
+  const handleEditPhoneChange = (val: string) => {
+    setEditPhone(val);
+    if (editPhoneError) setEditPhoneError(null);
+  };
 
   const handleOpenEdit = () => {
     setEditName(name);
     setEditPhone(phoneNumber);
+    setEditNameError(null);
+    setEditPhoneError(null);
     setIsEditOpen(true);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editName.trim()) {
-      toast.error('Name cannot be empty');
-      return;
+    setEditNameError(null);
+    setEditPhoneError(null);
+
+    const trimmedName = editName.trim();
+    const trimmedPhone = editPhone.trim();
+
+    let hasError = false;
+
+    if (!trimmedName) {
+      setEditNameError('Name is required');
+      hasError = true;
+    } else if (trimmedName.length < 2) {
+      setEditNameError('At least 2 characters');
+      hasError = true;
     }
-    if (!editPhone.trim()) {
-      toast.error('Phone number cannot be empty');
+
+    if (!trimmedPhone) {
+      setEditPhoneError('Phone number is required');
+      hasError = true;
+    } else {
+      const cleanPhone = trimmedPhone.replace(/^\+/, '');
+      const isNumeric = /^\d+$/.test(cleanPhone);
+      if (!isNumeric) {
+        setEditPhoneError('Digits only (optional starting +)');
+        hasError = true;
+      } else if (cleanPhone.length < 10 || cleanPhone.length > 12) {
+        setEditPhoneError('10-12 digits required');
+        hasError = true;
+      }
+    }
+
+    if (hasError) {
+      toast.error('Please correct the errors in the form.');
       return;
     }
 
@@ -40,8 +81,8 @@ export function ActiveCustomerHeader({ id, name, phoneNumber, onClear }: ActiveC
       await updateCustomer({
         id,
         data: {
-          name: editName.trim(),
-          phone_number: editPhone.trim(),
+          name: trimmedName,
+          phone_number: trimmedPhone,
         },
       }).unwrap();
       
@@ -109,11 +150,19 @@ export function ActiveCustomerHeader({ id, name, phoneNumber, onClear }: ActiveC
                 <input
                   type="text"
                   value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#15368A] focus:bg-white text-[12px] p-2 rounded-md outline-none transition-all font-semibold text-slate-800"
+                  onChange={(e) => handleEditNameChange(e.target.value)}
+                  className={`w-full text-[12px] p-2 rounded-md outline-none transition-all font-semibold ${
+                    editNameError
+                      ? 'border border-rose-400 bg-rose-50/10 focus:border-rose-400 text-rose-900 placeholder:text-rose-300'
+                      : 'bg-slate-50 border border-slate-200 focus:border-[#15368A] focus:bg-white text-slate-800'
+                  }`}
                   placeholder="Customer Name"
-                  required
                 />
+                {editNameError && (
+                  <span className="text-[10px] font-extrabold text-rose-500 block mt-1 animate-in slide-in-from-top-1 duration-150">
+                    ⚠️ {editNameError}
+                  </span>
+                )}
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-slate-600 mb-1">
@@ -122,11 +171,19 @@ export function ActiveCustomerHeader({ id, name, phoneNumber, onClear }: ActiveC
                 <input
                   type="text"
                   value={editPhone}
-                  onChange={(e) => setEditPhone(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#15368A] focus:bg-white text-[12px] p-2 rounded-md outline-none transition-all font-semibold text-slate-800"
+                  onChange={(e) => handleEditPhoneChange(e.target.value)}
+                  className={`w-full text-[12px] p-2 rounded-md outline-none transition-all font-semibold ${
+                    editPhoneError
+                      ? 'border border-rose-400 bg-rose-50/10 focus:border-rose-400 text-rose-900 placeholder:text-rose-300'
+                      : 'bg-slate-50 border border-slate-200 focus:border-[#15368A] focus:bg-white text-slate-800'
+                  }`}
                   placeholder="Phone Number"
-                  required
                 />
+                {editPhoneError && (
+                  <span className="text-[10px] font-extrabold text-rose-500 block mt-1 animate-in slide-in-from-top-1 duration-150">
+                    ⚠️ {editPhoneError}
+                  </span>
+                )}
               </div>
               <div className="pt-2 flex justify-end gap-2">
                 <button

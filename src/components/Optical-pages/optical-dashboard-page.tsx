@@ -17,9 +17,11 @@ export default function OpticalDashboardPage() {
     searchQuery,
     setSearchQuery,
     newCustName,
-    setNewCustName,
     newCustPhone,
-    setNewCustPhone,
+    nameError,
+    phoneError,
+    handleCustNameChange,
+    handleCustPhoneChange,
     spectacleType,
     setSpectacleType,
     priceCategory,
@@ -52,9 +54,11 @@ export default function OpticalDashboardPage() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             newCustName={newCustName}
-            setNewCustName={setNewCustName}
+            setNewCustName={handleCustNameChange}
             newCustPhone={newCustPhone}
-            setNewCustPhone={setNewCustPhone}
+            setNewCustPhone={handleCustPhoneChange}
+            nameError={nameError}
+            phoneError={phoneError}
             isCreatingCustomer={isCreatingCustomer}
             handleAddCustomer={handleAddCustomer}
             isCustomersLoading={isCustomersLoading}
