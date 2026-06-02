@@ -58,7 +58,7 @@ export function CustomerDirectory({
               <Input
                 value={newCustName}
                 onChange={(e) => setNewCustName(e.target.value)}
-                placeholder="New Customer Name"
+                placeholder="Customer Name"
                 className={`h-7.5 text-xs rounded-md transition-all flex-1 px-2 ${
                   nameError
                     ? 'border-rose-400 bg-rose-50/10 text-rose-900 focus-visible:ring-rose-400 placeholder:text-rose-300'
