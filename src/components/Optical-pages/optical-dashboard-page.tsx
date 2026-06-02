@@ -8,7 +8,7 @@ import {
   useCreatePrescriptionMutation,
   useDeletePrescriptionMutation,
   useDeleteOpticalCustomerMutation,
-} from '@/lib/api/endpoints/opticalApi';
+} from '@/lib/api/endpoints/opticals/opticalApi';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
