@@ -1,5 +1,7 @@
 'use client';
 
+import { ArrowLeft } from 'lucide-react';
+
 interface OpticalHeaderProps {
   hasActiveCustomer: boolean;
   onBack: () => void;
@@ -15,9 +17,10 @@ export function OpticalHeader({ hasActiveCustomer, onBack }: OpticalHeaderProps)
         <button
           type="button"
           onClick={onBack}
-          className="text-[9.5px] font-bold bg-white/10 hover:bg-white/20 text-white px-2 py-0.5 rounded transition-colors"
+          className="text-[9.5px] font-bold bg-white/10 hover:bg-white/20 text-white px-2 py-0.5 rounded transition-colors flex items-center gap-1"
         >
-          ← Back to Directory
+          <ArrowLeft className="w-3 h-3" />
+          Back
         </button>
       )}
     </div>
