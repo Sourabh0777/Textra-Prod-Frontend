@@ -14,7 +14,7 @@ interface NavbarProps {
 
 export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
   const router = useRouter();
-  const [notifications] = useState(3);
+  const [notifications] = useState(0);
 
   return (
     <header className="sticky top-0 z-30 w-full bg-white/70 backdrop-blur-xl border-b border-neutral-200">
@@ -40,7 +40,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
         </div>
 
         {/* Left side - Search or Breadcrumbs */}
-        <div className="flex items-center gap-4 flex-1 max-w-xl">
+        {/* <div className="flex items-center gap-4 flex-1 max-w-xl">
           <div className="relative w-full group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-[#15368A] transition-colors" />
             <input
@@ -50,7 +50,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
               className="w-full pl-10 pr-4 py-2 bg-neutral-100/50 border border-transparent rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#15368A]/20 focus:bg-white focus:border-[#15368A]/30 transition-all duration-300"
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Right side - Actions & Profile */}
         <div className="flex items-center gap-2 md:gap-4">
@@ -65,10 +65,7 @@ export function Navbar({ onMenuClick, isMobile }: NavbarProps) {
           </button>
 
           {/* Settings */}
-          <button
-            onClick={() => router.push('/select-business-type')}
-            className="p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300"
-          >
+          <button className="p-2 text-neutral-500 hover:text-[#15368A] hover:bg-neutral-100 rounded-xl transition-all duration-300">
             <Settings className="w-5 h-5" />
           </button>
 
