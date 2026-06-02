@@ -1,19 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  useFetchOpticalCustomersQuery, 
-  useCreateOpticalCustomerMutation, 
-  useFetchPrescriptionsQuery, 
+import { useUser } from '@clerk/nextjs';
+import {
+  useFetchOpticalCustomersQuery,
+  useCreateOpticalCustomerMutation,
+  useFetchPrescriptionsQuery,
   useCreatePrescriptionMutation,
   useDeletePrescriptionMutation,
-  useDeleteOpticalCustomerMutation
+  useDeleteOpticalCustomerMutation,
 } from '@/lib/api/endpoints/opticals/opticalApi';
 import { toast } from 'sonner';
 
 export function useOpticalDashboard() {
-  // RTK Query hooks
-  const { data: customers, isLoading: isCustomersLoading } = useFetchOpticalCustomersQuery();
+  const { user: clerkUser, isLoaded } = useUser();
+
+  // RTK Query hooks with Clerk auth check
+  const { data: customersResponse, isLoading: isCustomersLoading } = useFetchOpticalCustomersQuery(undefined, {
+    skip: !isLoaded || !clerkUser,
+  });
+
+  const customers = Array.isArray(customersResponse) ? customersResponse : (customersResponse as any)?.data || [];
+
   const [createCustomer, { isLoading: isCreatingCustomer }] = useCreateOpticalCustomerMutation();
   const [createPrescription, { isLoading: isSavingPrescription }] = useCreatePrescriptionMutation();
   const [deletePrescription] = useDeletePrescriptionMutation();
@@ -35,9 +43,14 @@ export function useOpticalDashboard() {
   const [imageBase64, setImageBase64] = useState<string | null>(null);
 
   // Fetch prescriptions for active customer if selected
-  const { data: prescriptions, isLoading: isPrescriptionsLoading } = useFetchPrescriptionsQuery(activeCustomerId || '', {
-    skip: !activeCustomerId
-  });
+  const { data: prescriptionsResponse, isLoading: isPrescriptionsLoading } = useFetchPrescriptionsQuery(
+    activeCustomerId || '',
+    {
+      skip: !activeCustomerId || !isLoaded || !clerkUser,
+    },
+  );
+
+  const prescriptions = Array.isArray(prescriptionsResponse) ? prescriptionsResponse : (prescriptionsResponse as any)?.data || [];
 
   const activeCustomer = customers?.find((c: any) => c._id === activeCustomerId);
 
@@ -62,13 +75,13 @@ export function useOpticalDashboard() {
     try {
       const result = await createCustomer({
         name: newCustName.trim(),
-        phone_number: newCustPhone.trim()
+        phone_number: newCustPhone.trim(),
       }).unwrap();
-      
+
       toast.success('Customer registered successfully!');
       setNewCustName('');
       setNewCustPhone('');
-      
+
       // Auto-select the newly created customer
       if (result?._id) {
         setActiveCustomerId(result._id);
@@ -113,7 +126,7 @@ export function useOpticalDashboard() {
         customer_id: activeCustomerId,
         spectacle_type: spectacleType,
         price_category: priceCategory,
-        image_base64: imageBase64
+        image_base64: imageBase64,
       }).unwrap();
 
       toast.success('Prescription pad logged successfully!');

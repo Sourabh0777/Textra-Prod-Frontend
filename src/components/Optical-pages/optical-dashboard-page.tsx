@@ -1,6 +1,6 @@
 'use client';
 
-import { useOpticalDashboard } from '@/lib/hooks/use-optical-dashboard';
+import { useOpticalDashboard } from '@/lib/hooks/optical-hooks/use-optical-dashboard';
 import { OpticalHeader } from './optical-header';
 import { CustomerDirectory } from './customer-directory';
 import { ActiveCustomerHeader } from './active-customer-header';
@@ -43,10 +43,7 @@ export default function OpticalDashboardPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-4">
       {/* Dynamic Header */}
-      <OpticalHeader
-        hasActiveCustomer={!!activeCustomer}
-        onBack={() => setActiveCustomerId(null)}
-      />
+      <OpticalHeader hasActiveCustomer={!!activeCustomer} onBack={() => setActiveCustomerId(null)} />
 
       <div className="max-w-xl mx-auto p-1.5 space-y-1.5">
         {/* DIRECTORY VIEW: No Customer selected */}
@@ -102,10 +99,7 @@ export default function OpticalDashboardPage() {
       </div>
 
       {/* Fullscreen Overlay Viewer */}
-      <ImagePreviewModal
-        previewModalImage={previewModalImage}
-        onClose={() => setPreviewModalImage(null)}
-      />
+      <ImagePreviewModal previewModalImage={previewModalImage} onClose={() => setPreviewModalImage(null)} />
     </div>
   );
 }
