@@ -67,6 +67,7 @@ export default function OpticalDashboardPage() {
           <div className="space-y-1.5 animate-in fade-in duration-200">
             {/* Customer Details Row */}
             <ActiveCustomerHeader
+              id={activeCustomer._id}
               name={activeCustomer.name}
               phoneNumber={activeCustomer.phone_number}
               onClear={() => setActiveCustomerId(null)}
