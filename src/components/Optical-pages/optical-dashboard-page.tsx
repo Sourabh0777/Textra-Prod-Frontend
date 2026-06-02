@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  useFetchOpticalCustomersQuery, 
-  useCreateOpticalCustomerMutation, 
-  useFetchPrescriptionsQuery, 
+import {
+  useFetchOpticalCustomersQuery,
+  useCreateOpticalCustomerMutation,
+  useFetchPrescriptionsQuery,
   useCreatePrescriptionMutation,
   useDeletePrescriptionMutation,
-  useDeleteOpticalCustomerMutation
+  useDeleteOpticalCustomerMutation,
 } from '@/lib/api/endpoints/opticalApi';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -41,9 +41,12 @@ export default function OpticalDashboardPage() {
   const [imageBase64, setImageBase64] = useState<string | null>(null);
 
   // Fetch prescriptions for active customer if selected
-  const { data: prescriptions, isLoading: isPrescriptionsLoading } = useFetchPrescriptionsQuery(activeCustomerId || '', {
-    skip: !activeCustomerId
-  });
+  const { data: prescriptions, isLoading: isPrescriptionsLoading } = useFetchPrescriptionsQuery(
+    activeCustomerId || '',
+    {
+      skip: !activeCustomerId,
+    },
+  );
 
   const activeCustomer = customers?.find((c: any) => c._id === activeCustomerId);
 
@@ -68,13 +71,13 @@ export default function OpticalDashboardPage() {
     try {
       const result = await createCustomer({
         name: newCustName.trim(),
-        phone_number: newCustPhone.trim()
+        phone_number: newCustPhone.trim(),
       }).unwrap();
-      
+
       toast.success('Customer registered successfully!');
       setNewCustName('');
       setNewCustPhone('');
-      
+
       // Auto-select the newly created customer
       if (result?._id) {
         setActiveCustomerId(result._id);
@@ -119,7 +122,7 @@ export default function OpticalDashboardPage() {
         customer_id: activeCustomerId,
         spectacle_type: spectacleType,
         price_category: priceCategory,
-        image_base64: imageBase64
+        image_base64: imageBase64,
       }).unwrap();
 
       toast.success('Prescription pad logged successfully!');
@@ -168,7 +171,9 @@ export default function OpticalDashboardPage() {
       <div className="bg-[#15368A] text-white py-2 px-3 shadow-sm flex items-center justify-between select-none">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-black tracking-tight">👓 Optical Diagnostics</span>
-          <span className="bg-blue-600 text-[8px] font-bold px-1 py-0.2 rounded-sm text-blue-100 tracking-wider">POS MOBILE</span>
+          <span className="bg-blue-600 text-[8px] font-bold px-1 py-0.2 rounded-sm text-blue-100 tracking-wider">
+            POS MOBILE
+          </span>
         </div>
         {activeCustomer && (
           <button
@@ -212,8 +217,8 @@ export default function OpticalDashboardPage() {
                     type="tel"
                     className="h-7.5 text-xs rounded-md border-slate-200 focus-visible:ring-[#15368A] w-24 px-2"
                   />
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isCreatingCustomer}
                     className="bg-[#15368A] hover:bg-[#0f286b] h-7.5 px-2.5 rounded-md text-[10px] font-bold shrink-0"
                   >
@@ -226,7 +231,9 @@ export default function OpticalDashboardPage() {
             {/* High Density Customer List */}
             <div className="bg-white border border-slate-100 rounded-lg p-1 shadow-sm max-h-[78vh] overflow-y-auto divide-y divide-slate-50">
               {isCustomersLoading ? (
-                <div className="py-8 flex items-center justify-center"><Loader /></div>
+                <div className="py-8 flex items-center justify-center">
+                  <Loader />
+                </div>
               ) : filteredCustomers && filteredCustomers.length > 0 ? (
                 filteredCustomers.map((cust: any) => (
                   <div
@@ -238,7 +245,7 @@ export default function OpticalDashboardPage() {
                       <span className="font-extrabold text-slate-800 text-[12px] truncate">{cust.name}</span>
                       <span className="text-slate-400 text-[10.5px] truncate">({cust.phone_number})</span>
                     </div>
-                    
+
                     <button
                       type="button"
                       onClick={(e) => {
@@ -269,8 +276,12 @@ export default function OpticalDashboardPage() {
                   {activeCustomer.name.charAt(0)}
                 </div>
                 <div className="min-w-0">
-                  <div className="font-extrabold text-slate-800 text-[12px] truncate leading-tight">{activeCustomer.name}</div>
-                  <div className="text-slate-500 text-[10.5px] font-medium leading-tight">{activeCustomer.phone_number}</div>
+                  <div className="font-extrabold text-slate-800 text-[12px] truncate leading-tight">
+                    {activeCustomer.name}
+                  </div>
+                  <div className="text-slate-500 text-[10.5px] font-medium leading-tight">
+                    {activeCustomer.phone_number}
+                  </div>
                 </div>
               </div>
               <button
@@ -285,20 +296,26 @@ export default function OpticalDashboardPage() {
             {/* Quick Log Prescription Form */}
             <Card className="p-2 border border-slate-100 shadow-sm rounded-lg bg-white space-y-2">
               <div className="flex items-center justify-between border-b border-slate-50 pb-1">
-                <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">Log Prescription Details</span>
-                <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1 rounded-sm">Step 2 of 2</span>
+                <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">
+                  Log Prescription Details
+                </span>
+                <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1 rounded-sm">
+                  Step 2 of 2
+                </span>
               </div>
 
               <form onSubmit={handleSavePrescription} className="space-y-2">
                 {/* Spectacle Type Buttons */}
                 <div className="space-y-0.5">
-                  <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Spectacles Type</Label>
+                  <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">
+                    Spectacles Type
+                  </Label>
                   <div className="grid grid-cols-4 gap-1">
                     {[
                       { key: 'single', label: 'Single' },
                       { key: 'kt', label: 'Bifocal' },
                       { key: 'progressive', label: 'Progr.' },
-                      { key: 'contact', label: 'Contact' }
+                      { key: 'contact', label: 'Contact' },
                     ].map((type) => (
                       <button
                         key={type.key}
@@ -318,12 +335,14 @@ export default function OpticalDashboardPage() {
 
                 {/* Price Category Star Selection */}
                 <div className="space-y-0.5">
-                  <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Price Category</Label>
+                  <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">
+                    Price Category
+                  </Label>
                   <div className="grid grid-cols-3 gap-1">
                     {[
                       { key: '1 star', stars: 1, label: '< ₹1k' },
                       { key: '2 star', stars: 2, label: '₹1k-2k' },
-                      { key: '3 star', stars: 3, label: '> ₹2k' }
+                      { key: '3 star', stars: 3, label: '> ₹2k' },
                     ].map((item) => (
                       <button
                         key={item.key}
@@ -338,7 +357,9 @@ export default function OpticalDashboardPage() {
                         <span className="truncate">{item.label}</span>
                         <span className="flex text-amber-500 shrink-0 select-none">
                           {Array.from({ length: item.stars }).map((_, i) => (
-                            <span key={i} className="text-[9px]">★</span>
+                            <span key={i} className="text-[9px]">
+                              ★
+                            </span>
                           ))}
                         </span>
                       </button>
@@ -348,7 +369,9 @@ export default function OpticalDashboardPage() {
 
                 {/* File Upload / Camera Row */}
                 <div className="space-y-0.5">
-                  <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Upload Pad Photo (Mandatory)</Label>
+                  <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">
+                    Upload Pad Photo (Mandatory)
+                  </Label>
                   <div className="flex gap-1.5 items-center">
                     {!imagePreview ? (
                       <div className="relative border border-dashed border-slate-200 hover:border-[#15368A]/40 rounded-md p-2 flex items-center justify-center bg-slate-50 flex-1 h-9.5 cursor-pointer transition-all">
@@ -389,14 +412,16 @@ export default function OpticalDashboardPage() {
                 </div>
 
                 {/* Save Button */}
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSavingPrescription || !imagePreview}
                   className="w-full bg-[#15368A] hover:bg-[#0f286b] h-8 rounded-md text-[11px] font-bold shadow-xs disabled:bg-slate-100 disabled:text-slate-400 mt-1 transition-all"
                 >
                   {isSavingPrescription ? (
                     <span className="flex items-center justify-center gap-1">Saving Pad Log...</span>
-                  ) : 'Save Prescription Pad Log'}
+                  ) : (
+                    'Save Prescription Pad Log'
+                  )}
                 </Button>
               </form>
             </Card>
@@ -404,31 +429,43 @@ export default function OpticalDashboardPage() {
             {/* Diagnostic Logs timeline */}
             <Card className="p-2 border border-slate-100 shadow-sm rounded-lg bg-white space-y-1.5">
               <div className="flex items-center justify-between border-b border-slate-50 pb-1">
-                <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">Diagnostic History</span>
-                <span className="text-[9.5px] font-bold text-[#15368A] bg-blue-50 px-1 rounded-sm">{prescriptions?.length || 0} Logs</span>
+                <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">
+                  Diagnostic History
+                </span>
+                <span className="text-[9.5px] font-bold text-[#15368A] bg-blue-50 px-1 rounded-sm">
+                  {prescriptions?.length || 0} Logs
+                </span>
               </div>
 
               <div className="space-y-1 max-h-[38vh] overflow-y-auto divide-y divide-slate-50">
                 {isPrescriptionsLoading ? (
-                  <div className="py-6 flex items-center justify-center"><Loader /></div>
+                  <div className="py-6 flex items-center justify-center">
+                    <Loader />
+                  </div>
                 ) : prescriptions && prescriptions.length > 0 ? (
                   prescriptions.map((pres: any) => {
                     const starsCount = pres.price_category === '3 star' ? 3 : pres.price_category === '2 star' ? 2 : 1;
-                    const specLabel = pres.spectacle_type === 'single' ? 'Single' : pres.spectacle_type === 'kt' ? 'Bifocal' : pres.spectacle_type === 'progressive' ? 'Progressive' : 'Contact';
-                    
+                    const specLabel =
+                      pres.spectacle_type === 'single'
+                        ? 'Single'
+                        : pres.spectacle_type === 'kt'
+                          ? 'Bifocal'
+                          : pres.spectacle_type === 'progressive'
+                            ? 'Progressive'
+                            : 'Contact';
+
                     return (
-                      <div key={pres._id} className="py-1 flex items-center justify-between gap-2 hover:bg-slate-50 rounded transition-colors">
+                      <div
+                        key={pres._id}
+                        className="py-1 flex items-center justify-between gap-2 hover:bg-slate-50 rounded transition-colors"
+                      >
                         <div className="flex items-center gap-2 min-w-0">
                           {/* Thumbnail */}
-                          <div 
+                          <div
                             onClick={() => setPreviewModalImage(pres.image_url)}
                             className="w-7 h-9 bg-white border border-slate-200 rounded overflow-hidden shadow-xxs cursor-pointer relative flex items-center justify-center shrink-0"
                           >
-                            <img
-                              src={pres.image_url}
-                              alt="Thumbnail"
-                              className="w-full h-full object-cover"
-                            />
+                            <img src={pres.image_url} alt="Thumbnail" className="w-full h-full object-cover" />
                           </div>
 
                           <div className="min-w-0 flex flex-col">
@@ -442,7 +479,10 @@ export default function OpticalDashboardPage() {
                             </div>
                             <span className="text-slate-400 text-[8.5px] leading-tight mt-0.5">
                               {new Date(pres.created_at).toLocaleDateString('en-IN', {
-                                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                                day: '2-digit',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
                               })}
                             </span>
                           </div>
@@ -472,11 +512,11 @@ export default function OpticalDashboardPage() {
 
       {/* FULLSCREEN IMAGE PREVIEW MODAL */}
       {previewModalImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 z-[9999] animate-in fade-in duration-200"
           onClick={() => setPreviewModalImage(null)}
         >
-          <div 
+          <div
             className="bg-white border border-slate-100 max-w-sm w-full rounded-lg overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
