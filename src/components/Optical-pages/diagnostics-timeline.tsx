@@ -20,7 +20,7 @@ export function DiagnosticsTimeline({
   return (
     <Card className="p-2 border border-slate-100 shadow-sm rounded-lg bg-white space-y-1.5">
       <div className="flex items-center justify-between border-b border-slate-50 pb-1">
-        <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">Diagnostic History</span>
+        <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">History</span>
         <span className="text-[9.5px] font-bold text-[#15368A] bg-blue-50 px-1 rounded-sm">
           {prescriptions?.length || 0} Logs
         </span>

@@ -38,17 +38,13 @@ export function PrescriptionForm({
         <span className="font-extrabold text-[9px] text-slate-400 uppercase tracking-wider">
           Log Prescription Details
         </span>
-        <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1 rounded-sm">
-          Step 2 of 2
-        </span>
+        <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1 rounded-sm">Step 2 of 2</span>
       </div>
 
       <form onSubmit={handleSavePrescription} className="space-y-2">
         {/* Spectacle Type Buttons */}
         <div className="space-y-0.5">
-          <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">
-            Spectacles Type
-          </Label>
+          <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Spectacles Type</Label>
           <div className="grid grid-cols-4 gap-1">
             {[
               { key: 'single', label: 'Single' },
@@ -74,9 +70,7 @@ export function PrescriptionForm({
 
         {/* Price Category Star Selection */}
         <div className="space-y-0.5">
-          <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">
-            Price Category
-          </Label>
+          <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Price Category</Label>
           <div className="grid grid-cols-3 gap-1">
             {[
               { key: '1 star', stars: 1, label: '< ₹1k' },
@@ -108,9 +102,7 @@ export function PrescriptionForm({
 
         {/* File Upload / Camera Row */}
         <div className="space-y-0.5">
-          <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">
-            Upload Pad Photo (Mandatory)
-          </Label>
+          <Label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Upload Photo</Label>
           <div className="flex gap-1.5 items-center">
             {!imagePreview ? (
               <div className="relative border border-dashed border-slate-200 hover:border-[#15368A]/40 rounded-md p-2 flex items-center justify-center bg-slate-50 flex-1 h-9.5 cursor-pointer transition-all">
@@ -156,11 +148,7 @@ export function PrescriptionForm({
           disabled={isSavingPrescription || !imagePreview}
           className="w-full bg-[#15368A] hover:bg-[#0f286b] h-8 rounded-md text-[11px] font-bold shadow-xs disabled:bg-slate-100 disabled:text-slate-400 mt-1 transition-all"
         >
-          {isSavingPrescription ? (
-            <span className="flex items-center justify-center gap-1">Saving Pad Log...</span>
-          ) : (
-            'Save Prescription Pad Log'
-          )}
+          {isSavingPrescription ? <span className="flex items-center justify-center gap-1">Saving...</span> : 'Save'}
         </Button>
       </form>
     </Card>
