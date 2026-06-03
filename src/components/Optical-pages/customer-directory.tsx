@@ -20,6 +20,7 @@ interface CustomerDirectoryProps {
   filteredCustomers: any[];
   setActiveCustomerId: (id: string) => void;
   handleDeleteCustomer: (id: string, name: string) => void;
+  activeCustomerId?: string | null;
 }
 
 export function CustomerDirectory({
@@ -37,6 +38,7 @@ export function CustomerDirectory({
   filteredCustomers,
   setActiveCustomerId,
   handleDeleteCustomer,
+  activeCustomerId,
 }: CustomerDirectoryProps) {
   return (
     <div className="space-y-1.5 animate-in fade-in duration-200">
@@ -105,18 +107,26 @@ export function CustomerDirectory({
       </div>
 
       {/* High Density Customer List */}
-      <div className="bg-white border border-slate-100 rounded-lg p-1 shadow-sm max-h-[78vh] overflow-y-auto divide-y divide-slate-50">
+      <div className={`bg-white border border-slate-100 rounded-lg p-1 shadow-sm overflow-y-auto divide-y divide-slate-50 transition-all duration-200 ${
+        activeCustomerId ? 'max-h-[25vh]' : 'max-h-[78vh]'
+      }`}>
         {isCustomersLoading ? (
           <div className="py-8 flex items-center justify-center">
             <Loader />
           </div>
         ) : filteredCustomers && filteredCustomers.length > 0 ? (
-          filteredCustomers.map((cust) => (
-            <div
-              key={cust._id}
-              onClick={() => setActiveCustomerId(cust._id)}
-              className="p-2.5 rounded-md flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-50 active:bg-slate-100 transition-colors"
-            >
+          filteredCustomers.map((cust) => {
+            const isActive = cust._id === activeCustomerId;
+            return (
+              <div
+                key={cust._id}
+                onClick={() => setActiveCustomerId(cust._id)}
+                className={`p-2.5 rounded-md flex items-center justify-between gap-2 cursor-pointer transition-all ${
+                  isActive
+                    ? 'bg-blue-50/75 hover:bg-blue-50/90 border-l-2 border-[#15368A]'
+                    : 'hover:bg-slate-50 active:bg-slate-100 border-l-2 border-transparent'
+                }`}
+              >
               <div className="min-w-0 flex items-baseline gap-1.5">
                 <span className="font-extrabold text-slate-800 text-[12px] truncate">{cust.name}</span>
                 <span className="text-slate-400 text-[10.5px] truncate">({cust.phone_number})</span>
@@ -134,7 +144,8 @@ export function CustomerDirectory({
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
-          ))
+            );
+          })
         ) : (
           <div className="text-center py-8 text-slate-400 text-[11px] font-bold">
             No customers found. Register above!

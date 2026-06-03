@@ -48,26 +48,27 @@ export default function OpticalDashboardPage() {
       <OpticalHeader hasActiveCustomer={!!activeCustomer} onBack={() => setActiveCustomerId(null)} />
 
       <div className="max-w-xl mx-auto p-1.5 space-y-1.5">
-        {/* DIRECTORY VIEW: No Customer selected */}
-        {!activeCustomer ? (
-          <CustomerDirectory
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            newCustName={newCustName}
-            setNewCustName={handleCustNameChange}
-            newCustPhone={newCustPhone}
-            setNewCustPhone={handleCustPhoneChange}
-            nameError={nameError}
-            phoneError={phoneError}
-            isCreatingCustomer={isCreatingCustomer}
-            handleAddCustomer={handleAddCustomer}
-            isCustomersLoading={isCustomersLoading}
-            filteredCustomers={filteredCustomers || []}
-            setActiveCustomerId={setActiveCustomerId}
-            handleDeleteCustomer={handleDeleteCustomer}
-          />
-        ) : (
-          /* WORKSPACE VIEW: Active Customer details & forms */
+        {/* Customer Directory is always visible */}
+        <CustomerDirectory
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          newCustName={newCustName}
+          setNewCustName={handleCustNameChange}
+          newCustPhone={newCustPhone}
+          setNewCustPhone={handleCustPhoneChange}
+          nameError={nameError}
+          phoneError={phoneError}
+          isCreatingCustomer={isCreatingCustomer}
+          handleAddCustomer={handleAddCustomer}
+          isCustomersLoading={isCustomersLoading}
+          filteredCustomers={filteredCustomers || []}
+          setActiveCustomerId={setActiveCustomerId}
+          handleDeleteCustomer={handleDeleteCustomer}
+          activeCustomerId={activeCustomer?._id}
+        />
+
+        {/* WORKSPACE VIEW: Rendered below the directory if a customer is selected */}
+        {activeCustomer && (
           <div className="space-y-1.5 animate-in fade-in duration-200">
             {/* Customer Details Row */}
             <ActiveCustomerHeader
